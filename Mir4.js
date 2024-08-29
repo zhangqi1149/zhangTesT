@@ -6,6 +6,36 @@ const WIDTH_SCREEN = device.height;   // 目标屏幕宽度
 const HEIGHT_SCREEN = device.width; // 目标屏幕高度
 
 
+// // 进入到游戏了
+// var Card = select(reData,"卡组变更")
+// if (Card){
+//     // // 开始做任务
+//     // reai = select(reData, '级')
+//     // // 找到“级”在字符串中的位置
+//     // let index = reai.text.indexOf('级');
+//     // if (index !== -1) {
+//     //     // 获取“级”前面的字符串并去除空格
+//     //     let numberBeforeLevel = reai.text.slice(0, index).trim();
+//     //     toast("人物当前等级" + numberBeforeLevel); // 输出 40
+//     // } else {
+//     //     console.log("未找到字符 '级'");
+//     // }
+
+//     // if (reai) {
+//     //     console.log("开始做任务",reai.text)
+//     //     sleep(5000)
+//     //     return
+//     // }
+
+//     // 开始游戏
+//     reai = selclick(width_screenshot,height_screenshot,reData, 'AUTO')
+//     if (reai) {
+//         console.log("AUTO")
+//         sleep(5000)
+//         return
+//     }
+
+// }
 
 // console.log("WIDTH_SCREEN: ",WIDTH_SCREEN);
 // console.log("HEIGHT_SCREEN: ",HEIGHT_SCREEN);
@@ -116,7 +146,6 @@ function clip(img, box) {
         }
     }
 }
-
 
 function preprocessImage(img) {
     // 1. 灰度处理
@@ -238,7 +267,49 @@ function process(){
             return
         }
 
-        var OUT = select(reData,"服务器连接断开")
+        //  剧情的开端
+        var OUT = select(reData,"请拖拽虚拟摇杆进行移动")
+        if (OUT){
+            // 422.0, 425.0
+            swipe(232, 455, 232, 200, 3000); 
+            sleep(4000)
+            return
+        }
+
+        // 使用轻功
+        OUT = select(reData,"1段跳跃")
+        if (OUT){
+            click(1221,400)
+            return
+        }
+
+        OUT = select(reData,"瞬间快速地")
+        if (OUT){
+            toast("弹力轻功")
+            click(1060,531)
+            click(1204,400)
+            sleep(3000)
+            return
+        }
+
+        // 使用轻功
+        OUT = select(reData,"点击轻功")
+        if (OUT){
+            click(1221,400)
+            return
+        }
+
+        // 使用轻功
+        OUT = select(reData,"试试轻功吧")
+        if (OUT){
+            click(1221,400)
+            sleep(2000)
+            click(1221,400)
+            return
+        }
+
+
+        OUT = select(reData,"服务器连接断开")
         if (OUT){
             reai = selclick(width_screenshot,height_screenshot,reData, '前往登录')
             if (reai) {
@@ -280,28 +351,123 @@ function process(){
             console.log("点击关闭广告")
             textClick(width_screenshot,height_screenshot,reai,920)
             sleep(3000)
+            return
+        }
+
+        //  选择角色界面
+        var role = select(reData, '删除角色') 
+        if(role){
+            // 开始游戏
+            reai = selclick(width_screenshot,height_screenshot,reData, '开始游戏')
+            if (reai) {
+                console.log("点击界面进入游戏")
+                sleep(5000)
+                return
+            }
         }
         
         //  剧情跳过
+        reai = selclick(width_screenshot,height_screenshot,reData, '精灵')
+        if (reai) {
+            sleep(1000)
+            return
+        }
+ 
+        //  剧情跳过
         reai = selclick(width_screenshot,height_screenshot,reData, '器')
         if (reai) {
-            console.log("跳过")
+            sleep(1000)
+            return
+        }
+
+        reai = selclick(width_screenshot,height_screenshot,reData, '跳过')
+        if (reai) {
             sleep(5000)
             return
         }
 
-        reai = select(width_screenshot,height_screenshot,reData, '开采岩窟花树液')
+        reai = select(reData, '漆黑的')
         if (reai) {
-            click(644.5,274.5)
-            sleep(5000)
-            return
+            reai = selclick(width_screenshot,height_screenshot,reData, '开采岩窟花树液')
+            if (reai) {
+                sleep(5000)
+                click(644.5,274.5)
+                return
+            }
+      
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往')
+            if (reai) {
+                sleep(9000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '师弟对话')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '对话')
+            if (reai) {
+                sleep(5000)
+                return
+            }
         }
 
-        reai = selclick(width_screenshot,height_screenshot,reData, '漆黑的')
+        reai = select(reData, '危险的救援计划')
         if (reai) {
-            console.log("跳过")
-            sleep(5000)
-            return
+            reai = select(reData, '前往狭窄的')
+            if (reai) {
+                sleep(1000)
+                //  滑动
+                swipe(232, 455, 0, 455, 8000);    //200 536
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '与芊')
+            if (reai) {
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '开启牢门')
+            if (reai) {
+                sleep(5000)
+                click(644.5,274.5)
+                return
+            }
+
+            reai = select(reData, '救出芊')
+            if (reai) {
+                sleep(5000)
+                click(644.5,274.5)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '寻找特殊')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '跟着剑')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往地牢内部')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往内部')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '剑啸大师兄对话')
+            if (reai) {
+                sleep(8000)
+                return
+            }
         }
 
         reai = selclick(width_screenshot,height_screenshot,reData, '京')
@@ -340,50 +506,6 @@ function process(){
                 }
             } 
         } 
-
-        //  选择角色界面
-        var role = select(reData, '删除角色') 
-        if(role){
-            // 开始游戏
-            reai = selclick(width_screenshot,height_screenshot,reData, '开始游戏')
-            if (reai) {
-                console.log("点击界面进入游戏")
-                sleep(5000)
-                return
-            }
-        }
-
-        //  进入到游戏了
-        var Card = select(reData,"卡组变更")
-        if (Card){
-            // // 开始做任务
-            // reai = select(reData, '级')
-            // // 找到“级”在字符串中的位置
-            // let index = reai.text.indexOf('级');
-            // if (index !== -1) {
-            //     // 获取“级”前面的字符串并去除空格
-            //     let numberBeforeLevel = reai.text.slice(0, index).trim();
-            //     toast("人物当前等级" + numberBeforeLevel); // 输出 40
-            // } else {
-            //     console.log("未找到字符 '级'");
-            // }
-
-            // if (reai) {
-            //     console.log("开始做任务",reai.text)
-            //     sleep(5000)
-            //     return
-            // }
-
-            // 开始游戏
-            reai = selclick(width_screenshot,height_screenshot,reData, 'AUTO')
-            if (reai) {
-                console.log("AUTO")
-                sleep(5000)
-                return
-            }
-
-        }
-
     }
 }
 
@@ -392,20 +514,24 @@ function main() {
     init()
     let currentPkg = currentPackage();
     // 是否在游戏
-    if (currentPkg == "com.wemade.mir4global" ){
+    if (currentPkg == "com.wemade.mir4global" | currentPkg =="android"){
         toast("目前在游戏")
         process()
     } else {
-        toast("目前不在游戏")
+        toast("目前不在游戏"+currentPkg)
+        console.log("当前的包名:",currentPkg)
         app.launch('com.wemade.mir4global')
         sleep(5000)
     }
     // console.log("点击操作结束");
 }
 
-for (let index = 0; index < 1; index++) {
-    // main();
+for (let index = 0; index < 100; index++) {
+    main();
+    sleep(3000)
 }
 
+
+ 
 
 toast("操作结束")
