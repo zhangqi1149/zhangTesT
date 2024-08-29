@@ -1,10 +1,3 @@
-// // 设置屏幕密度为 320 dpi
-// shell("wm density 320", true);
-
-// // 设置屏幕分辨率为 720x1280 像素
-// shell("wm size 720x1280", true);
-
-
 // 设置服务器地址
 const SERVER_URL = "http://192.168.0.119:5000/ocr";
 
@@ -12,31 +5,22 @@ const SERVER_URL = "http://192.168.0.119:5000/ocr";
 const WIDTH_SCREEN = device.height;   // 目标屏幕宽度
 const HEIGHT_SCREEN = device.width; // 目标屏幕高度
 
-// const HEIGHT_SCREEN = device.height;   // 目标屏幕宽度
-// const WIDTH_SCREEN = device.width; // 目标屏幕高度
 
-var currentPackage = currentPackage();  // 获取当前应用的包名
-var currentActivity = currentActivity();  // 获取当前应用的 Activity 名称
 
-console.log("当前应用包名: " + currentPackage);
-// 当前应用包名: com.huawei.android.launcher  // 桌面
-// 当前应用包名: com.wemade.mir4global   // 传奇4
-console.log("当前应用的 Activity: " + currentActivity);
-// 当前应用的 Activity: com.huawei.android.launcher.unihome.UniHomeLauncher  // 桌面
-// 当前应用的 Activity: com.epicgames.ue4.GameActivity   // 传奇4
-
-console.log("WIDTH_SCREEN: ",WIDTH_SCREEN);
-console.log("HEIGHT_SCREEN: ",HEIGHT_SCREEN);
+// console.log("WIDTH_SCREEN: ",WIDTH_SCREEN);
+// console.log("HEIGHT_SCREEN: ",HEIGHT_SCREEN);
 
 // 发送请求
-function captureAndUploadScreen(img) {
+function getOcr(img, lang) {
     try {
-        // var processedImage  = preprocessImage(img)
-
         // 将截图转换为Base64编码的PNG格式
         var imgData = images.toBase64(img, "png");
-        // 构造请求的 JSON 数据
-        var jsonData = JSON.stringify({ image: imgData });
+
+        // 构造请求的 JSON 数据，添加 lang 字段
+        var jsonData = JSON.stringify({
+            image: imgData,
+            lang: lang  // 动态设置语言
+        });
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
         var response = http.postJson(SERVER_URL, jsonData, {
@@ -56,7 +40,7 @@ function captureAndUploadScreen(img) {
     return null;
 }
 
-// 查找内容
+// 模糊查找内容
 function select(ocrResults, targetText) {
     if (!Array.isArray(ocrResults)) {
         console.error("OCR 结果不是数组");
@@ -66,20 +50,41 @@ function select(ocrResults, targetText) {
     for (let i = 0; i < ocrResults.length; i++) {
         let item = ocrResults[i];
         if (item && item.text !== undefined) {
-            if (item.text === targetText) {
-                console.log("找到目标文本:", item);
-                return item;
-            }
+            // if (item.text === targetText) {
+            //     console.log("找到目标文本:", item.text);
+            //     return item;
+            // }
             // 检查文本是否包含 "40级"
             if (item.text.includes(targetText)) {
-                console.log("找到目标文本:", item);
+                console.log("模糊查找目标文本:", item.text);
                 return item;
             }
         } else {
             console.error(`第 ${i} 项缺少 text 属性`, item);
         }
     }
-    console.log("未找到目标文本");
+    console.log("未找到目标文本",targetText);
+    return null;
+}
+
+// 精准查找内容
+function selectTow(ocrResults, targetText) {
+    if (!Array.isArray(ocrResults)) {
+        console.error("OCR 结果不是数组");
+        return null;
+    }
+    for (let i = 0; i < ocrResults.length; i++) {
+        let item = ocrResults[i];
+        if (item && item.text !== undefined) {
+            if (item.text === targetText) {
+                console.log("找到目标文本:", item.text);
+                return item;
+            }
+        } else {
+            console.error(`第 ${i} 项缺少 text 属性`, item);
+        }
+    }
+    console.log("未找到目标文本",targetText);
     return null;
 }
 
@@ -95,7 +100,7 @@ function clip(img, box) {
     var croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
 
     // 上传裁剪后的图像并获取 OCR 结果
-    var ocrResults = captureAndUploadScreen(croppedImage);
+    var ocrResults = getOcr(croppedImage);
     console.log("OCR 结果:", ocrResults);
 
     if (ocrResults) {
@@ -112,21 +117,6 @@ function clip(img, box) {
     }
 }
 
-// 关闭控件
-function findAndClickCloseButtonUsingAccessibility() {
-    // 查找包含“关闭”或“X”的控件
-    var closeButton = textContains("关闭").findOne(3000) || textContains("X").findOne(3000);
-
-    if (closeButton) {
-        console.log("找到关闭按钮:", closeButton.bounds());
-        closeButton.click();
-        console.log("关闭按钮点击成功");
-        return true;
-    } else {
-        console.log("未找到关闭按钮");
-    }
-    return false;
-}
 
 function preprocessImage(img) {
     // 1. 灰度处理
@@ -142,70 +132,280 @@ function preprocessImage(img) {
     return binaryImage;
 }
 
+//  点击文本中间
+function textClick(width_screenshot,height_screenshot,target,num){
+    // 计算文本区域的中心点
+    let centerX = (target.box[0][0] + target.box[2][0]) / 2;
+    let centerY = (target.box[0][1] + target.box[2][1]) / 2;
 
-function main() {
+    // 将坐标从截图转换到设备屏幕坐标
+    let x_phone = (centerX / width_screenshot) * WIDTH_SCREEN;
+    let y_phone = (centerY / height_screenshot) * HEIGHT_SCREEN;
+
+    console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
+
+    // 点击坐标
+    click(x_phone+num,y_phone);
+    // click(x_phone+920,y_phone); // 广告的关闭按钮
+}
+
+// 查找文本并点击
+function selclick(width_screenshot,height_screenshot,reData,src){
+    var target = select(reData, src)
+    if(target != null){
+        // 存在 点击
+        console.log("开始点击",src);
+
+        // 计算文本区域的中心点
+        let centerX = (target.box[0][0] + target.box[2][0]) / 2;
+        let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+
+        // 将坐标从截图转换到设备屏幕坐标
+        let x_phone = (centerX / width_screenshot) * WIDTH_SCREEN;
+        let y_phone = (centerY / height_screenshot) * HEIGHT_SCREEN;
+
+        console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
+
+        // 点击坐标
+        click(x_phone,y_phone);
+
+        return true
+    }else{
+        return false
+    }
+}
+
+// 查找文本并点击
+function clickTow(width_screenshot,height_screenshot,reData,src){
+    var target = selectTow(reData, src)
+    if(target != null){
+        // 存在 点击
+        console.log("开始点击",src);
+
+        // 计算文本区域的中心点
+        let centerX = (target.box[0][0] + target.box[2][0]) / 2;
+        let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+
+        // 将坐标从截图转换到设备屏幕坐标
+        let x_phone = (centerX / width_screenshot) * WIDTH_SCREEN;
+        let y_phone = (centerY / height_screenshot) * HEIGHT_SCREEN;
+
+        console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
+
+        // 点击坐标
+        click(x_phone,y_phone);
+
+        return true
+    }else{
+        return false
+    }
+}
+
+
+function init(){
     // 权限检查
     if (!auto.service) {
         console.log("请开启无障碍服务");
         auto();
     }
+
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
     }
 
-    // 是否在游戏
-    if (currentPackage == "com.wemade.mir4global" ){
-        sleep(2000)
-        toast("目前在游戏")
-        var img = captureScreen();
-        if (!img) {
-            console.log("截图失败");
-            exit();
+}
+
+function process(){
+    var img = captureScreen();
+    if (!img) {
+        console.log("截图失败");
+        exit();
+    }
+
+    let width_screenshot = img.getWidth();  // 获取截图的宽度
+    let height_screenshot = img.getHeight();  // 获取截图的高度
+
+    // console.log("截图宽度: "+width_screenshot)
+    // console.log("截图高度: "+height_screenshot)
+
+    var ocrResults = getOcr(img,"ch");
+    if (ocrResults) {
+        var reData = JSON.parse(ocrResults);
+        var Load = select(reData,"Loading")
+        if (Load){
+            toast(" Load 界面 等待5秒")
+            sleep(5000)
+            return
         }
 
-        let width_screenshot = img.getWidth();  // 获取截图的宽度
-        let height_screenshot = img.getHeight();  // 获取截图的高度
-
-        // console.log("截图宽度:", width_screenshot);
-        // console.log("截图高度:", height_screenshot);
-
-        var ocrResults = captureAndUploadScreen(img);
-        if (ocrResults) {
-            try {
-                var reData = JSON.parse(ocrResults);
-                var target = select(reData, '购买');
-                if (target != null) {
-                    console.log("开始点击");
-
-                    // 计算文本区域的中心点
-                    let centerX = (target.box[0][0] + target.box[2][0]) / 2;
-                    let centerY = (target.box[0][1] + target.box[2][1]) / 2;
-
-                    // 将坐标从截图转换到设备屏幕坐标
-                    let x_phone = (centerX / width_screenshot) * WIDTH_SCREEN;
-                    let y_phone = (centerY / height_screenshot) * HEIGHT_SCREEN;
-
-                    console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
-
-                    // 点击坐标
-                    click(x_phone,y_phone);
-                    // click(x_phone+920,y_phone); // 广告的关闭按钮
-                    sleep(1000);  // 等待1秒
-                } else {
-                    console.log("未找到目标文本");
-                }
-            } catch (e) {
-                console.error("解析 OCR 结果失败: ", e);
+        var OUT = select(reData,"服务器连接断开")
+        if (OUT){
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往登录')
+            if (reai) {
+                console.log("点击界面进入游戏")
+                sleep(5000)
+                return
             }
         }
+
+        OUT = select(reData,"重新尝试")
+        if (OUT){
+            reai = selclick(width_screenshot,height_screenshot,reData, '重新尝试')
+            if (reai) {
+                console.log("点击重新尝试")
+                sleep(5000)
+                return
+            }
+        }
+
+        OUT = select(reData,"错误")
+        if (OUT){
+            reai = clickTow(width_screenshot,height_screenshot,reData, '确认')
+            if (reai) {
+                console.log("点击确认")
+                sleep(5000)
+                return
+            }
+            reai = clickTow(width_screenshot,height_screenshot,reData, '游戏结束')
+            if (reai) {
+                console.log("游戏结束")
+                sleep(5000)
+                return
+            }
+        }
+
+        //  关闭广告
+        reai = select(reData, '今日不')
+        if (reai) {
+            console.log("点击关闭广告")
+            textClick(width_screenshot,height_screenshot,reai,920)
+            sleep(3000)
+        }
+        
+        //  剧情跳过
+        reai = selclick(width_screenshot,height_screenshot,reData, '器')
+        if (reai) {
+            console.log("跳过")
+            sleep(5000)
+            return
+        }
+
+        reai = select(width_screenshot,height_screenshot,reData, '开采岩窟花树液')
+        if (reai) {
+            click(644.5,274.5)
+            sleep(5000)
+            return
+        }
+
+        reai = selclick(width_screenshot,height_screenshot,reData, '漆黑的')
+        if (reai) {
+            console.log("跳过")
+            sleep(5000)
+            return
+        }
+
+        reai = selclick(width_screenshot,height_screenshot,reData, '京')
+        if (reai) {
+            console.log("跳过")
+            sleep(5000)
+            return
+        }
+        
+        // 判断根识别   进入游戏界面以前
+        var reai = select(reData, 'REA') 
+        if(reai){
+            // 进入游戏
+            reai = selclick(width_screenshot,height_screenshot,reData, '点击')
+            if (reai) {
+                console.log("点击界面进入游戏")
+                sleep(5000)
+                return
+            }
+
+            // 加载补丁中
+            reai = selclick(width_screenshot,height_screenshot,reData, '加载补丁中')
+            if (reai) {
+                console.log("加载补丁中 等待5秒")
+                sleep(5000)
+                return
+            }
+
+            reai = select(reData, '资格的证明') 
+            if(reai){
+                // 进入游戏
+                reai = clickTow(width_screenshot,height_screenshot,reData, '登录游戏')
+                if (reai) {
+                    console.log("登录游戏")
+                    sleep(5000)
+                }
+            } 
+        } 
+
+        //  选择角色界面
+        var role = select(reData, '删除角色') 
+        if(role){
+            // 开始游戏
+            reai = selclick(width_screenshot,height_screenshot,reData, '开始游戏')
+            if (reai) {
+                console.log("点击界面进入游戏")
+                sleep(5000)
+                return
+            }
+        }
+
+        //  进入到游戏了
+        var Card = select(reData,"卡组变更")
+        if (Card){
+            // // 开始做任务
+            // reai = select(reData, '级')
+            // // 找到“级”在字符串中的位置
+            // let index = reai.text.indexOf('级');
+            // if (index !== -1) {
+            //     // 获取“级”前面的字符串并去除空格
+            //     let numberBeforeLevel = reai.text.slice(0, index).trim();
+            //     toast("人物当前等级" + numberBeforeLevel); // 输出 40
+            // } else {
+            //     console.log("未找到字符 '级'");
+            // }
+
+            // if (reai) {
+            //     console.log("开始做任务",reai.text)
+            //     sleep(5000)
+            //     return
+            // }
+
+            // 开始游戏
+            reai = selclick(width_screenshot,height_screenshot,reData, 'AUTO')
+            if (reai) {
+                console.log("AUTO")
+                sleep(5000)
+                return
+            }
+
+        }
+
+    }
+}
+
+
+function main() {
+    init()
+    let currentPkg = currentPackage();
+    // 是否在游戏
+    if (currentPkg == "com.wemade.mir4global" ){
+        toast("目前在游戏")
+        process()
     } else {
         toast("目前不在游戏")
         app.launch('com.wemade.mir4global')
-        sleep(15000)
+        sleep(5000)
     }
     // console.log("点击操作结束");
-    toast("操作结束")
 }
 
-main();
- 
+for (let index = 0; index < 1; index++) {
+    // main();
+}
+
+
+toast("操作结束")

@@ -1,4 +1,6 @@
 import json
+import os
+from datetime import datetime
 
 from flask import Flask, request, jsonify
 from paddleocr import PaddleOCR
@@ -29,6 +31,21 @@ def ocr_service():
 
         # 解码 Base64 编码的图像数据
         img = base64.b64decode(img_data)
+
+        # 使用当前时间戳作为文件名
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        img_filename = os.path.join("image", f"{timestamp}.png")
+
+        # 将图像保存到 'image' 文件夹中
+        with open(img_filename, "wb") as f:
+            f.write(img)
+
+        # 获取语言参数，默认为 'ch'
+        lang = data_v.get("lang", "ch")
+
+        # 根据传递的语言参数重新初始化 OCR 对象
+        global ocr
+        ocr = PaddleOCR(use_angle_cls=True, lang=lang)
 
         # 执行 OCR 识别
         result = ocr.ocr(img, cls=True)
