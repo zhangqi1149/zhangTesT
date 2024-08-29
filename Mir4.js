@@ -147,6 +147,7 @@ function clip(img, box) {
     }
 }
 
+// 图片处理
 function preprocessImage(img) {
     // 1. 灰度处理
     var grayscaleImage = images.grayscale(img);
@@ -253,11 +254,8 @@ function process(){
 
     let width_screenshot = img.getWidth();  // 获取截图的宽度
     let height_screenshot = img.getHeight();  // 获取截图的高度
-
-    // console.log("截图宽度: "+width_screenshot)
-    // console.log("截图高度: "+height_screenshot)
-
     var ocrResults = getOcr(img,"ch");
+
     if (ocrResults) {
         var reData = JSON.parse(ocrResults);
         var Load = select(reData,"Loading")
@@ -276,6 +274,12 @@ function process(){
             return
         }
 
+        // 使用轻功
+        OUT = select(reData,"活力补充")
+        if (OUT){
+            click(950,164)
+            return
+        }
         // 使用轻功
         OUT = select(reData,"1段跳跃")
         if (OUT){
@@ -386,39 +390,242 @@ function process(){
             return
         }
 
-        reai = select(reData, '漆黑的')
+        reai = select(reData, '伪像切换')
         if (reai) {
-            reai = selclick(width_screenshot,height_screenshot,reData, '开采岩窟花树液')
+            toast("伪像切换")
+            click(1230,29)
+            return
+        }
+
+        // 黑暗之影
+        reai = select(reData, '黑暗之影')
+        if (reai) {
+            reai = selclick(width_screenshot,height_screenshot,reData, '击败')
             if (reai) {
-                sleep(5000)
+                sleep(15000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往银')
+            if (reai) {
+                sleep(13000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '与京一师弟')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '拜见师父')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+    
+            reai = selclick(width_screenshot,height_screenshot,reData, '与红药')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+
+            // TODO
+            reai = selclick(width_screenshot,height_screenshot,reData, '强化体质')
+            if (reai) {
+                sleep(2000)
+
+
+
+                return
+            }
+
+        }
+
+
+        // 追踪痕迹
+        reai = select(reData, '追踪痕迹')
+        if (reai) {
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '寻得蛊')
+            if (reai) {
+                sleep(2000)
                 click(644.5,274.5)
+                sleep(5000)
                 return
             }
-      
-            reai = selclick(width_screenshot,height_screenshot,reData, '前往')
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '强化技能')
             if (reai) {
-                sleep(9000)
+                sleep(2000)
+                img = captureScreen();
+                reai = select(reData, '技能配置')
+                ocrResults = getOcr(img,"ch");
+                reData = JSON.parse(ocrResults);
+                if (reData) {
+                    reai = clickTow(width_screenshot,height_screenshot,reData, '学习')
+                    if (reai) {
+                        sleep(4000)
+                    }
+        
+                    reai = selclick(width_screenshot,height_screenshot,reData, '饿鬼')
+                    if (reai) {
+                        sleep(3000)
+                        reai = selclick(width_screenshot,height_screenshot,reData, '强化')
+                        if (reai) {
+                            sleep(4000)
+                            click(1230,25)
+                            return
+                        }
+                    }
+                }
                 return
             }
-            reai = selclick(width_screenshot,height_screenshot,reData, '师弟对话')
+
+            
+            reai = selclick(width_screenshot,height_screenshot,reData, '击败')
+            if (reai) {
+                sleep(15000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '离开桃花')
             if (reai) {
                 sleep(5000)
                 return
             }
-            reai = selclick(width_screenshot,height_screenshot,reData, '对话')
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往师父')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往银')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '与师父对话')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+   
+            reai = selclick(width_screenshot,height_screenshot,reData, '寻找芊')
+            if (reai) {
+                sleep(6000)
+                return
+            }
+ 
+        }
+
+        // 燃烧的桃花谷
+        reai = select(reData, '燃烧的')
+        if (reai) {
+            reai = selclick(width_screenshot,height_screenshot,reData, '寻找')
+            if (reai) {
+                sleep(4000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '师父对话')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+        }
+        
+        // 岁月静好
+        reai = select(reData, '岁月静好')
+        if (reai) {
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往师父')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '击败半')
+            if (reai) {
+                sleep(16000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往更深')
+            if (reai) {
+                sleep(7000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往芊')
+            if (reai) {
+                sleep(7000)
+                return
+            }
+
+            
+            reai = selclick(width_screenshot,height_screenshot,reData, '与京一师弟对话')
             if (reai) {
                 sleep(5000)
                 return
             }
         }
 
-        reai = select(reData, '危险的救援计划')
+        //  武功修炼
+        reai = select(reData, '武功修炼')
+        if (reai) {
+            reai = selclick(width_screenshot,height_screenshot,reData, '与师父对话')
+            if (reai) {
+                sleep(2000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '摧毁木')
+            if (reai) {
+                sleep(6000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往木')
+            if (reai) {
+                sleep(4000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '深入修炼')
+            if (reai) {
+                sleep(6000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '击败蛤蟆')
+            if (reai) {
+                sleep(15000)
+                return
+            }
+
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '师弟对话')
+            if (reai) {
+                sleep(4000)
+                return
+            }
+      
+        }
+
+        // 危险的救援计划
+        reai = select(reData, '危险的救')
         if (reai) {
             reai = select(reData, '前往狭窄的')
             if (reai) {
                 sleep(1000)
                 //  滑动
                 swipe(232, 455, 0, 455, 8000);    //200 536
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '离开监牢')
+            if (reai) {
+                sleep(4000)
                 return
             }
 
@@ -434,7 +641,7 @@ function process(){
                 return
             }
 
-            reai = select(reData, '救出芊')
+            reai = selclick(width_screenshot,height_screenshot,reData, '救出芊')
             if (reai) {
                 sleep(5000)
                 click(644.5,274.5)
@@ -466,6 +673,34 @@ function process(){
             reai = selclick(width_screenshot,height_screenshot,reData, '剑啸大师兄对话')
             if (reai) {
                 sleep(8000)
+                return
+            }
+        }
+
+            
+        // 漆黑的密道
+        reai = select(reData, '漆黑的')
+        if (reai) {
+            reai = selclick(width_screenshot,height_screenshot,reData, '开采岩窟花树液')
+            if (reai) {
+                sleep(5000)
+                click(644.5,274.5)
+                return
+            }
+      
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往')
+            if (reai) {
+                sleep(9000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '师弟对话')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+            reai = selclick(width_screenshot,height_screenshot,reData, '对话')
+            if (reai) {
+                sleep(5000)
                 return
             }
         }
@@ -526,9 +761,8 @@ function main() {
     // console.log("点击操作结束");
 }
 
-for (let index = 0; index < 100; index++) {
+for (let index = 0; index < 1 ; index++) {
     main();
-    sleep(3000)
 }
 
 
