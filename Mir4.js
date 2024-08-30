@@ -423,10 +423,6 @@ function process(){
                     if (index == 1) {
                         click(1087,278)
                     }
-                    // 防御
-                    if (index == 2) {
-                        click(871,159)
-                    }
                     // 生命
                     if (index == 3|index == 4) {
                         click(860,221)

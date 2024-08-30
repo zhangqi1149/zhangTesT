@@ -17,6 +17,11 @@
     // console.log("当前应用的 Activity: " + currentActivity);
     // 当前应用的 Activity: com.huawei.android.launcher.unihome.UniHomeLauncher  // 桌面
     // 当前应用的 Activity: com.epicgames.ue4.GameActivity   // 传奇4
+
+    -1316119  它对应的颜色值是 #E6E8D9  浅灰色调        没有攻击
+    -1968649  它对应的颜色值是 #E2E2E7  非常浅的灰色。    正在攻击
+    -14012619 它对应的颜色值是 #2A2A2D，深灰色带有淡淡的蓝色调。 任务不亮
+    -6766849  它对应的颜色值是 #99A1FF，浅蓝色      任务亮
 ```
 
 
