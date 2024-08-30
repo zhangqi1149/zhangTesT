@@ -93,7 +93,7 @@ function select(ocrResults, targetText) {
             console.error(`第 ${i} 项缺少 text 属性`, item);
         }
     }
-    console.log("未找到目标文本",targetText);
+    // console.log("未找到目标文本",targetText);
     return null;
 }
 
@@ -114,7 +114,7 @@ function selectTow(ocrResults, targetText) {
             console.error(`第 ${i} 项缺少 text 属性`, item);
         }
     }
-    console.log("未找到目标文本",targetText);
+    // console.log("未找到目标文本",targetText);
     return null;
 }
 
@@ -258,12 +258,6 @@ function process(){
 
     if (ocrResults) {
         var reData = JSON.parse(ocrResults);
-        var Load = select(reData,"Loading")
-        if (Load){
-            toast(" Load 界面 等待5秒")
-            sleep(5000)
-            return
-        }
 
         //  剧情的开端
         var OUT = select(reData,"请拖拽虚拟摇杆进行移动")
@@ -274,12 +268,20 @@ function process(){
             return
         }
 
-        // 使用轻功
+        var Load = select(reData,"Loading")
+        if (Load){
+            toast(" Load 界面 等待5秒")
+            sleep(5000)
+            return
+        }
+        
+        // 活力补充
         OUT = select(reData,"活力补充")
         if (OUT){
             click(950,164)
             return
         }
+
         // 使用轻功
         OUT = select(reData,"1段跳跃")
         if (OUT){
@@ -312,7 +314,6 @@ function process(){
             return
         }
 
-
         OUT = select(reData,"服务器连接断开")
         if (OUT){
             reai = selclick(width_screenshot,height_screenshot,reData, '前往登录')
@@ -332,6 +333,16 @@ function process(){
                 return
             }
         }
+
+        OUT = select(reData,"说明")
+        if (OUT){
+            reai = selclick(width_screenshot,height_screenshot,reData, '确认')
+            if (reai) {
+                sleep(5000)
+                return
+            }
+        }
+
 
         OUT = select(reData,"错误")
         if (OUT){
@@ -370,19 +381,7 @@ function process(){
             }
         }
         
-        //  剧情跳过
-        reai = selclick(width_screenshot,height_screenshot,reData, '精灵')
-        if (reai) {
-            sleep(1000)
-            return
-        }
- 
-        //  剧情跳过
-        reai = selclick(width_screenshot,height_screenshot,reData, '器')
-        if (reai) {
-            sleep(1000)
-            return
-        }
+
 
         reai = selclick(width_screenshot,height_screenshot,reData, '跳过')
         if (reai) {
@@ -396,10 +395,125 @@ function process(){
             click(1230,29)
             return
         }
+        reai = select(reData, '闭关修炼')
+        if (reai) {
+            toast("伪像切换")
+            click(1230,29)
+            return
+        }
 
         // 黑暗之影
         reai = select(reData, '黑暗之影')
         if (reai) {
+            reai = selclick(width_screenshot,height_screenshot,reData, '收集食人')
+            if (reai) {
+                sleep(22000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '强化体质')
+            if (reai) {
+                sleep(2000)
+                for (let index = 0; index < 6; index++) {
+                    // 法伤
+                    if (index == 0) {
+                        click(885,334)
+                    }
+                    //  命中
+                    if (index == 1) {
+                        click(1087,278)
+                    }
+                    // 防御
+                    if (index == 2) {
+                        click(871,159)
+                    }
+                    // 生命
+                    if (index == 3|index == 4) {
+                        click(860,221)
+                    }
+                    // 魔力
+                    if ( index == 5) {
+                        click(1111,221)
+                    }
+                    sleep(1500)
+                    click(1040,672)
+                    sleep(3000)
+                }
+                click(1230,25) // 关闭
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '采集森')
+            if (reai) {
+                sleep(8000)
+                click(326,638)
+                sleep(7000)
+                click(326,638)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '收集熊胆')
+            if (reai) {
+                sleep(23000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '返回红药')
+            if (reai) {
+                sleep(35000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '击退污染的')
+            if (reai) {
+                sleep(40000)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往寻找')
+            if (reai) {
+                sleep(8500)
+                return
+            }
+
+            // TODO 这里开启了重复任务
+            reai = selclick(width_screenshot,height_screenshot,reData, '与孔大夫')
+            if (reai) {
+                sleep(3000)
+                click(223 , 560)
+                sleep(500)
+                click(223 , 560)
+                sleep(500)
+                click(223 , 560)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '与陈生对')
+            if (reai) {
+                sleep(4000)
+                click(223 , 560)
+                sleep(500)
+                click(223 , 560)
+                sleep(500)
+                click(223 , 560)
+                sleep(3000)
+                click(223 , 560)
+                return
+            }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往师父所在')
+            if (reai) {
+                sleep(4500)
+                return
+            }
+
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往狗熊栖息地')
+            if (reai) {
+                sleep(8000)
+                return
+            }
+
             reai = selclick(width_screenshot,height_screenshot,reData, '击败')
             if (reai) {
                 sleep(15000)
@@ -413,7 +527,7 @@ function process(){
 
             reai = selclick(width_screenshot,height_screenshot,reData, '与京一师弟')
             if (reai) {
-                sleep(2000)
+                sleep(3400)
                 return
             }
 
@@ -425,22 +539,11 @@ function process(){
     
             reai = selclick(width_screenshot,height_screenshot,reData, '与红药')
             if (reai) {
-                sleep(2000)
-                return
-            }
-
-            // TODO
-            reai = selclick(width_screenshot,height_screenshot,reData, '强化体质')
-            if (reai) {
-                sleep(2000)
-
-
-
+                sleep(4500)
                 return
             }
 
         }
-
 
         // 追踪痕迹
         reai = select(reData, '追踪痕迹')
@@ -511,6 +614,12 @@ function process(){
                 sleep(2000)
                 return
             }
+
+            reai = selclick(width_screenshot,height_screenshot,reData, '与精灵对话')
+            if (reai) {
+                sleep(2000)
+                return
+            }
    
             reai = selclick(width_screenshot,height_screenshot,reData, '寻找芊')
             if (reai) {
@@ -562,7 +671,12 @@ function process(){
                 return
             }
 
-            
+            reai = selclick(width_screenshot,height_screenshot,reData, '前往声')
+            if (reai) {
+                sleep(7000)
+                return
+            }
+
             reai = selclick(width_screenshot,height_screenshot,reData, '与京一师弟对话')
             if (reai) {
                 sleep(5000)
@@ -677,7 +791,6 @@ function process(){
             }
         }
 
-            
         // 漆黑的密道
         reai = select(reData, '漆黑的')
         if (reai) {
@@ -741,6 +854,13 @@ function process(){
                 }
             } 
         } 
+
+        //  剧情跳过
+        reai = selclick(width_screenshot,height_screenshot,reData, '器')
+        if (reai) {
+            sleep(2000)
+            return
+        }
     }
 }
 
@@ -756,12 +876,13 @@ function main() {
         toast("目前不在游戏"+currentPkg)
         console.log("当前的包名:",currentPkg)
         app.launch('com.wemade.mir4global')
+        app.launch('com.wemade.mir4global')
         sleep(5000)
     }
     // console.log("点击操作结束");
 }
 
-for (let index = 0; index < 1 ; index++) {
+for (let index = 0; index < 200 ; index++) {
     main();
 }
 
