@@ -1,6 +1,10 @@
 # zhangTesT
 
 ```
+    首先能不去截图就不去截图
+    参数能不传就不传
+    可以不计算的就不计算
+
 
     // 设置屏幕密度为 320 dpi
     // shell("wm density 320", true);
@@ -18,16 +22,22 @@
     // 当前应用的 Activity: com.huawei.android.launcher.unihome.UniHomeLauncher  // 桌面
     // 当前应用的 Activity: com.epicgames.ue4.GameActivity   // 传奇4
 
-    坐标 390 652
-    -1316119  它对应的颜色值是 #E6E8D9  浅灰色调        没有攻击
-    
-    -1968649  它对应的颜色值是 #E2E2E7  非常浅的灰色。    正在攻击
-
-    坐标 1233 188
-    -14012619 它对应的颜色值是 #2A2A2D，深灰色带有淡淡的蓝色调。 任务不亮
-    -6766849  它对应的颜色值是 #99A1FF，浅蓝色      任务亮
+    8-31 11-52  更改服务器代码 可以自己控制是否保存图片
 ```
 
+### 错误信息
+```
+    15:20:48.835/E: Wrapped com.stardust.autojs.runtime.exception.ScriptException: 无障碍服务已启用但并未运行，这可能是安卓的BUG，您可能需要重启手机或重启无障碍服务 (/android_asset/modules/__automator__.js#136)
+    Wrapped com.stardust.autojs.runtime.exception.ScriptException: 无障碍服务已启用但并未运行，这可能是安卓的BUG，您可能需要重启手机或重启无障碍服务
+        at /android_asset/modules/__automator__.js:136:0
+        at init ([remote]Mir4:46:0)
+        at main ([remote]Mir4:111:0)
+        at [remote]Mir4:117:0
+
+    15:20:48.845/V: 
+    ------------ 
+    [ [remote]Mir4 ]运行结束，用时0.435000秒
+```
 
 ###  连接断开
 ```

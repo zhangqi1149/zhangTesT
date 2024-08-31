@@ -32,13 +32,18 @@ def ocr_service():
         # 解码 Base64 编码的图像数据
         img = base64.b64decode(img_data)
 
-        # 使用当前时间戳作为文件名
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        img_filename = os.path.join("image", f"{timestamp}.png")
+        # 从 JSON 数据中获取 "save" 字段
+        save_file = data_v.get("save", False)
+        
+        # 如果 save 为 True，保存图片
+        if save_file:
+            # 使用当前时间戳作为文件名
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            img_filename = os.path.join("image", f"{timestamp}.png")
 
-        # 将图像保存到 'image' 文件夹中
-        with open(img_filename, "wb") as f:
-            f.write(img)
+            # 将图像保存到 'image' 文件夹中
+            with open(img_filename, "wb") as f:
+                f.write(img)
 
         # 获取语言参数，默认为 'ch'
         lang = data_v.get("lang", "ch")
