@@ -161,8 +161,10 @@ function selclick(reData,src,num){
         console.log(`点击${src}: x=${x_phone}, y=${y_phone}`);
 
         // 点击坐标
-        click(x_phone,y_phone);
-        sleep(5)
+        code = click(x_phone,y_phone);
+        if (!code) {
+            console.log(`${src} 点击失败`)
+        }
         return true
     }else{
         return false
@@ -360,6 +362,13 @@ function upLevel(){
         exit();
     }
 
+    var point = images.findColor(img, -13553096, {threshold: 0, region: [522, 41, 6, 3]});
+    if (point) {
+        sleep(2000)
+        console.log("在打怪了")
+        return
+    }
+
     width_screenshot = img.getWidth();  // 获取截图的宽度
     height_screenshot = img.getHeight();  // 获取截图的高度
 
@@ -368,7 +377,7 @@ function upLevel(){
 
     // 裁剪图像
     // var croppedImg = images.clip(img, clipRegion[0], clipRegion[1], clipRegion[2], clipRegion[3]);  // 
-    var attImg = images.clip(img, 522,41,6,3);  // 裁剪图像打怪的
+    // var attImg = images.clip(img, 522,41,6,3);  // 裁剪图像打怪的
 
     var grayscaleImage = images.grayscale(img);  // 灰度处理
     // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
@@ -390,13 +399,12 @@ function upLevel(){
             reai = select(reData, '退出登录') 
             if (reai) {
                 reai = select(reData, '选项') 
-                if (condition) {
+                if (!reai) {
                     // 返回
                     home()
                     sleep(5000)
                 }
             }
-
 
             // 加载补丁中
             reai = selclick(reData, '加载补丁中')
@@ -470,16 +478,16 @@ function upLevel(){
             return
         }
 
-        //  是否是在打怪
-        var clors = getCl(attImg,1,2)
-        if (clors.hex == '#29292e') {
-            console.log("在打怪");
-            sleep(2000);
-            return 
-        }
+        // //  是否是在打怪
+        // var clors = getCl(attImg,1,2)
+        // if (clors.hex == '#29292e') {
+        //     console.log("在打怪");
+        //     sleep(2000);
+        //     return 
+        // }
         
         // 是否在自动寻路
-        var imgtext = clip(img, [[582.0, 507.0], [713.0, 507.0], [713.0, 529.0], [582.0, 529.0]])
+        var imgtext = clip(img, [[571.0, 507.0], [633.0, 507.0], [571.0, 529.0], [633.0, 529.0]])
         if (imgtext) {
             console.log(" 我在奔跑 ");
             sleep(3000);
@@ -979,9 +987,9 @@ function main(){
     }
 }
 
-// for (let index = 0; index < 100 ; index++) {
-//     main()
-// }
+for (let index = 0; index < 100 ; index++) {
+    main()
+}
 
 
 // console.log("开始请求截图")
