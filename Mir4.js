@@ -1,15 +1,12 @@
 // 设置服务器地址
-const SERVER_URL = "http://192.168.0.119:5000/ocr";
+var SERVER_URL = "http://192.168.0.119:5000/ocr";
 
-const Shout = "加我QQ 有好东西"
+var Shout = "加我QQ 有好东西"
 
-const  Save = false  // true   false 
+var  Save = false  // true   false 
 
-const width_screenshot = 1285
-const height_screenshot = 720
-
-const WIDTH_SCREEN = device.height;   // 目标屏幕宽度
-const HEIGHT_SCREEN = device.width; // 目标屏幕高度
+var width_screenshot = 1285
+var height_screenshot = 720
 
 // OCR请求
 function getOcr(img, lang) {
@@ -28,7 +25,8 @@ function getOcr(img, lang) {
         var response = http.postJson(SERVER_URL, jsonData, {
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            timeout: 10000 // 设置超时时间为10秒
         });
         
         if (response.statusCode == 200) {
@@ -59,7 +57,8 @@ function getCl(img, x1,y1) {
         var response = http.postJson("http://192.168.0.119:5000/color", jsonData, {
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            timeout: 10000 // 设置超时时间为10秒
         });
         
         if (response.statusCode == 200) {
@@ -68,10 +67,44 @@ function getCl(img, x1,y1) {
             console.error("服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
+        toast("请求失败: ",e)
         console.error("请求失败: ", e);
     }
     return null;
 }
+
+// OCR请求
+function isblue(img) {
+    try {
+        // 将截图转换为Base64编码的PNG格式
+        var imgData = images.toBase64(img, "png");
+
+        // 构造请求的 JSON 数据，添加 lang 字段
+        var jsonData = JSON.stringify({
+            image: imgData,
+            save: Save // true   false 
+        });
+        
+        // 发送 POST 请求，确保 Content-Type 为 application/json
+        var response = http.postJson("http://192.168.0.119:5000/is_blue", jsonData, {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            timeout: 10000 // 设置超时时间为10秒
+        });
+        
+        if (response.statusCode == 200) {
+            return JSON.parse(response.body.string()).mostly_blue;
+        } else {
+            console.error("服务器返回错误：" + response.statusCode);
+        }
+    } catch (e) {
+        toast("请求失败: ",e)
+        console.error("请求失败: ", e);
+    }
+    return null;
+}
+
 
 // 初始化
 function init(){
@@ -131,8 +164,8 @@ function textClick(target,num){
     let centerY = (target.box[0][1] + target.box[2][1]) / 2;
 
     // 将坐标从截图转换到设备屏幕坐标
-    let x_phone = (centerX / width_screenshot) * WIDTH_SCREEN;
-    let y_phone = (centerY / height_screenshot) * HEIGHT_SCREEN;
+    let x_phone = (centerX / width_screenshot) * device.height;
+    let y_phone = (centerY / height_screenshot) * device.width;
 
     console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
 
@@ -150,8 +183,8 @@ function selclick(reData,src,num){
         let centerY = (target.box[0][1] + target.box[2][1]) / 2;
 
         // 将坐标从截图转换到设备屏幕坐标
-        let x_phone = (centerX / width_screenshot) * WIDTH_SCREEN;
-        let y_phone = (centerY / height_screenshot) * HEIGHT_SCREEN;
+        let x_phone = (centerX / width_screenshot) * device.height;
+        let y_phone = (centerY / height_screenshot) * device.width;
 
         console.log(`点击${src}: x=${x_phone}, y=${y_phone}`);
 
@@ -177,11 +210,11 @@ function clip(img, box) {
     // 裁剪图像
     var croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
 
-    var grayscaleImage = images.grayscale(croppedImage);  // 灰度处理
+    // var grayscaleImage = images.grayscale(croppedImage);  // 灰度处理
     // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
 
     // 上传裁剪后的图像并获取 OCR 结果
-    var ocrResults = getOcr(grayscaleImage,"ch");
+    var ocrResults = getOcr(croppedImage,"ch");
     if (ocrResults) {
         try {
             if (Array.isArray(ocrResults) && ocrResults.length > 0 && ocrResults[0].hasOwnProperty('text')) {
@@ -193,6 +226,20 @@ function clip(img, box) {
         }
     }
     return false
+}
+
+// 区域裁剪
+function clip2(img, box) {
+    // 获取裁剪区域的坐标
+    var x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
+    var x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
+    var y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
+    var y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
+
+    // 裁剪图像
+    var croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
+
+    return croppedImage
 }
 
 //  错误处理
@@ -371,12 +418,25 @@ function upLevel(){
     // 裁剪图像
     // var croppedImg = images.clip(img, clipRegion[0], clipRegion[1], clipRegion[2], clipRegion[3]);  // 
     var attImg = images.clip(img, 522,41,6,3);  // 裁剪图像打怪的
+    //  是否是在打怪
+    var clors = getCl(attImg,1,2)
 
-    var grayscaleImage = images.grayscale(img);  // 灰度处理
+    // 是否在自动寻路
+    // var qust = clip(img, [[571.0, 507.0], [633.0, 507.0], [571.0, 529.0], [633.0, 529.0]])
+    var imgtext = clip2(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
+
+    var code = isblue(imgtext)
+    imgtext.recycle();
+    imgtext = null;
+    // console.log("截完图了")
+
+    // var grayscaleImage = images.grayscale(img);  // 灰度处理
     // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
 
     // 获取OCR
-    var reData = getOcr(grayscaleImage,"ch");
+    var reData = getOcr(img,"ch");
+    img.recycle(); // 手动释放内存
+    img = null;
     if (reData) {
         // 进入游戏界面以前
         var reai = select(reData, 'REA') 
@@ -476,20 +536,16 @@ function upLevel(){
             return
         }
 
-        //  是否是在打怪
-        var clors = getCl(attImg,1,2)
         if (clors.hex == '#2e2f34') {
             console.log("在打怪");
             sleep(2000);
             return 
-        }
-        
-        // 是否在自动寻路
-        var imgtext = clip(img, [[571.0, 507.0], [633.0, 507.0], [571.0, 529.0], [633.0, 529.0]])
-        if (imgtext) {
-            console.log(" 我在奔跑 ");
+        }    
+
+        // if (imgtext) { // && qust
+        if (code ) {
+            // console.log(" 我在自动做任务 ",code);
             sleep(3000);
-            return
         }else{
             // 加入限定的条件 
             reai = select(reData,"和平")
@@ -497,10 +553,10 @@ function upLevel(){
             reai3 = select(reData,"近距")
             reai4 = select(reData,"标记")
             if (reai||reai2||reai3||reai4) {
-                console.log(" 我在点击了 ");
+                console.log(" . ");
                 code = click(1122.5,187);    
                 sleep(1000)
-                toast(code)
+                // toast(code)
             }
         } 
 
@@ -723,6 +779,8 @@ function upLevel(){
                 swipe(273, 100, 273, 700, 1000); 
                 img = captureScreen();
                 reData = getOcr(img,"ch");
+                img.recycle(); // 手动释放内存
+                img = null;
                 if (reData) {
                     reai = selclick(reData, '暴血花')
                     if (reai) {
@@ -735,6 +793,8 @@ function upLevel(){
                 
                     img = captureScreen();
                     reData = getOcr(img,"ch");
+                    img.recycle(); // 手动释放内存
+                    img = null;
                     reai = selclick(reData, '饿鬼')
                     if (reai) {
                         sleep(2000);
@@ -857,7 +917,7 @@ function upLevel(){
             }
 
             //  这个不可以自动
-            reai = selclick(reData, '22.带')
+            reai = select(reData, '22.带')
             if (reai) {
                 reai = selclick(reData, '跳过')
                 if (reai) {
@@ -865,14 +925,13 @@ function upLevel(){
                 }
                 swipe(208, 543, 208, 400, 5000); 
                 selclick(reData, '22.带')
-                sleep(7000);
+                sleep(13000);
                 return
             }
             
-            reai = selclick(reData, '21.获')
+            reai = select(reData, '21.获')
             if (reai) {
                 sleep(20000);
-
                 click(326,638);
                 sleep(4000)
                 click(326,638);
@@ -893,8 +952,10 @@ function upLevel(){
                 sleep(3000);
                 img = captureScreen();
                 ocrResults = getOcr(img,"ch");
-                if(reData){
-                    reai = selclick(reData, '修炼秘籍')
+                img.recycle(); // 手动释放内存
+                img = null;
+                if(ocrResults){
+                    reai = selclick(ocrResults, '修炼秘籍')
                     sleep(4000) ;
                     click(1070,669)
                     sleep(4000) ;
@@ -937,13 +998,13 @@ function upLevel(){
         // 比奇城风云
         reai = select(reData,"比奇城风")
         if (reai) {
+            reai = select(reData, '请点击全部')
+            if (reai) {
+                reai = selclick(reData, '跳过')
+                sleep(600)
+            }
             reai = selclick(reData, '21.强化装备')
             if (reai) {
-                selclick(reData,"跳过")
-                sleep(4000);
-                click(809,190);
-                sleep(2000);
-
                 // 强化
                 click(1100,667);
                 sleep(3000);
@@ -973,11 +1034,7 @@ function upLevel(){
                 // sleep(2000);
                 return
             }
-            reai = select(reData, '请点击全部')
-            if (reai) {
-                reai = selclick(reData, '跳过')
-                sleep(600)
-            }
+
             return
         }
 
@@ -989,6 +1046,19 @@ function upLevel(){
                 reai = selclick(reData, '跳过')
                 sleep(600)
             }
+            // reai = selclick(reData, '4.')
+            // if (reai) {
+            //     sleep(6000)
+            // }
+            // reai = selclick(reData, '5.')
+            // if (reai) {
+            //     sleep(6000)
+            // }
+            // reai = selclick(reData, '9.')
+            // if (reai) {
+            //     sleep(6000)
+            // }
+
             return
         }
 
@@ -997,6 +1067,7 @@ function upLevel(){
         if (reai) {
             reai = select(reData, '银杏谷采')
             if (reai) {
+                sleep(8000);
                 click(326,638);
                 sleep(128000);
             }
@@ -1028,23 +1099,30 @@ function main(){
     }
 }
 
-for (let index = 0; index < 300; index++) {
+toast("开始执行!")
+// for (let index = 0; index < 3; index++) {
     main()
-}
+// }
 
 
-// // console.log("开始请求截图")
+// console.log("开始请求截图")
 // if (!requestScreenCapture(true)) {
 //     throw new Error("请求屏幕捕获权限失败");
 // }
 
 // console.log("截图")
 // var img = captureScreen();
-
-
-// console.log("开始请求OCR")
+// console.log("开始请求")
 // var ocrResults = getOcr(img,"ch");
-// console.log("OCR结果")
+// console.log("结果")
+
  
+// ocrResults = getOcr(img,"ch");
+// img.recycle(); // 手动释放内存
+
+
+// var imgtext = clip2(img,[[1180 ,150],[1243 ,150],[1243 ,191 ],[1180 ,191]])
+
+// console.log(isblue(imgtext))
 
 toast("操作结束")
