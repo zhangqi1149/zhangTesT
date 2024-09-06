@@ -32,7 +32,7 @@ function getOcr(img, lang) {
         if (response.statusCode == 200) {
             return JSON.parse(response.body.string());
         } else {
-            console.error("服务器返回错误：" + response.statusCode);
+            console.error("getOcr 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
         console.error("请求失败: ", e);
@@ -64,7 +64,7 @@ function getCl(img, x1,y1) {
         if (response.statusCode == 200) {
             return JSON.parse(response.body.string());
         } else {
-            console.error("服务器返回错误：" + response.statusCode);
+            console.error(" getCl 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
         toast("请求失败: ",e)
@@ -96,7 +96,7 @@ function isblue(img) {
         if (response.statusCode == 200) {
             return JSON.parse(response.body.string()).mostly_blue;
         } else {
-            console.error("服务器返回错误：" + response.statusCode);
+            console.error(" isblue 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
         toast("请求失败: ",e)
@@ -276,6 +276,20 @@ function wrong(reData){
             sleep(5000);
             return true
         }
+        reai = selclick(reData, '结束')
+        if (reai) {
+            sleep(2000);
+            return true
+        }
+    }
+
+    OUT = select(reData,"警告")
+    if (OUT){
+        reai = selclick(reData, '确认')
+        if (reai) {
+            sleep(5000);
+            return true
+        }
     }
 
     OUT = select(reData,"错误")
@@ -297,6 +311,7 @@ function wrong(reData){
     //  关闭广告
     reai = select(reData, '今日不')
     if (reai) {
+        click(105,607);  // 今日不再显示
         console.log("点击关闭广告")
         textClick(reai,920)
         sleep(3000);
@@ -399,7 +414,7 @@ function Loong(reData){
         //  设置药剂 和 技能频率
         long = selclick(reData,"尝试上下")
         if (long){
-            sleep(2000);
+            sleep(1000);
             return true
         }
 
@@ -409,17 +424,18 @@ function Loong(reData){
             sleep(3000);
 
             click(1195,595);  // 技能释放频率
+            click(1195,595);  // 技能释放频率
+            click(1195,595);  // 技能释放频率
             sleep(700);
-            // click(1195,441);  // 战斗自动锁定
+            click(1195,441);  // 战斗自动锁定
             click(1195,367);  // 复活时自动返回
             sleep(700);
             click(1195,297);  // 队伍共享目标
             sleep(700);
-            click(671,660);  // 结束 说明弹窗
-            sleep(700);
+            click(642,443);  // 结束 说明弹窗
             click(1195,224);  // 围绕队长战斗
-            sleep(700);
-            click(671,660);  // 结束 说明弹窗
+            sleep(1500);
+            click(642,443);  // 结束 说明弹窗
             sleep(700);
             click(1235,41) // 关闭窗口
 
@@ -430,15 +446,19 @@ function Loong(reData){
         if (long){
             sleep(4000);
             click(1195,595);  // 技能释放频率
-            sleep(100);
-            // click(1195,441);  // 战斗自动锁定
+            click(1195,595);  // 技能释放频率
+            click(1195,595);  // 技能释放频率
+            sleep(700);
+            click(1195,441);  // 战斗自动锁定
             click(1195,367);  // 复活时自动返回
-            sleep(100);
+            sleep(700);
             click(1195,297);  // 队伍共享目标
+            sleep(700);
             click(671,660);  // 结束 说明弹窗
             click(1195,224);  // 围绕队长战斗
+            sleep(1500);
             click(671,660);  // 结束 说明弹窗
-            sleep(500)
+            sleep(700);
             click(1235,41) // 关闭窗口
             return true
         }
@@ -485,7 +505,7 @@ function Loong(reData){
         //  精灵
         long = selclick(reData,"最佳帅气帮手")
         if (long){
-            sleep(1000);
+            sleep(3000);
             return true
         }
         long = selclick(reData,"才能召唤精")
@@ -514,7 +534,7 @@ function Loong(reData){
             sleep(1000);
             return true
         }
-        long = selclick(reData,"会一直跟随")
+        long = selclick(reData,"一直跟随")
         if (long){
             click(820,110);
             sleep(1000);
@@ -523,6 +543,7 @@ function Loong(reData){
         
         long = selclick(reData,"展示精灵")
         if (long){
+            sleep(1000);
             click(1230,29);
             sleep(1000);
             return true
@@ -538,9 +559,88 @@ function Loong(reData){
             }
         }
 
+        long = select(reData, '一下委托') 
+        if (long) {
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true    
+        }
+
         // 技能强化
-        long = selclick(reData,"学习有关技能")
+        long = select(reData,"学习有关")
         if (long){
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
+
+        // 魔石
+        long = selclick(reData,"如何使用魔")
+        if (long){
+            sleep(3000);
+            return true
+        }
+        long = select(reData,"为你准备的")
+        if (long){
+            click(814,183);  //点击石头
+            sleep(1000);
+            return true
+        }
+        long = selclick(reData,"魔石也有")
+        if (long){
+            sleep(1000);
+            return true
+        }
+        long = select(reData,"选择魔石栏")
+        if (long){
+            click(1145,183);  // 装备
+            sleep(1000);
+            return true
+        }
+        long = select(reData,"点击这里的装备")
+        if (long){ 
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
+        long = select(reData,"成功镶嵌")
+        if (long){
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
+
+        // 内功
+        long = select(reData,"如何修炼")
+        if (long){
+            selclick(reData,"跳过")
+            sleep(3000);
+            return true
+        }
+
+        //  强化体质
+        long = select(reData,"有强化体质")
+        if (long) {
+            long = selclick(reData,"跳过")
+            if (long){
+                sleep(3000);
+                return true
+            }
+        }
+
+        // 委托任务
+        long = select(reData,"做好事就一定会有好报")
+        if (long) {
+            long = selclick(reData,"跳过")
+            if (long){
+                sleep(3000);
+                return true
+            }
+        }
+
+        // 
+        long = select(reData,"设置药水")
+        if (long){ 
             selclick(reData,"跳过")
             sleep(1000);
             return true
@@ -559,6 +659,9 @@ function Console(reData) {
     } 
     long = select(reData, '请点击菜单按键')
     if (long) {
+        var item = long.box[0][0]
+        var item2 = long.box[1][1]
+        console.log(`请点击菜单按键: ${item}`)
         // [816.0, 269.0], [943.0, 267.0], [944.0, 291.0], [817.0, 293.0] 制造菜单提示位置
         if (long.box[0][0] == 816.0) {
             click(1028,216);  // 制造工坊
@@ -566,40 +669,91 @@ function Console(reData) {
             return true
         }
         // [[900.0, 155.0], [1049.0, 149.0], [1050.0, 177.0], [902.0, 183.0]] 精灵菜单提示位置
-        if (long.box[0][0] == 900.0) {
+        if (item == 900.0) {
             click(1120,105);  // 精灵
             sleep(2000);
             return true
         }
-        long = selclick(reData, '跳过')
-        if (reData) {
-            sleep(4000)
+
+        // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
+        // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
+        if (item == 727.0 || item == 728.0 || item2 == 156.0) {
+            click(945,109);  // 角色
+            sleep(2000);
+            return true 
         }
+
+        long = selclick(reData, '跳过')
+        if (long) {
+            console.log("$$$$$$$$$$$$ 请点击菜单按键 跳过")
+            sleep(3000)
+        }
+        return
     }
     long = select(reData, '请点击按键')
     if (long) {
+        var item = long.box[0][0]
+        console.log(`请点击按键: ${item}`)
         // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
-        if (long.box[0][0] == 754.0) {
+        if (item== 754.0) {
             click(935,310);  // 制造
             sleep(1000);
+            return true
         }
         // [[213.0, 422.0], [306.0, 421.0], [307.0, 441.0], [213.0, 442.0]] 装备的高级选项提示位置
-        if (long.box[0][0] == 213.0) {
+        // [[167.0, 420.0], [262.0, 420.0], [262.0, 442.0], [167.0, 442.0]]
+        if (item == 213.0 ||item == 167.0) {
             click(71,367); // 高级
             sleep(1000);
+            return true
         }
         // [[750.0, 234.0], [845.0, 234.0], [845.0, 257.0], [750.0, 257.0]]  精灵提示位置
-        if (long.box[0][0] == 750.0) {
+        // [[751.0, 236.0], [846.0, 236.0], [846.0, 258.0], [751.0, 258.0]]  精灵提示位置 
+        if (item == 750.0 || item == 751.0) {
             click(940,200); // 精灵
             sleep(1000);
+            return true
         }
 
-        // 未匹配的全跳过
+        // [[843.0, 236.0], [938.0, 236.0], [938.0, 258.0], [843.0, 258.0]] 辅助装备提示位置
+        // [[842.0, 234.0], [937.0, 234.0], [937.0, 257.0], [842.0, 257.0]
+        if (item == 843.0 || item == 842.0) {
+            click(1025,195); // 辅助装备
+            sleep(2000);
+            return true
+        }
+
+        // // 未匹配的全跳过
         long = selclick(reData, '跳过')
-        if (reData) {
+        if (long) {
+            console.log("############## 请点击按键 跳过")
             sleep(4000)
         }
         return true
+    }
+
+    long = select(reData, '请点击。')
+    if (long) {
+        var item = long.box[0][0]
+        console.log(`请点击.: ${item}`)
+        // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
+        if (item== 754.0) {
+            click(292,215);  // 制造
+            sleep(1000);
+            return true
+        }
+        return true
+    }
+
+    long = select(reData, '宝牌',1)
+    if (long) {
+        long = select(reData, '请点击')
+        if (long) {
+            click(295,212);
+            sleep(1000);
+            return true
+        }
+        
     }
 
     long = select(reData, '推荐佩戴')
@@ -612,7 +766,6 @@ function Console(reData) {
     return false
 }
 
-
 // 关闭窗口
 function closeX(reData){
     var reai = select(reData, '伪像切换')
@@ -622,6 +775,13 @@ function closeX(reData){
         sleep(2000);
         return true
     }
+    var reai = select(reData, '大地图')
+    if (reai) {
+        click(1230,29)
+        sleep(2000);
+        return true
+    }
+
     reai = select(reData, '闭关修炼')
     if (reai) {
         toast("闭关修炼")
@@ -640,9 +800,8 @@ function closeX(reData){
     Load = select(reData, '利用活力')
     if (Load) {
         click(223 , 560) ;
-        sleep(50);
         sleep(1200);
-        return
+        return true
     }
 
     reai = select(reData, '战斗设置')
@@ -668,6 +827,7 @@ function closeX(reData){
     reai = select(reData,"角色")
     if (reai) {
         click(1196,52)
+        return true
     }
     return false
 }
@@ -680,6 +840,26 @@ function imgRecycle(params) {
         // 将参数设为null，帮助垃圾回收
         params = null;
     }
+}
+
+function getlv(lvData){
+    if (!Array.isArray(lvData)) {
+        console.error("111 OCR 结果不是数组");
+        return null;
+    }
+
+    for (let i = 0; i < lvData.length; i++) {
+        let item = lvData[i];
+        if (item && item.text !== undefined) {
+            if (item.text.includes("级")) {
+                let index = item.text.indexOf('级');
+                let numberBeforeLevel = item.text.slice(0, index).trim();
+                return numberBeforeLevel;
+            }
+        }  
+    }
+    return 9 ;
+
 }
 
 //  升级
@@ -701,6 +881,13 @@ function upLevel(){
 
     // 是否在自动寻路
     var imgtext = clip2(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
+
+    // 裁剪等级
+    var croppedImage = images.clip(img, 25, 0, 55, 32);
+    var lvData = getOcr(croppedImage,"ch");
+    imgRecycle(croppedImage);
+    // 获取等级
+    var lv = getlv(lvData)
 
     //  获取颜色
     var code = isblue(imgtext)
@@ -773,11 +960,8 @@ function upLevel(){
         //  处理强化 制造 加点
         if (Console(reData)) {return }
         
-        
         // 关闭所有的弹窗
         if (closeX(reData)) {return }
-
-        
 
         OUT = select(reData,"前往狭窄的通道")
         if (!OUT) {
@@ -790,25 +974,45 @@ function upLevel(){
 
         if (clors.hex == '#2e2f34') {
             console.log("在打怪");
-            sleep(2000);
+            // 处理取消打怪升级
+            sleep(3000);
             return 
         }    
 
+        console.log(`人物当前等级: ${lv} `); // 输出等级  
+        //  获取等级 
+        if (lv >= 9 && lv < 15) {
+            reai = select(reData,"芊菲的下落")
+            if (reai) {
+                // 去银杏谷练级
+                reai = selclick(reData,"银")
+                if (reai) {
+                    sleep(2000);
+                    click(330,445);
+                    sleep(500)
+                    click(330,445);
+                    click(330,445);
+                    sleep(7000);
+                    click(395,662);  // 点击打怪
+                    sleep(7000);
+                }
+                return    
+            }
+        }
+
         // if (imgtext) { // && qust
-        if (code ) {
+        if (code) {
             // console.log(" 我在自动做任务 ",code);
             sleep(3000);
         }else{
             // 加入限定的条件 
             reai = select(reData,"和平")
-            reai2 = select(reData,"级")
             reai3 = select(reData,"近距")
-            reai4 = select(reData,"标记")
-            if (reai||reai2||reai3||reai4) {
+            reai4 = select(reData,"安全")
+            if (reai||reai3||reai4) {
                 console.log(" . ");
                 code = click(1122.5,187);    
                 sleep(1000)
-                // toast(code)
             }
         } 
 
@@ -844,7 +1048,7 @@ function upLevel(){
                 sleep(5000);
                 return
             }
-
+            return
         }
 
         // 危险的救援计划
@@ -881,7 +1085,7 @@ function upLevel(){
         if (reai) {
             reai = select(reData, '摧毁木')
             if (reai) {
-                reai = selclick(reData, '跳过')
+                selclick(reData, '跳过')
                 // 点击攻击按钮
                 click(1197,625);  // 攻击键
                 sleep(1000);
@@ -1061,17 +1265,9 @@ function upLevel(){
             }
         }
 
-        // 黑暗之影   活力  委托
+        // 黑暗之影      委托
         reai = select(reData, '黑暗之影')
         if (reai) {
-            reai = select(reData, '请点击全')
-            if (reai) {
-                selclick(reData, '跳过')
-            }
-            reai = select(reData, '请点击按')
-            if (reai) {
-                selclick(reData, '跳过')
-            }
             reai = select(reData, '请点击活')
             if (reai) {
                 click(168,100); // 点击活力
@@ -1086,15 +1282,18 @@ function upLevel(){
                 sleep(500);
                 click(725,536);
                 sleep(500);
-                click(778,433); // max
+                click(718,441); // max 未起效
+                sleep(500);
+                click(718,441); // max
+                click(718,441);// max
                 sleep(500);
                 click(725,536) ;// 点击使用
             }
 
-            reai = selclick(reData, '强化体质')
+            reai = select(reData, '强化体质')
             if (reai) {
                 sleep(2000);
-                for (let index = 0; index < 7; index++) {
+                for (let index = 0; index < 6; index++) {
                     // 法伤
                     if (index == 0) {
                         click(885,334)
@@ -1107,10 +1306,10 @@ function upLevel(){
                     if (index == 3|index == 4|index == 5) {
                         click(860,221)
                     }
-                    // 魔力
-                    if (index == 6) {
-                        click(1111,221)
-                    }
+                    // // 魔力
+                    // if (index == 6) {
+                    //     click(1111,221)
+                    // }
                     sleep(1500)
                     click(1040,672)
                     sleep(3000);
@@ -1121,18 +1320,19 @@ function upLevel(){
 
             reai = select(reData, '采集森')
             if (reai) {
-                sleep(5000)
+                sleep(8000)
                 click(326,638);
                 sleep(8000)
                 click(326,638);
                 return
             }
 
+            //  这个背景是蓝色的 导致识别不正确
             reai = select(reData, '击败跑来')
             if (reai) {
-                if (clors.hex !== '#2e2f34') {
+                if (clors.hex != '#2e2f34') {
                     reai = selclick(reData, '击败跑来')
-                    sleep(2000);
+                    sleep(3000);
                     return 
                 }  
             }
@@ -1141,16 +1341,16 @@ function upLevel(){
         }
         
         // 芊菲的下落
-        reai = select(reData, '芊菲的下落')
-        if (reai) {
-            selclick(reData, '跳过')
-            sleep(1200)
-            return
-        }
+ 
 
         // 寻求灵药
         reai = select(reData,"寻求灵药")
         if (reai) {
+            reai = selclick(reData, '7.与')
+            if (reai) {
+                sleep(4000);
+                return
+            }
             reai = selclick(reData, '8.制')
             if (reai) {
                 sleep(4000);
@@ -1200,49 +1400,44 @@ function upLevel(){
             reai = selclick(reData, '6.修炼')
             if (reai) {
                 selclick(reData, '跳过')
-                sleep(3000);
+                sleep(2000)
                 img = captureScreen();
                 ocrResults = getOcr(img,"ch");
                 imgRecycle(img)
                 if(ocrResults){
-                    reai = selclick(ocrResults, '修炼秘籍')
-                    sleep(4000) ;
-                    click(1070,669)
-                    sleep(4000) ;
-                    click(1070,669)
-                    sleep(2000) ;
-                    click(1070,669)
-                    sleep(2000) ;
-                    click(1070,669)
-                    sleep(2000) ;
+                    sleep(5000) ;
+                    for (let i = 0; i < 7; i++) {
+                        sleep(2000);
+                        // 天宫   1070,162   
+                        if (i==0||i==1||i==2) {
+                            click(1070,162);
+                        }
 
-                    click(1070,221)
-                    sleep(3000) ;
+                        // 持律   1070,219 
+                        if (i==3||i==4||i==5) {
+                            click(1070,219);
+                        }
 
-                    click(1070,669)
-                    sleep(2000) ;
-                    click(1070,669)
-                    sleep(2000) ;
-                    click(1070,669)
-                    sleep(2000) ;
-                    click(1070,669)
-                    sleep(2000) ;
+                        if (i==6) {
+                            click(1070,278);
+                        }
 
-                    //  脉天
-                    click(1070,279)
-                    sleep(2000) ;
+                        click(1070,666); // 点击修炼
+                        sleep(4000);
+                        click(1070,666); // 点击修炼
+                        click(1070,666); // 点击修炼
+                        // 脉天   1070,278
 
-                    click(1070,669)
-                    sleep(2000) ;
-                    click(1070,669)
-                    sleep(2000) ;
-
+                        // 太定   1070,340
+                    }
+          
                     // 关闭
                     click(1230,29);
                     sleep(2000) ;
                 }
                 return
             }
+            return
         }
 
         // 比奇城风云
@@ -1253,23 +1448,13 @@ function upLevel(){
                 reai = selclick(reData, '跳过')
                 sleep(600)
             }
-            reai = selclick(reData, '21.强化装备')
+            reai = select(reData, '21.强化装备')
             if (reai) {
+                sleep(3000)
                 // 强化
                 click(1100,667);
                 sleep(3000);
                 click(1100,667);
-                sleep(2000);
-
-                click(1100,667);
-                sleep(3000);
-                click(1100,667);
-                sleep(2000);
-
-                //  确认点击
-                click(610,383);
-                sleep(1000);
-                click(732,472);
                 sleep(2000);
 
                 // click(1100,667);
@@ -1277,11 +1462,11 @@ function upLevel(){
                 // click(1100,667);
                 // sleep(2000);
 
-                // //  确认点击
-                // click(610,383);
-                // sleep(1000);
-                // click(732,472);
-                // sleep(2000);
+                //  确认点击
+                click(610,383);
+                sleep(1000);
+                click(732,472);
+                sleep(2000);
                 return
             }
 
@@ -1312,7 +1497,7 @@ function upLevel(){
             return
         }
 
-        // 绑架的背后
+        // 绑架的背后   精英任务  
         reai = select(reData,"绑架的背后")
         if (reai) {
             reai = select(reData, '银杏谷采')
@@ -1339,10 +1524,24 @@ function upLevel(){
             return
         }
 
+        reai = select(reData,"跳过")
+        if (reai) {
+            item = reai.box[0][0]
+            if (item > 1100) {
+                selclick(reData,"跳过")
+                sleep(2000);
+                return
+            } 
+            
+        }
+
         reai = selclick(reData,"《器")
         if (reai) {
-            sleep(2000);
+            sleep(3000);
+            return
         }
+
+        click(223 , 560) ; // 点击画面
     }
 }
 
@@ -1354,31 +1553,23 @@ function main(){
     }
 }
 
-// toast("开始执行!")
 console.log("开始执行!")
-// for (let index = 0; index < 3; index++) {
-    main()
-// }
+
+main()
 
 
-// console.log("开始请求截图")
-// if (!requestScreenCapture(true)) {
-//     throw new Error("请求屏幕捕获权限失败");
-// }
+if (false) {
+    // console.log("开始请求截图")
+    if (!requestScreenCapture(true)) {
+        throw new Error("请求屏幕捕获权限失败");
+    }
 
-// console.log("截图")
-// var img = captureScreen();
-// console.log("开始请求")
-// var ocrResults = getOcr(img,"ch");
-// console.log("结果")
+    // console.log("截图")
+    var img = captureScreen();
 
+    // console.log("开始请求")
+    var reData = getOcr(img,"ch");
+}
  
-// ocrResults = getOcr(img,"ch");
-// img.recycle(); // 手动释放内存
-
-
-// var imgtext = clip2(img,[[1180 ,150],[1243 ,150],[1243 ,191 ],[1180 ,191]])
-
-// console.log(isblue(imgtext))
-
-toast("操作结束")
+// toast("操作结束")
+console.log("操作结束")

@@ -1,3 +1,4 @@
+import gc
 import json
 import os
 from datetime import datetime
@@ -14,9 +15,10 @@ import base64
 app = Flask(__name__)
 
 # 初始化 OCR 对象
-ocr_ch = PaddleOCR(use_angle_cls=True, lang='ch')
-ocr_en = PaddleOCR(use_angle_cls=True, lang='en')
-
+ocr = {
+    'ch': PaddleOCR(use_angle_cls=True, lang='ch'),
+    'en': PaddleOCR(use_angle_cls=True, lang='en')
+}
 
 @app.route('/ocr', methods=['POST'])
 def ocr_service():
@@ -53,14 +55,14 @@ def ocr_service():
 
         # 获取语言参数，默认为 'ch'
         lang = data_v.get("lang", "ch")
-        ocr = ocr_ch if lang == 'ch' else ocr_en
+        ocr_instance = ocr.get(lang, ocr['ch'])
 
         # 根据传递的语言参数重新初始化 OCR 对象
         # global ocr
         # ocr = PaddleOCR(use_angle_cls=True, lang=lang)
 
         # 执行 OCR 识别
-        result = ocr.ocr(img, cls=True)
+        result = ocr_instance.ocr(img, cls=True)
 
         response = []
         if isinstance(result, list):
@@ -78,6 +80,19 @@ def ocr_service():
                                     'box': box
                                 })
         print("response: ", response)
+        # 如果没有识别到任何字，则返回 null
+        # 手动清理内存
+        del img_data, img, result, result_list
+        # 仅在这些变量已定义的情况下删除它们
+        if 'line' in locals():
+            del line
+        if 'box' in locals():
+            del box
+        if 'text_info' in locals():
+            del text_info
+        gc.collect()  # 强制进行垃圾回收
+        if not response:
+            return jsonify(None), 200
         return jsonify(response)
 
     except Exception as e:
@@ -114,6 +129,11 @@ def color_recognition():
         # 将 RGB 值转换为 16 进制颜色代码
         hex_color = '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2])
 
+
+        # 手动清理不再使用的变量
+        del img_data, img, image, color
+        gc.collect()  # 强制进行垃圾回收
+
         # 返回颜色的 RGB 值和 16 进制颜色代码
         return jsonify({
             "hex": hex_color
@@ -144,7 +164,10 @@ def is_image_mostly_blue(image):
                 blue_pixels += 1
 
     blue_percentage = blue_pixels / total_pixels
-    print(f"Total Pixels: {total_pixels}, Blue Pixels: {blue_pixels}, Blue Percentage: {blue_percentage}")  # 调试信息
+    # print(f"Total Pixels: {total_pixels}, Blue Pixels: {blue_pixels}, Blue Percentage: {blue_percentage}")  # 调试信息
+    # 清理 NumPy 数组，避免占用大量内存
+    del np_image, row, pixel,height,width
+    gc.collect()  # 强制进行垃圾回收
 
     return blue_percentage > 0.58
 
@@ -167,21 +190,25 @@ def color_is_blue():
         img = base64.b64decode(img_data)
         image = Image.open(BytesIO(img))
 
-        # 从 JSON 数据中获取 "save" 字段
-        save_file = data_v.get("save", False)
-
-        # 如果 save 为 True，保存图片
-        if save_file:
-            # 使用当前时间戳作为文件名
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            img_filename = os.path.join("image", f"{timestamp}.png")
-
-            # 将图像保存到 'image' 文件夹中
-            with open(img_filename, "wb") as f:
-                f.write(img)
+        # # 从 JSON 数据中获取 "save" 字段
+        # save_file = data_v.get("save", False)
+        #
+        # # 如果 save 为 True，保存图片
+        # if save_file:
+        #     # 使用当前时间戳作为文件名
+        #     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        #     img_filename = os.path.join("image", f"{timestamp}.png")
+        #
+        #     # 将图像保存到 'image' 文件夹中
+        #     with open(img_filename, "wb") as f:
+        #         f.write(img)
 
         # 判断图像是否大部分区域偏蓝
         mostly_blue = is_image_mostly_blue(image)
+
+        # 清理 PIL Image 对象
+        del data,img, image
+        gc.collect()  # 强制进行垃圾回收
 
         print("是否大部分区域偏蓝", mostly_blue)
         # 返回结果
