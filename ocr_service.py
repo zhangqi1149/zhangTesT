@@ -79,10 +79,10 @@ def ocr_service():
                                     'confidence': confidence,
                                     'box': box
                                 })
-        print("response: ", response)
+        # print("response: ", response)
         # 如果没有识别到任何字，则返回 null
         # 手动清理内存
-        del img_data, img, result, result_list
+        del img_data, img, result, result_list, data, data_v
         # 仅在这些变量已定义的情况下删除它们
         if 'line' in locals():
             del line
@@ -129,9 +129,8 @@ def color_recognition():
         # 将 RGB 值转换为 16 进制颜色代码
         hex_color = '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2])
 
-
         # 手动清理不再使用的变量
-        del img_data, img, image, color
+        del img_data, img, image, color, data_v, data
         gc.collect()  # 强制进行垃圾回收
 
         # 返回颜色的 RGB 值和 16 进制颜色代码
@@ -166,7 +165,7 @@ def is_image_mostly_blue(image):
     blue_percentage = blue_pixels / total_pixels
     # print(f"Total Pixels: {total_pixels}, Blue Pixels: {blue_pixels}, Blue Percentage: {blue_percentage}")  # 调试信息
     # 清理 NumPy 数组，避免占用大量内存
-    del np_image, row, pixel,height,width
+    del np_image, row, pixel, height, width, blue_pixels, total_pixels
     gc.collect()  # 强制进行垃圾回收
 
     return blue_percentage > 0.58
@@ -207,10 +206,10 @@ def color_is_blue():
         mostly_blue = is_image_mostly_blue(image)
 
         # 清理 PIL Image 对象
-        del data,img, image
-        gc.collect()  # 强制进行垃圾回收
+        del data, img, image, data_v, img_data
+        # gc.collect()  # 强制进行垃圾回收
 
-        print("是否大部分区域偏蓝", mostly_blue)
+        # print("是否大部分区域偏蓝", mostly_blue)
         # 返回结果
         return jsonify({
             "mostly_blue": bool(mostly_blue)
