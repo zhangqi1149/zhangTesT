@@ -107,9 +107,6 @@ function isblue(img) {
     return null;
 }
 
-// var grayscaleImage = images.grayscale(img);  // 灰度处理
-// var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
-
 // 初始化
 function init(){
     // 权限检查
@@ -130,8 +127,10 @@ function init(){
         sleep(3000);
     }
     return false
+    // var grayscaleImage = images.grayscale(img);  // 灰度处理
+    // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
 }
- 
+
 // 查找内容  支持模糊查询 1是精准查询  不传是模糊查询
 // 模糊查找内容
 function select(ocrResults, targetText,num) {
@@ -384,6 +383,13 @@ function Loong(reData){
         if (long){
             click(1060,531);
             click(1204,400);
+            sleep(3000);
+            return true
+        }
+
+        long = select(reData,"带回千年")
+        if (long){
+            long = sel(reData,"跳过")
             sleep(3000);
             return true
         }
@@ -774,6 +780,26 @@ function Console(reData) {
         return true
     }
 
+    long = selclick(reData, '点击画面') 
+    if (long) {
+        sleep(2000);
+        return true
+    }
+
+    return false
+}
+
+//  关闭通知
+function closeNote(reData,src) {
+    var target = select(reData, src)
+    // console.log(target)
+    if (target) {
+        let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+        let y_phone = (centerY / height_screenshot) * device.width;
+        // console.log(`点击${src}: x= 1166, y=${y_phone}`);
+        let code = click(1166,y_phone);
+        return code
+    }
     return false
 }
 
@@ -826,6 +852,12 @@ function closeX(reData){
         sleep(2000);
         return true
     }
+    reai = select(reData, '快捷栏设置')
+    if (reai) {
+        click(1235,41)
+        sleep(2000);
+        return true
+    }
 
     reai = select(reData, '特殊强化')
     if (reai) {
@@ -860,6 +892,7 @@ function imgRecycle(params) {
     }
 }
 
+//  获取等级
 function getlv(lvData){
     if (!Array.isArray(lvData)) {
         // console.error("111 OCR 结果不是数组");
@@ -878,6 +911,290 @@ function getlv(lvData){
         }  
     }
     return null ;
+}
+
+//  领取奖励
+function reward(reData) {
+    //  领取成就  
+    var reai = selclick(reData, '可领取成就奖励')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = select(reData, '完成成就获')
+    if (reai) {
+        click(1157,100);
+        sleep(8000);
+        click(157,100);  // 点击画面
+        sleep(1000)
+        click(1230,29);  // 退出
+        sleep(2000);
+        return true
+    }
+
+    //  接触封印   
+    // reai = selclick(reData, '可解除道具封印。')
+    // if (reai) {
+    //     sleep(2000);
+    //     return true
+    // }
+    // reai = select(reData, '正在解除封印')
+    // if (reai) {
+    //     sleep(3000)
+    //     click(813,198); // 先获取 
+    //     sleep(2000)
+    //     click(613,100); // 先获取 
+        
+    //     click(813,198); // 上架盒子解密 
+    //     sleep(200)
+    //     click(813,198); // 上架盒子解密 
+    //     sleep(200)
+    //     click(813,198); // 上架盒子解密 
+    //     sleep(200)
+    //     click(813,198); // 上架盒子解密 
+    //     sleep(200)
+
+    //     sleep(400)
+    //     click(1230,29);  // 退出
+    //     sleep(2000);
+    //     return true
+    // }
+
+    // 存在可召唤的精灵
+    reai = selclick(reData, '存在可召唤的精灵')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = select(reData, '出战效果')
+    if (reai) {
+        //  重新截图拿到最新的
+        var img = captureScreen();
+        var color = images.pixel(img, 939, 247);    // -1935584  橙色
+        if (color == -1935584 ) {
+            click(939, 247);
+            // 点击召唤  
+            sleep(2000);
+            click(1130,666);
+            sleep(1000)
+            click(1130,666);
+            sleep(1000)
+            // 点击上面的位置
+            click(916,121);
+            sleep(2000);
+        }
+        color = images.pixel(img, 1034, 247);   // -1935584  橙色
+        if (color == -1935584 ) {
+            sleep(1000);
+            click(1034, 247);
+            // 点击召唤  
+            sleep(2000);
+            click(1130,666);
+            sleep(1000)
+            click(1130,666);
+            sleep(1000)
+            // 点击上面的位置
+            click(1011,121);
+            sleep(1000);
+        }
+        color = images.pixel(img, 1130, 247);   // -1935584  橙色
+        if (color == -1935584 ) {
+            sleep(1000);
+            click(1130,247);
+            // 点击召唤  
+            sleep(2000);
+            click(1130,666);
+        }
+        imgRecycle(img)
+        click(1230,29);
+        sleep(2000);
+        return true
+    }
+
+    // 存在可镶嵌的魔石。
+    reai = selclick(reData, '存在可镶嵌的魔石')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = select(reData, '合成魔石')
+    if (reai) {
+        sleep(3000)
+        //  重新截图拿到最新的
+        var img = captureScreen();
+        var color = images.pixel(img, 242, 259);   // -1935584  橙色
+        if (color == -1935584 ) {
+            
+            //  点击石头  908, 191
+            click(908,191);
+            sleep(1000);
+            //  装备 1150,674
+            click(1150,674);
+            sleep(1000);
+            //  槽 224, 284
+            click(224,284);
+            sleep(500)
+        }
+
+        color = images.pixel(img, 217, 357);   // -1935584  橙色
+        if (color == -1935584 ) {
+            sleep(2000);
+            //  点击石头  1000, 191
+            click(1000,191);
+            sleep(1000);
+
+            //  装备 1150,674
+            click(1150,674);
+            sleep(1000);
+
+            //  槽 193, 382
+            click(193,382);
+        }
+        imgRecycle(img)
+        click(1230,29);
+        sleep(2000);
+        return true
+    }
+
+    //  可学技能
+    reai = selclick(reData, '可学习新技能')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    // 升级技能
+    reai = selclick(reData, '存在可升阶的技能')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = select(reData, '效果信息')
+    if (reai) {
+        sleep(3000)
+        //  重新截图拿到最新的
+        var img = captureScreen();
+        //  拿到最新的数据
+        var reData = getOcr(img,"ch");
+        if (reData) {
+            var reai = selclick(reData, '学习',1) 
+            if (reai) {
+                sleep(1000);
+                click(961,669);
+                sleep(1000);
+            }
+            var reai = selclick(reData, '腐败') 
+            if (reai) {
+                click(961,669);
+                sleep(1000);
+            }
+            var reai = selclick(reData, '暴血') 
+            if (reai) {
+                click(961,669);
+                sleep(1000);
+                click(961,669);
+                sleep(1000);
+            }
+        }
+
+        click(1230,29);
+        sleep(2000);
+        imgRecycle(img)
+
+        return true
+    }
+
+    // 可修炼内功
+    reai = selclick(reData, '可修炼内功')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = selclick(reData, '可升阶内功易筋经')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+
+    reai = selclick(reData, '升阶所需等级')
+    if (reai) {
+        click(1039,671); // 点击修炼
+        sleep(4000);
+        click(1039,671); // 点击修炼
+        return true
+    }
+    reai = select(reData, '太定')
+    if (reai) {
+        var img = captureScreen();
+        var color = images.pixel(img, 43, 146);  
+        if (color == -1935584 ) {
+            //  有需要升级的地方
+            var img = captureScreen();
+            //  天宫  color == -8108002
+            var color = images.pixel(img, 330, 605); 
+            //  持律 
+            var color1 = images.pixel(img, 454, 605); 
+            //  脉天
+            var color2 = images.pixel(img, 578, 605); 
+            //  太定
+            var color3 = images.pixel(img, 711, 605); 
+            imgRecycle(img)
+            if (color == -1935584 ) {
+                click( 300,645);
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(4000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+
+            if (color1 == -1935584 ) {
+                click( 424 ,645);
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(4000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+
+            if (color2 == -1935584 ) {
+                click( 547  ,645);
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(4000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+
+            if (color3 == -1935584 ) {
+                click( 672  ,645);
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(4000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            sleep(2000);
+            return true
+        } 
+        return false
+    }
+
+
+    // 存在可提升的体质
+    reai = selclick(reData, '存在可提升的体质')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+
+
+
+
+    closeNote(reData,"可加入门派")
+    closeNote(reData,"可执行奇缘")
+    closeNote(reData,"可解除道具封印")
+
+    return false
 }
 
 //  升级
@@ -910,6 +1227,11 @@ function upLevel(){
     //  获取颜色
     var code = isblue(imgtext)
     imgRecycle(imgtext)
+
+    // 通知区域 橙色
+    var color = images.pixel(img, 1184, 17);
+    var color1 = images.pixel(img, 459, 666);   // 红药
+    var color2 = images.pixel(img, 529, 666);   // 蓝药
 
     // 获取OCR
     var reData = getOcr(img,"ch");
@@ -977,9 +1299,41 @@ function upLevel(){
         
         //  处理强化 制造 加点
         if (Console(reData)) {return }
-        
+
+
+        // 领取奖励
+        if (reward(reData)) {return }
+
+        if (color == -1935584) {
+            click(1184,17)
+            return
+        }
         // 关闭所有的弹窗
         if (closeX(reData)) {return }
+
+        //  切换药剂
+        if (color1 != -11661539 || color2 != -15912110 ) {
+            console.log(" 没有大药 ")
+            //  点击第三个药设置 
+            click(610,661);
+            sleep(2000);
+
+            // 两个药都去掉
+            click(471,606);
+            sleep(1000);
+            click(541,606);
+            sleep(1000);
+
+            //  点击第1个药剂 红
+            click(891,415); 
+            sleep(2000);
+            click(476, 666); 
+            sleep(3000);
+            //  点击第2个药剂 蓝
+            click(955,415); 
+            sleep(2000);
+            click(539, 666); 
+        }
 
         OUT = select(reData,"前往狭窄的通道")
         if (!OUT) {
@@ -1005,6 +1359,12 @@ function upLevel(){
                     sleep(10000);  
                 }
             }
+            // 使用觉醒
+            if (lv > 16) {
+                click(1133,560);   // 觉醒键 
+                sleep(10000);  
+            }
+
             sleep(5000);
             return 
         }    
@@ -1015,8 +1375,8 @@ function upLevel(){
             reai = select(reData,"芊菲的下落")
             if (reai) {
                 // 去银杏谷练级
-                // reai = selclick(reData,"银")
-                // if (reai) {
+                reai = selclick(reData,"银")
+                if (reai) {
                     sleep(2000);
                     click(330,445);
                     sleep(500)
@@ -1024,8 +1384,9 @@ function upLevel(){
                     click(330,445);
                     sleep(7000);
                     click(395,662);  // 点击打怪
-                    sleep(7000);
-                // }
+                    click(1195,630);
+                    sleep(27000);
+                }
                 return    
             }
         }
@@ -1374,7 +1735,7 @@ function upLevel(){
             }
             // 芊菲的下落
         }else{
-             // 寻求灵药
+            // 寻求灵药
             reai = select(reData,"寻求灵药")
             if (reai) {
                 reai = selclick(reData, '7.与')
@@ -1484,6 +1845,10 @@ function upLevel(){
                 reai = select(reData, '21.强化装备')
                 if (reai) {
                     sleep(3000)
+                    //  选武器  
+                    click(809,200);
+                    sleep(1000);
+
                     // 强化
                     click(1100,667);
                     sleep(3000);
@@ -1514,12 +1879,6 @@ function upLevel(){
                     reai = selclick(reData, '跳过')
                     sleep(600)
                 }
-                // reai = selclick(reData, '4.')
-                // if (reai) {
-                //     sleep(6000)
-                // }
- 
-
                 return
             }
 
@@ -1531,6 +1890,12 @@ function upLevel(){
                     sleep(8000);
                     click(326,638);
                     sleep(128000);
+                }
+
+                reai = selclick(reData, '4.与')
+                if (reai) {
+                    sleep(2000);
+                    return 
                 }
 
                 reai = selclick(reData, '品质2武器')
@@ -1547,6 +1912,16 @@ function upLevel(){
                     click(1230,29);
                     sleep(1000);
                 }
+
+                reai = selclick(reData, '18.完成丹')   // todo 
+                if (reai) {
+                    sleep(2000);
+
+
+                    return 
+                }
+
+
                 return
             }
 
@@ -1586,7 +1961,7 @@ console.log("开始执行!")
 main()
 
 
-if (Save) {
+if (false) {
     // console.log("开始请求截图")
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
@@ -1597,6 +1972,12 @@ if (Save) {
 
     // console.log("开始请求")
     var reData = getOcr(img,"ch");
+
+    // var color = images.pixel(img, 529, 666);   //  通知点  -1935584  橙色 
+    // console.log(color)
+    // if (reData) {
+    //     reward(reData)
+    // }
 }
  
 // toast("操作结束")
