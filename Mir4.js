@@ -973,6 +973,27 @@ function reward(reData) {
         return true
     }
 
+    var reai = selclick(reData, '请领取每日课题奖励')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = select(reData, '每日课题现状')
+    if (reai) {
+        click(1140,179); // 点击领取
+        sleep(4000);
+        click(1140,179);
+        
+        click(647,179); // 点击领取
+
+        click(1140,179);  // 点击画面
+        sleep(1000)
+
+        click(1230,29);  // 退出
+        sleep(2000);
+        return true
+    }
+
     //  接触封印   
     // reai = selclick(reData, '可解除道具封印。')
     // if (reai) {
@@ -1320,6 +1341,7 @@ function reward(reData) {
     closeNote(reData,"已扩充精灵出战")
     closeNote(reData,"背包里存在推荐装备")
     closeNote(reData,"可学习新内功")
+    closeNote(reData,"可以在村庄里使用私人仓库")
 
     return false
 }
@@ -2112,17 +2134,17 @@ if (false) {
     var img = captureScreen();
 
     // console.log("开始请求")
-    var reData = getOcr(img,"ch");
+    // var reData = getOcr(img,"ch");
 
-    // var color = images.pixel(img, 434, 560);   //  通知点  -1935584  橙色 
-    // console.log(color)
-    if (!reData) {
-        // reward(reData)
+    var color = images.pixel(img, 532, 667); // -13553358
+    console.log(color)
+    // if (!reData) {
+    //     // reward(reData)
  
-    }
+    // }
 
 
-    click(800,495);
+    // click(800,495);
 
 
 }
