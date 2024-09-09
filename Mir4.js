@@ -665,6 +665,7 @@ function Loong(reData){
             sleep(1000);
             return true
         }
+        return true
     }
     return false
 }
@@ -1316,6 +1317,9 @@ function reward(reData) {
     closeNote(reData,"可加入门派")
     closeNote(reData,"可执行奇缘")
     closeNote(reData,"可解除道具封印")
+    closeNote(reData,"已扩充精灵出战")
+    closeNote(reData,"背包里存在推荐装备")
+    closeNote(reData,"可学习新内功")
 
     return false
 }
@@ -1423,8 +1427,10 @@ function upLevel(){
         //  处理强化 制造 加点
         if (Console(reData)) {return }
 
-
-        if (lv > 13 ) {
+        var lv = storage.get("lv",0)
+        //  获取等级 
+        console.log(`人物当前等级: ${lv} `); // 输出等级  
+        if (lv > 11 ) {
             // 领取奖励
             if (reward(reData)) {return }
         }
@@ -1436,31 +1442,32 @@ function upLevel(){
         // 关闭所有的弹窗
         if (closeX(reData)) {return }
 
-        if (lv >= 18) {
-            //  切换药剂
-            if (color1 != -11661539 || color2 != -15912110 ) {
-                console.log(" 没有大药 ")
-                //  点击第三个药设置 
-                click(610,661);
-                sleep(2000);
+        //  切换药剂
+        // if (lv >= 17) {
+        //     if (color1 != -11661539 || color2 != -15912110 ) {
+        //         console.log(" 没有大药 ")
+        //         //  点击第三个药设置 
+        //         click(610,661);
+        //         sleep(2000);
 
-                // 两个药都去掉
-                click(471,606);
-                sleep(1000);
-                click(541,606);
-                sleep(1000);
+        //         // 两个药都去掉
+        //         click(471,606);
+        //         sleep(1000);
+        //         click(541,606);
+        //         sleep(1000);
 
-                //  点击第1个药剂 红
-                click(891,415); 
-                sleep(2000);
-                click(476, 666); 
-                sleep(3000);
-                //  点击第2个药剂 蓝
-                click(955,415); 
-                sleep(2000);
-                click(539, 666); 
-            }
-        }
+        //         //  点击第1个药剂 红
+        //         click(891,415); 
+        //         sleep(2000);
+        //         click(476, 666); 
+        //         sleep(3000);
+        //         //  点击第2个药剂 蓝
+        //         click(955,415); 
+        //         sleep(2000);
+        //         click(539, 666); 
+        //         return 
+        //     }
+        // }
 
         OUT = select(reData,"前往狭窄的通道")
         if (!OUT) {
@@ -1471,7 +1478,7 @@ function upLevel(){
             }
         }
 
-        var lv = storage.get("lv",0)
+
         if (clors.hex == '#2e2f34') {
             console.log("在打怪");
             // 处理取消打怪升级
@@ -1496,8 +1503,6 @@ function upLevel(){
             return 
         }    
 
-        //  获取等级 
-        console.log(`人物当前等级: ${lv} `); // 输出等级  
         if (lv >= 9 && lv < 15) {
             reai = select(reData,"芊菲的下落")
             if (reai) {
@@ -1514,6 +1519,15 @@ function upLevel(){
                     click(1195,630);
                     sleep(27000);
                 }
+                return    
+            }
+        }
+
+        if (lv >= 18 && lv < 22) {
+            reai = select(reData,"绑架的背后")
+            if (reai) {
+                click (395,662);
+                sleep(10000)  ;
                 return    
             }
         }
