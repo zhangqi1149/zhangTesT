@@ -161,7 +161,7 @@ function select(ocrResults, targetText,num) {
 }
 
 //  点击文本中间  num 偏移量
-function textClick(target,num){
+function textClick(target,num,num2){
     // 计算文本区域的中心点
     let centerX = (target.box[0][0] + target.box[2][0]) / 2;
     let centerY = (target.box[0][1] + target.box[2][1]) / 2;
@@ -173,7 +173,7 @@ function textClick(target,num){
     console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
 
     // 点击坐标
-    click(x_phone+num,y_phone);
+    click(x_phone+num,y_phone+num2);
     // click(x_phone+920,y_phone); // 广告的关闭按钮
 }
 
@@ -389,7 +389,7 @@ function Loong(reData){
 
         long = select(reData,"带回千年")
         if (long){
-            long = sel(reData,"跳过")
+            long = selclick(reData,"跳过")
             sleep(3000);
             return true
         }
@@ -434,7 +434,7 @@ function Loong(reData){
             click(1195,595);  // 技能释放频率
             sleep(700);
             click(1195,441);  // 战斗自动锁定
-            click(1195,367);  // 复活时自动返回
+            // click(1195,367);  // 复活时自动返回
             sleep(700);
             click(1195,297);  // 队伍共享目标
             sleep(700);
@@ -716,7 +716,7 @@ function Console(reData) {
         var item = long.box[0][0]
         console.log(`请点击按键: ${item}`)
         // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
-        if (item== 754.0) {
+        if (item == 754.0 || item == 752.0 ) {
             click(935,310);  // 制造
             sleep(1000);
             return true
@@ -784,6 +784,30 @@ function Console(reData) {
     if (long) {
         sleep(2000);
         return true
+    }
+
+    long = select(reData,"购买")
+    if (long) {
+        long = selclick(reData,"中型魔力恢复")
+        if (long) {
+            sleep(2000);
+            // 点击 输入框
+            click(853,390);
+            sleep(4000);
+
+            //  上限
+            click(775,489);
+            sleep(1000);
+            //  输入完毕
+            click(775,633);
+            sleep(2000);
+            //  购买键
+            // click(800,495);
+            sleep(2000);
+            click(1219,94); //  X
+            sleep(2000);
+            return true
+        }
     }
 
     return false
@@ -879,6 +903,22 @@ function closeX(reData){
         sleep(2000);
         return true
     }
+
+    reai = select(reData,"输入数字")
+    if (reai) {
+        selclick(reData,"取消")
+        sleep(2000);
+        return true
+    }
+    reai = select(reData,"购买")
+    if (reai) {
+        click(1219,94); //  X
+        sleep(2000);
+        return true
+    }
+
+
+
     return false
 }
 
@@ -1179,16 +1219,99 @@ function reward(reData) {
         return false
     }
 
-
     // 存在可提升的体质
     reai = selclick(reData, '存在可提升的体质')
     if (reai) {
         sleep(2000);
         return true
     }
+    reai = select(reData, '法术攻击')
+    if (reai) {
+        var img = captureScreen();
+        var color = images.pixel(img, 290, 34);
+        if (color == -1935584 ) {
+            //  有需要升级的地方
+            var img = captureScreen();
+            //  法术   
+            var color = images.pixel(img, 434, 557); 
+            console.log(color)
+            //  命中 
+            var color1 = images.pixel(img, 600, 489); 
+            //  回避
+            var color2 = images.pixel(img, 271, 489); 
 
+            //  魔力
+            var color3 = images.pixel(img, 666, 326); 
+            //  生命
+            var color4 = images.pixel(img, 203, 326); 
 
+            //  法术防御
+            var color5 = images.pixel(img, 589, 177); 
+            //  物理防御
+            var color6 = images.pixel(img, 260, 177); 
+            imgRecycle(img)
+            if (color == -1935584 ) {
+                click(400,600);  // 点击法伤
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            if (color1 == -1935584 ) {
+                click(564,524);  // 点击命中
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            if (color2 == -1935584 ) {
+                click(234,524);  // 点击回避
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            if (color3 == -1935584 ) {
+                click(629,357);  // 点击魔力
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            if (color4 == -1935584 ) {
+                click(166,357);  // 点击生命
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            if (color5 == -1935584 ) {
+                click(562,200);  // 点击法术防御
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
+            if (color6 == -1935584 ) {
+                click(234,200);  // 点击物理防御
+                sleep(1000);
+                click(1039,671); // 点击修炼
+                sleep(3000);
+                click(1039,671); // 点击修炼
+                sleep(1000);
+            }
 
+            sleep(2000);
+            return true
+        } 
+        return false
+    }
 
     closeNote(reData,"可加入门派")
     closeNote(reData,"可执行奇缘")
@@ -1301,8 +1424,10 @@ function upLevel(){
         if (Console(reData)) {return }
 
 
-        // 领取奖励
-        if (reward(reData)) {return }
+        if (lv > 13 ) {
+            // 领取奖励
+            if (reward(reData)) {return }
+        }
 
         if (color == -1935584) {
             click(1184,17)
@@ -1311,28 +1436,30 @@ function upLevel(){
         // 关闭所有的弹窗
         if (closeX(reData)) {return }
 
-        //  切换药剂
-        if (color1 != -11661539 || color2 != -15912110 ) {
-            console.log(" 没有大药 ")
-            //  点击第三个药设置 
-            click(610,661);
-            sleep(2000);
+        if (lv >= 18) {
+            //  切换药剂
+            if (color1 != -11661539 || color2 != -15912110 ) {
+                console.log(" 没有大药 ")
+                //  点击第三个药设置 
+                click(610,661);
+                sleep(2000);
 
-            // 两个药都去掉
-            click(471,606);
-            sleep(1000);
-            click(541,606);
-            sleep(1000);
+                // 两个药都去掉
+                click(471,606);
+                sleep(1000);
+                click(541,606);
+                sleep(1000);
 
-            //  点击第1个药剂 红
-            click(891,415); 
-            sleep(2000);
-            click(476, 666); 
-            sleep(3000);
-            //  点击第2个药剂 蓝
-            click(955,415); 
-            sleep(2000);
-            click(539, 666); 
+                //  点击第1个药剂 红
+                click(891,415); 
+                sleep(2000);
+                click(476, 666); 
+                sleep(3000);
+                //  点击第2个药剂 蓝
+                click(955,415); 
+                sleep(2000);
+                click(539, 666); 
+            }
         }
 
         OUT = select(reData,"前往狭窄的通道")
@@ -1973,11 +2100,17 @@ if (false) {
     // console.log("开始请求")
     var reData = getOcr(img,"ch");
 
-    // var color = images.pixel(img, 529, 666);   //  通知点  -1935584  橙色 
+    // var color = images.pixel(img, 434, 560);   //  通知点  -1935584  橙色 
     // console.log(color)
-    // if (reData) {
-    //     reward(reData)
-    // }
+    if (!reData) {
+        // reward(reData)
+ 
+    }
+
+
+    click(800,495);
+
+
 }
  
 // toast("操作结束")
