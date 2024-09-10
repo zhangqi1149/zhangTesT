@@ -256,8 +256,17 @@ function wrong(reData){
             return true
         }
     }
+    OUT = select(reData,"网络套")  // 要给整个应用杀掉
+    if (OUT){
+        reai = selclick(reData, '重新尝试',1)
+        if (reai) {
+            console.log("点击重新尝试")
+            sleep(5000);
+            return true
+        }
+    }
 
-    var OUT = select(reData,"重新尝试")
+    OUT = select(reData,"重新尝试")
     if (OUT){
         reai = selclick(reData, '重新尝试')
         if (reai) {
@@ -857,6 +866,12 @@ function closeX(reData){
         sleep(2000);
         return true
     }
+    reai = select(reData, '一键删除')
+    if (reai) {
+        click(1230,29)
+        sleep(2000);
+        return true
+    }
     reai = select(reData, '合成魔')
     if (reai) {
         click(1230,29)
@@ -956,6 +971,39 @@ function getlv(lvData){
 
 //  领取奖励
 function reward(reData) {
+    // 领取邮箱
+    reai = select(reData, '一键删除')
+    if (reai) {
+        var img = captureScreen();
+        // 账号
+        var emil = images.pixel(img, 163, 75);
+        if (emil == -1935584) {
+            click( 163, 75);
+            sleep(2000);
+        }
+
+        // 系统
+        emil = images.pixel(img, 163, 151);
+        if (emil == -1935584) {
+            click( 163, 151);
+            sleep(2000);
+        }
+
+
+        // 报告
+            
+        imgRecycle(img);
+        // 全部领取
+        click(1151,105);
+        sleep(4000);
+        click(1151,105);
+        click(1230,29);
+        sleep(1000);
+
+        return true
+    }
+
+    console.log("领取成就")
     //  领取成就  
     var reai = selclick(reData, '可领取成就奖励')
     if (reai) {
@@ -1362,9 +1410,13 @@ function upLevel(){
     var attImg = images.clip(img, 522,41,6,3); 
     //  是否是在打怪
     var clors = getCl(attImg,1,2)
+    imgRecycle(attImg)
 
     // 是否在自动寻路
     var imgtext = clip2(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
+    //  获取颜色
+    var code = isblue(imgtext)
+    imgRecycle(imgtext)
 
     // 裁剪等级
     var croppedImage = images.clip(img, 25, 0, 55, 32);
@@ -1373,14 +1425,12 @@ function upLevel(){
     // 获取等级
     getlv(lvData)
 
-    //  获取颜色
-    var code = isblue(imgtext)
-    imgRecycle(imgtext)
-
     // 通知区域 橙色
     var color = images.pixel(img, 1184, 17);
-    var color1 = images.pixel(img, 459, 666);   // 红药
-    var color2 = images.pixel(img, 529, 666);   // 蓝药
+
+    // 邮箱
+    var emil = images.pixel(img, 66, 94); 
+    
 
     // 获取OCR
     var reData = getOcr(img,"ch");
@@ -1450,46 +1500,29 @@ function upLevel(){
         if (Console(reData)) {return }
 
         var lv = storage.get("lv",0)
-        //  获取等级 
-        console.log(`人物当前等级: ${lv} `); // 输出等级  
+        console.log(`人物当前等级: ${lv} `); // 当前等级  
+        
+        // 领取奖励
         if (lv > 11 ) {
-            // 领取奖励
+            //  通知气泡
+            if (color == -1935584) {
+                click(1184,17)
+                return
+            }
+            // 根据气泡领取
             if (reward(reData)) {return }
+            // 领取邮箱
+            if (emil == -2133216) {
+                //  可以领取
+                click(55,105);
+                sleep(3000);
+                return
+            }
         }
 
-        if (color == -1935584) {
-            click(1184,17)
-            return
-        }
         // 关闭所有的弹窗
         if (closeX(reData)) {return }
 
-        //  切换药剂
-        // if (lv >= 17) {
-        //     if (color1 != -11661539 || color2 != -15912110 ) {
-        //         console.log(" 没有大药 ")
-        //         //  点击第三个药设置 
-        //         click(610,661);
-        //         sleep(2000);
-
-        //         // 两个药都去掉
-        //         click(471,606);
-        //         sleep(1000);
-        //         click(541,606);
-        //         sleep(1000);
-
-        //         //  点击第1个药剂 红
-        //         click(891,415); 
-        //         sleep(2000);
-        //         click(476, 666); 
-        //         sleep(3000);
-        //         //  点击第2个药剂 蓝
-        //         click(955,415); 
-        //         sleep(2000);
-        //         click(539, 666); 
-        //         return 
-        //     }
-        // }
 
         OUT = select(reData,"前往狭窄的通道")
         if (!OUT) {
@@ -1500,7 +1533,7 @@ function upLevel(){
             }
         }
 
-
+        // 是否在打怪
         if (clors.hex == '#2e2f34') {
             console.log("在打怪");
             // 处理取消打怪升级
@@ -1525,6 +1558,7 @@ function upLevel(){
             return 
         }    
 
+        // 去挂机打怪
         if (lv >= 9 && lv < 15) {
             reai = select(reData,"芊菲的下落")
             if (reai) {
@@ -1545,16 +1579,8 @@ function upLevel(){
             }
         }
 
-        if (lv >= 18 && lv < 22) {
-            reai = select(reData,"绑架的背后")
-            if (reai) {
-                click (395,662);
-                sleep(10000)  ;
-                return    
-            }
-        }
 
-        // if (imgtext) { // && qust
+        //  是否在自动做任务
         if (code) {
             // console.log(" 我在自动做任务 ",code);
             sleep(5000);
@@ -1568,8 +1594,9 @@ function upLevel(){
                 code = click(1122.5,187);    
                 sleep(2000)
             }
-        } 
+        }
 
+        //  剧情任务
         if (lv < 15 ) {
              // 漆黑的密道
             reai = select(reData, '漆黑的')
@@ -2076,20 +2103,43 @@ function upLevel(){
                     sleep(1000);
                 }
 
-                reai = selclick(reData, '18.完成丹')   // todo 
+
+                reai = select(reData, '18.完成丹')
                 if (reai) {
-                    sleep(2000);
-
-
-                    return 
+                    reai = select(reData,"击败双");
+                    if (!reai) {
+                        // 
+                        img = captureScreen(); // 重新获取截图
+                        reData = getOcr(img,"ch"); // 重新OCR
+                        imgRecycle(img);
+                        if (reData) {
+                            reai = select(reData, '奇缘')   // todo  重新去获取一次
+                            if (reai) {
+                                // 丹鹰的护卫
+                                sleep(3000);
+                                click(1094,597); // 点击领取
+                                sleep(2000);
+            
+                                click(1230,29); // 退出
+                                sleep(6000);
+            
+                                click(1194,234);  // 点击领取的任务
+                                sleep(18000);
+            
+                                return
+                            }
+                        }
+                    }
+          
+                    return
                 }
-
 
                 return
             }
 
         }
        
+        //  跳过
         reai = select(reData,"跳过")
         if (reai) {
             item = reai.box[0][0]
@@ -2100,7 +2150,6 @@ function upLevel(){
             } 
             
         }
-
         reai = selclick(reData,"《器")
         if (reai) {
             sleep(3000);
@@ -2134,20 +2183,20 @@ if (false) {
     var img = captureScreen();
 
     // console.log("开始请求")
-    // var reData = getOcr(img,"ch");
-
-    var color = images.pixel(img, 532, 667); // -13553358
+    var reData = getOcr(img,"ch");
+    
+    // var color = images.pixel(img, 462, 667); // -13422030  第一个位置的药剂
+    var color =  images.pixel(img, 163, 75); // -13553358  第二个位置的药剂  
     console.log(color)
-    // if (!reData) {
+    // if (reData) {
     //     // reward(reData)
- 
+    //     reai = select(reData,"比奇城",1)
+    //     if (reai.box[0][0] > 1058 && reai.box[0][1] < 112 ) {
+    //     }
     // }
-
-
-    // click(800,495);
-
-
 }
  
+
+
 // toast("操作结束")
 console.log("操作结束")
