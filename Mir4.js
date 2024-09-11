@@ -297,6 +297,12 @@ function wrong(reData){
         }
     }
     
+    OUT = selclick(reData,"据点复活")
+    if (OUT){
+        sleep(5000);
+        return true
+    }
+
     OUT = select(reData,"说明")
     if (OUT){
         reai = selclick(reData, '确认')
@@ -476,7 +482,7 @@ function Loong(reData){
             click(1195,595);  // 技能释放频率
             sleep(700);
             // click(1195,441);  // 战斗自动锁定
-            // click(1195,367);  // 复活时自动返回
+            click(1195,367);  // 复活时自动返回
             sleep(700);
             click(1195,297);  // 队伍共享目标
             sleep(700);
@@ -497,7 +503,7 @@ function Loong(reData){
             click(1195,595);  // 技能释放频率
             click(1195,595);  // 技能释放频率
             sleep(700);
-            click(1195,441);  // 战斗自动锁定
+            // click(1195,441);  // 战斗自动锁定
             click(1195,367);  // 复活时自动返回
             sleep(700);
             click(1195,297);  // 队伍共享目标
@@ -1872,9 +1878,9 @@ function upLevel(){
             sleep(5000);
         }else{
             // 加入限定的条件 
-            reai = select(reData,"和平")
-            reai3 = select(reData,"近距")
-            reai4 = select(reData,"安全")
+            reai = select(reData,"和平",1)
+            reai3 = select(reData,"近距",1)
+            reai4 = select(reData,"安全",1)
             if (reai||reai3||reai4) {
                 console.log(" . ");
                 code = click(1122.5,187);    
@@ -2477,6 +2483,14 @@ function upLevel(){
         }
 
         // 半兽古墓
+        // reai = select(reData,"半兽古墓",1)
+        // if (reai) {
+        //     // 这里回去练级 练到30 TODO
+        //     if (lv < 30) {
+        //         // 练级
+
+        //     }
+        // }
        
         //  跳过
         reai = select(reData,"跳过")
