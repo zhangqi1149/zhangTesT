@@ -835,6 +835,14 @@ function Console(reData) {
             return true
         }
     }
+    
+    long = select(reData, '来挑选一下') 
+    if (long) {
+        //  选武器  
+        click(809,200);
+        sleep(2000);
+        return true
+    }
 
     long = select(reData,"中型生命值")
     if (long) {
@@ -1745,25 +1753,26 @@ function upLevel(){
                 return    
             }
         }
-        //  TODO
-        if (lv >= 18 && lv < 30 ) {
-            reai = select(reData,"【精英】比奇城后巷")
-            if (reai) {
-                if (reai.box[0][0] < 114 ) {
-                    click (395,662);
-                    sleep(2000);
-                    return
-                }
-            }
-            // reai = select(reData,"击败陈秋风")
-            // if (reai) {
-            //     //  todo 去打怪点
-            // }
-        }
+        //  TODO  升级到30
+        // if (lv >= 18 && lv < 30 ) {
+        //     reai = select(reData,"【精英】比奇城后巷")
+        //     if (reai) {
+        //         if (reai.box[0][0] < 114 ) {
+        //             click(395,662);
+        //             sleep(2000);
+        //             return
+        //         }
+        //     } 
+        //     // reai = select(reData,"击败陈秋风")
+        //     // if (reai) {
+        //     //     //  todo 去打怪点
+        //     // }
+        // }
 
 
-        reai = select(reData,"击败双门帮铁字组")
-        if (reai) {
+        reai = select(reData,"击败双门帮")
+        reai1 = select(reData,"击败老二")
+        if (reai || reai1) {
             img = captureScreen();
             var imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
             var code2 = isblue(imgtext2)
@@ -2259,7 +2268,7 @@ function upLevel(){
             return
         }
 
-        // 逃离银杏谷    // 9.与师父对话 可以切换药剂
+        // 逃离银杏谷 
         reai = select(reData,"逃离银杏谷")
         if(reai){
             reai = select(reData, '请点击全部')
@@ -2346,6 +2355,34 @@ function upLevel(){
                             // 丹鹰的护卫
                             sleep(3000);
                             click(1094,597); // 点击领取
+                            sleep(2000);
+        
+                            click(1230,29); // 退出
+                            sleep(6000);
+        
+                            click(1194,234);  // 点击领取的任务
+                            sleep(18000);
+                            return
+                        }
+                    }
+                }
+                return
+            }
+            reai = select(reData, '22.完成击败')  // 陈秋风
+            if (reai) {
+                reai = select(reData,"击败老二");
+                if (!reai) {
+                    selclick(reData, '22.完成击败')
+                    sleep(4000);
+                    img = captureScreen(); // 重新获取截图
+                    reData = getOcr(img,"ch"); // 重新OCR
+                    imgRecycle(img);
+                    if (reData) {
+                        reai = select(reData, '奇缘')     
+                        if (reai) {
+                            // 丹鹰的护卫
+                            sleep(3000);
+                            click(1158,426); // 点击领取
                             sleep(2000);
         
                             click(1230,29); // 退出
