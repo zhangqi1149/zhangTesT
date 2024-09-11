@@ -707,11 +707,32 @@ function Loong(reData){
             sleep(1000);
             return true
         }
+
+        //  坐骑
+        long = selclick(reData,"有关坐骑的")
+        if (long){ 
+            sleep(1000);
+            return true
+        }
+        long = select(reData,"各种各样的坐骑")
+        if (long){ 
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
+        long = selclick(reData,"每个坐骑都有")
+        if (long){ 
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
+
+
     }
     return false
 }
 
-//  制造 强化 合成 魔石  
+//  制造 强化 合成 魔石  坐骑
 function Console(reData) { 
     var long = select(reData, '请点击全部菜单按键')
     if (long) {
@@ -739,7 +760,8 @@ function Console(reData) {
 
         // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
         // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
-        if (item == 727.0 || item == 728.0 || item2 == 156.0) {
+        // [[730.0, 159.0], [853.0, 159.0], [853.0, 177.0], [730.0, 177.0]]
+        if ( (item > 727.0 || item < 731.0 )|| item2 == 156.0) {
             click(945,109);  // 角色
             sleep(2000);
             click(939,222);  // 铁匠
@@ -763,6 +785,16 @@ function Console(reData) {
             sleep(1000);
             return true
         }
+
+        // [[205.0, 70.0], [300.0, 70.0], [300.0, 93.0], [205.0, 93.0]] 坐骑
+        long = select(reData, '可佩戴')
+        if ((item > 203.0 && item < 207.0) && long) {
+            sleep(1000);
+            click(444,30); // 坐骑
+            sleep(2000);
+            return true
+        }
+        
         // [[213.0, 422.0], [306.0, 421.0], [307.0, 441.0], [213.0, 442.0]] 装备的高级选项提示位置
         // [[167.0, 420.0], [262.0, 420.0], [262.0, 442.0], [167.0, 442.0]]
         // if (item == 213.0 ||item == 167.0) {
@@ -789,6 +821,12 @@ function Console(reData) {
         }
 
         // 936  服饰提示位置
+        // [[937.0, 236.0], [1031.0, 236.0], [1031.0, 258.0], [937.0, 258.0]]
+        if (item > 935.0 && item <= 938.0) {
+            click(1123,200); // 辅助装备
+            sleep(2000);
+            return true
+        }
 
         // // 未匹配的全跳过
         long = selclick(reData, '跳过')
@@ -926,12 +964,32 @@ function closeX(reData){
         sleep(2000);
         return true
     }
+
+    reai = select(reData, '可佩戴')
+    if (reai) {
+        // if (Mount ==  -1935583) {
+        //     //  需要购买坐骑
+        // }
+        click(948,200); // 选中
+        sleep(2000);
+        click(1150,675); // 购买
+        sleep(2000);
+        click(1150,675); // 乘骑设置
+        sleep(2000);
+
+        click(1230,29);
+        sleep(2000);
+        return true
+    }
+    
     reai = select(reData, '龙神器')
     if (reai) {
         click(1230,29)
         sleep(2000);
         return true
     }
+
+
     reai = select(reData, '切换频道')
     if (reai) {
         click(1230,29)
@@ -1205,7 +1263,16 @@ function reward(reData) {
             sleep(2000);
             click(1130,666);
         }
-        console.log("出战效果")
+
+        color = images.pixel(img, 1237, 247);   // -1935584  橙色
+        if (color == -1935584 ) {
+            sleep(1000);
+            click(1207,247);
+            // 点击召唤  
+            sleep(2000);
+            click(1130,666);
+        }
+
         imgRecycle(img)
         click(1230,29);
         sleep(2000);
@@ -1527,6 +1594,7 @@ function upLevel(){
     var color1 = images.pixel(img, 459, 666);   // 判断是否是中红药
     var color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
 
+    // var Mount = images.pixel(img, 1234, 179); //坐骑  -1935583
     // 获取OCR
     var reData = getOcr(img,"ch");
     imgRecycle(img)
@@ -1793,6 +1861,14 @@ function upLevel(){
         console.log(`是否在自动做任务: ${code}`)
         if (code) {
             click(945,574); // 奔跑
+            //  切换视角
+            reai = select(reData,"小传子")
+            if (reai) {
+                if (reai.box[0][0] < 600) {
+                    swipe(721, 360, 10, 0, 1000);
+                    return
+                }
+            }
             sleep(5000);
         }else{
             // 加入限定的条件 
@@ -2399,6 +2475,8 @@ function upLevel(){
 
             return
         }
+
+        // 半兽古墓
        
         //  跳过
         reai = select(reData,"跳过")
@@ -2440,18 +2518,21 @@ if (false) {
         throw new Error("请求屏幕捕获权限失败");
     }
 
+    
     // console.log("截图")
     var img = captureScreen();
 
     // console.log("开始请求")
-    // var reData = getOcr(img,"ch");
+    var reData = getOcr(img,"ch");
     
-    emil = images.pixel(img, 163, 443);
-    console.log(emil)
+    // emil = images.pixel(img, 163, 443);
+    // console.log(emil)
+
+    // color = images.pixel(img, 1237, 247);   // -1935584  橙色
+    // console.log(color)
 
 }
  
-
 
 // toast("操作结束")
 console.log("操作结束")
