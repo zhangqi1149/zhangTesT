@@ -42,7 +42,7 @@ function getOcr(img, lang) {
     return null;
 }
 
-// OCR请求
+// 请求颜色
 function getCl(img, x1,y1) {
     try {
         // 将截图转换为Base64编码的PNG格式
@@ -75,7 +75,7 @@ function getCl(img, x1,y1) {
     return null;
 }
 
-// OCR请求
+// 请求是否是蓝色
 function isblue(img) {
     try {
         // 将截图转换为Base64编码的PNG格式
@@ -896,6 +896,10 @@ function Console(reData) {
             sleep(2000);
 
             // 点击 + 号  702,395   +100 778,393
+            click(778,393);
+            sleep(1000);
+            click(778,393);
+            sleep(1000);
             click(778,393);
             sleep(1000);
             click(778,393);
@@ -1797,9 +1801,54 @@ function upLevel(){
                 }
             }
             // 使用觉醒
-            if (lv > 16 && lv < 20) {
+            if (lv > 16 ) {
                 click(1133,560);   // 觉醒键 
                 sleep(10000);  
+            }
+            //  检查药回城 TODO
+            if (lv > 20 ) {
+                if (hp == -13093322 || mp == -11776688) {
+                    // 回城
+                    sleep(1000);
+                    click(1133,95); //点击大地图
+                    sleep(1000);
+                    click(200,25); //点比奇地区
+                    sleep(2000);
+                    click(582,412); //点比奇城
+                    sleep(2000);
+                    reai = select(reData,"半兽古墓1")
+                    if (reai) {
+                        console.log("半兽古墓一 前往庆济")
+                        // 前往庆济
+                        click(1128,572);
+                        sleep(1000);
+                        click(1128,572);
+                        console.log("点击传送1")
+                        sleep(1000);
+                        click(1058,678);
+                        sleep(13000);
+                    }else{
+                        console.log("前往庆济")
+                        // 前往庆济
+                        click(1128,572);
+                        sleep(2000);
+                        click(1128,572);
+                        console.log("点击传送")
+                        //  点击寻路
+                        sleep(1000);
+                        click(1202,678);
+                        sleep(38000);
+                    }
+                }
+            }
+            reai = select(reData,"【精英】比奇城后巷")
+            if (reai) {
+                if (reai.box[0][1] < 114 ) {
+                    reai = select(reData,"12.救出可疑的")
+                    if (reai) {
+                        sleep(50000);
+                    }
+                }
             }
 
             sleep(5000);
@@ -1828,20 +1877,39 @@ function upLevel(){
             }
         }
         //  TODO  升级到30
-        // if (lv >= 18 && lv < 30 ) {
-        //     reai = select(reData,"【精英】比奇城后巷")
-        //     if (reai) {
-        //         if (reai.box[0][0] < 114 ) {
-        //             click(395,662);
-        //             sleep(2000);
-        //             return
-        //         }
-        //     } 
-        //     // reai = select(reData,"击败陈秋风")
-        //     // if (reai) {
-        //     //     //  todo 去打怪点
-        //     // }
-        // }
+        if (lv < 30 ) {
+            //  查找 找救出可疑的女人
+            console.log("练级到30")
+            reai = select(reData,"12.救出可疑的女人")
+            if (reai) {
+                reai = select(reData,"【精英】比奇城后巷")
+                if (reai) {
+                    if (reai.box[0][1] < 114 ) {
+                        click(395,662);
+                        sleep(2000);
+                        return
+                    }
+                }else{
+                    click(1133,95); //点击大地图
+                    sleep(3000);
+                    click(200,25); //点比奇地区
+                    sleep(2000);
+                    click(582,412); //点比奇城
+                    sleep(2000);
+                    click(456,84); // 比奇后巷
+                    sleep(2000);
+                    click(1214,156); // 更改难度
+                    sleep(2000);
+                    click(476,407); // 双击去
+                    sleep(500);
+                    click(476,407); // 双击去
+                    sleep(30000);
+                    click(395,662);  // 打怪
+                }
+                return
+            }
+            return
+        }
 
 
         reai = select(reData,"击败双门帮")
@@ -1877,14 +1945,16 @@ function upLevel(){
             }
             sleep(5000);
         }else{
-            // 加入限定的条件 
-            reai = select(reData,"和平",1)
-            reai3 = select(reData,"近距",1)
-            reai4 = select(reData,"安全",1)
-            if (reai||reai3||reai4) {
-                console.log(" . ");
-                code = click(1122.5,187);    
-                sleep(2000)
+            reai = select(reData,"12.找救出可疑的女人")
+            if (!reai) {
+                // 加入限定的条件 
+                reai3 = select(reData,"近距",1)
+                reai4 = select(reData,"安全",1)
+                if (reai3||reai4) {
+                    console.log(" . ");
+                    code = click(1122.5,187);    
+                    sleep(2000)
+                }    
             }
         }
 
