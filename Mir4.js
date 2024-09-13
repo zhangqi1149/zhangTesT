@@ -138,7 +138,7 @@ function init(){
     }
     let currentPkg = currentPackage();
     // 是否在游戏
-    if (currentPkg == "com.wemade.mir4global" | currentPkg =="android"){
+    if (currentPkg == "com.wemade.mir4global" || currentPkg =="android"){
         return true
     } else {
         toast("目前不在游戏")
@@ -152,9 +152,9 @@ function init(){
     // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
 }
 
-// 查找内容  支持模糊查询 1是精准查询  不传是模糊查询
-// 模糊查找内容
-function select(ocrResults, targetText,num) {
+// 查找内容  支持模糊查询  默认 模糊查找内容
+function select(ocrResults, targetText,exactMatch) {
+    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
     if (!Array.isArray(ocrResults)) {
         console.error("OCR 结果不是数组");
         return null;
@@ -163,7 +163,7 @@ function select(ocrResults, targetText,num) {
     for (let i = 0; i < ocrResults.length; i++) {
         let item = ocrResults[i];
         if (item && item.text !== undefined) {
-            if (num == 1) {
+            if (exactMatch) {
                 if (item.text === targetText) {
                     console.log("找到目标文本:", item);
                     return item;
@@ -215,7 +215,7 @@ function selclick(reData,src,num){
         // 点击坐标
         code = click(x_phone,y_phone);
         if (!code) {
-            toast(`selclick ${src} 点击失败`)
+            console.log(`selclick ${src} 点击失败`)
         }
         return true
     }else{
@@ -223,33 +223,40 @@ function selclick(reData,src,num){
     }
 }
 
-// 区域裁剪
-function clip(img, box) {
-    // 获取裁剪区域的坐标
+// 公共裁剪函数
+function cropImage(img, box) {
+    // var grayscaleImage = images.grayscale(croppedImage);  // 灰度处理
+    // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
     var x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
     var x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
     var y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
     var y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
 
     // 裁剪图像
-    var croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
+    return images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
+}
 
-    // var grayscaleImage = images.grayscale(croppedImage);  // 灰度处理
-    // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
-
-    // 上传裁剪后的图像并获取 OCR 结果
-    var ocrResults = getOcr(croppedImage,"ch");
-    if (ocrResults) {
-        try {
-            if (Array.isArray(ocrResults) && ocrResults.length > 0 && ocrResults[0].hasOwnProperty('text')) {
+// 区域裁剪 没有在用
+function clip(img, box) {
+    try {
+        var croppedImage = cropImage(img, box);
+        // 进行 OCR 处理
+        var ocrResults = getOcr(croppedImage, "ch");
+        if (ocrResults && Array.isArray(ocrResults) && ocrResults.length > 0 && ocrResults[0].hasOwnProperty('text')) {
+            // 确保 ocrResults[0] 存在并且包含 'text' 属性
+            if (ocrResults[0].hasOwnProperty('text')) {
                 console.log(`裁剪图像中的文本: ${ocrResults[0].text}`);
-                return true
+                return true;
+            } else {
+                console.error("OCR 结果缺少 'text' 属性");
             }
-        } catch (e) {
-            console.error("解析 OCR 结果失败: ", e);
+        } else {
+            console.error("OCR 结果为空或格式错误");
         }
+    } catch (e) {
+        console.error("裁剪 OCR 处理失败: ", e);
     }
-    return false
+    return false;
 }
 
 // 区域裁剪
@@ -466,8 +473,9 @@ function Loong(reData){
 
         // ----   操作类的
         //  设置药剂 和 技能频率
-        long = selclick(reData,"尝试上下")
+        long = select(reData,"尝试上下")
         if (long){
+            selclick(reData,"跳过")
             sleep(1000);
             return true
         }
@@ -767,11 +775,17 @@ function Console(reData) {
         // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
         // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
         // [[730.0, 159.0], [853.0, 159.0], [853.0, 177.0], [730.0, 177.0]]
-        if ( (item > 727.0 || item < 731.0 )|| item2 == 156.0) {
+        if ( (item > 727.0 && item < 731.0 )|| item2 == 156.0) {
             click(945,109);  // 角色
             sleep(2000);
             click(939,222);  // 铁匠
             return true 
+        }
+
+        // [[725.0, 381.0], [855.0, 380.0], [855.0, 404.0], [726.0, 405.0]]  //任务提示按键
+        if (item2 > 380.0) {
+            selclick(reData, '跳过')
+            return
         }
 
         long = selclick(reData, '跳过')
@@ -784,6 +798,7 @@ function Console(reData) {
     long = select(reData, '请点击按键')
     if (long) {
         var item = long.box[0][0]
+        var item2 = long.box[1][1]
         console.log(`请点击按键: ${item}`)
         // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
         if (item == 754.0 || item == 752.0 ) {
@@ -828,11 +843,13 @@ function Console(reData) {
 
         // 936  服饰提示位置
         // [[937.0, 236.0], [1031.0, 236.0], [1031.0, 258.0], [937.0, 258.0]]
-        if (item > 935.0 && item <= 938.0) {
+        if ((item > 935.0 && item <= 938.0) && item2 < 240.0) {
             click(1123,200); // 辅助装备
             sleep(2000);
             return true
         }
+
+        // [[936.0, 348.0], [1029.0, 348.0], [1029.0, 371.0], [936.0, 371.0]] 解除封印
 
         // // 未匹配的全跳过
         long = selclick(reData, '跳过')
@@ -871,7 +888,7 @@ function Console(reData) {
         sleep(2000);
         return true
     }
-    long = select(reData, '完成',1) 
+    long = select(reData, '完成',true) 
     if (long) {
         if (long.box[0][0]< 1037) {
             click(1020,227);
@@ -1354,7 +1371,7 @@ function reward(reData) {
         //  拿到最新的数据
         var reData = getOcr(img,"ch");
         if (reData) {
-            var reai = selclick(reData, '学习',1) 
+            var reai = selclick(reData, '学习',true) 
             if (reai) {
                 sleep(1000);
                 click(961,669);
@@ -1703,7 +1720,7 @@ function upLevel(){
         //  切换药剂   在城镇的时候 
         if (lv >= 16) {
             //  检查城镇
-            reai = select(reData,"比奇城",1)
+            reai = select(reData,"比奇城",true)
             if (reai) {
                 // 判断人在不在比奇城
                 if (reai.box[0][0] > 1058 && reai.box[0][1] < 112 ) {
@@ -1850,6 +1867,7 @@ function upLevel(){
                     }
                 }
             }
+            click(1197,625);  // 普攻一下
 
             sleep(5000);
             return 
@@ -1877,11 +1895,11 @@ function upLevel(){
             }
         }
         //  TODO  升级到30
-        if (lv < 30 ) {
+        if (lv < 40 ) {
             //  查找 找救出可疑的女人
-            console.log("练级到30")
             reai = select(reData,"12.救出可疑的女人")
             if (reai) {
+                console.log("练级到40")
                 reai = select(reData,"【精英】比奇城后巷")
                 if (reai) {
                     if (reai.box[0][1] < 114 ) {
@@ -1904,11 +1922,10 @@ function upLevel(){
                     sleep(500);
                     click(476,407); // 双击去
                     sleep(30000);
-                    click(395,662);  // 打怪
+                    // click(395,662);  // 打怪
                 }
                 return
             }
-            return
         }
 
 
@@ -1948,9 +1965,10 @@ function upLevel(){
             reai = select(reData,"12.找救出可疑的女人")
             if (!reai) {
                 // 加入限定的条件 
-                reai3 = select(reData,"近距",1)
-                reai4 = select(reData,"安全",1)
-                if (reai3||reai4) {
+                reai3 = select(reData,"近距",true)
+                reai4 = select(reData,"安全",true)
+                reai5 = select(reData,"普通",true)
+                if (reai3||reai4||reai5) {
                     console.log(" . ");
                     code = click(1122.5,187);    
                     sleep(2000)
@@ -2185,7 +2203,7 @@ function upLevel(){
                     if (reai) {
                         sleep(4000);
                     }
-                    reai = selclick(reData, '学习',1)
+                    reai = selclick(reData, '学习',true)
                     if (reai) {
                         sleep(3000);
                     }
@@ -2553,7 +2571,7 @@ function upLevel(){
         }
 
         // 半兽古墓
-        // reai = select(reData,"半兽古墓",1)
+        // reai = select(reData,"半兽古墓",true)
         // if (reai) {
         //     // 这里回去练级 练到30 TODO
         //     if (lv < 30) {
@@ -2614,7 +2632,7 @@ if (false) {
 
     // color = images.pixel(img, 1237, 247);   // -1935584  橙色
     // console.log(color)
-
+    
 }
  
 
