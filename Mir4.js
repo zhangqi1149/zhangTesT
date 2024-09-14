@@ -1306,6 +1306,12 @@ function reward(reData) {
         return true
     }
 
+    // 存在可获得的坐骑。
+    if (selclick(reData, '存在可获得的坐骑')) {
+        sleep(2000);
+        return true
+    }
+
     // 存在可镶嵌的魔石。
     reai = selclick(reData, '存在可镶嵌的魔石')
     if (reai) {
@@ -1918,10 +1924,10 @@ function upLevel(){
                     sleep(2000);
                     click(1214,156); // 更改难度
                     sleep(2000);
-                    click(476,407); // 双击去
+                    click(313,526); // 双击去  476,407
                     sleep(500);
-                    click(476,407); // 双击去
-                    sleep(30000);
+                    click(313,526); // 双击去
+                    sleep(60000);
                     // click(395,662);  // 打怪
                 }
                 return
@@ -2246,8 +2252,11 @@ function upLevel(){
                 click(718,441); // max 未起效
                 sleep(500);
                 click(718,441); // max
+                sleep(500);
                 click(718,441);// max
+                sleep(500);
                 click(718,441);// max
+                sleep(500);
                 click(718,441);// max
                 sleep(500);
                 click(725,536) ;// 点击使用
