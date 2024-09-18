@@ -152,6 +152,28 @@ function init(){
     // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
 }
 
+// 生成随机英文名  名字要求6-12 
+function getRandomName() {
+    // 随机生成 2 到 5 之间的长度
+    var length = random(2, 6);
+    
+    // 定义字符集，可以根据需要修改
+    var characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var name = "";
+
+    // 循环生成随机字符组成名字
+    for (var i = 0; i < length; i++) {
+        var randomIndex = random(0, characters.length - 1);
+        name += characters.charAt(randomIndex);
+    }
+    
+    // 加上前缀
+    var prefix = "MMOGA ";
+    var fullName = prefix + name;
+    
+    return fullName;
+}
+
 // 查找内容  支持模糊查询  默认 模糊查找内容
 function select(ocrResults, targetText,exactMatch) {
     exactMatch = (exactMatch !== undefined) ? exactMatch : false;
@@ -490,7 +512,7 @@ function Loong(reData){
             click(1195,595);  // 技能释放频率
             sleep(700);
             // click(1195,441);  // 战斗自动锁定
-            click(1195,367);  // 复活时自动返回
+            // click(1195,367);  // 复活时自动返回
             sleep(700);
             click(1195,297);  // 队伍共享目标
             sleep(700);
@@ -512,7 +534,7 @@ function Loong(reData){
             click(1195,595);  // 技能释放频率
             sleep(700);
             // click(1195,441);  // 战斗自动锁定
-            click(1195,367);  // 复活时自动返回
+            // click(1195,367);  // 复活时自动返回
             sleep(700);
             click(1195,297);  // 队伍共享目标
             sleep(700);
@@ -674,7 +696,9 @@ function Loong(reData){
         long = select(reData,"成功镶嵌")
         if (long){
             selclick(reData,"跳过")
-            sleep(1000);
+            sleep(2000);
+            click(1230,29);
+            sleep(2000);
             return true
         }
 
@@ -750,7 +774,12 @@ function Loong(reData){
 function Console(reData) { 
     var long = select(reData, '请点击全部菜单按键')
     if (long) {
-        click(1228,28);
+        long = select(reData,"7.强化体质")
+        if (long) {
+            selclick(reData,"跳过")
+        }else{
+            click(1228,28);
+        }
         sleep(2000);
         return true
     } 
@@ -1015,7 +1044,12 @@ function closeX(reData){
         sleep(2000);
         return true
     }
-
+    reai = select(reData, '接受委托')
+    if (reai) {
+        click(795,149)
+        sleep(2000);
+        return true
+    }
 
     reai = select(reData, '切换频道')
     if (reai) {
@@ -1185,7 +1219,7 @@ function reward(reData) {
         sleep(2000);
         return true
     }
-    reai = selclick(reData, '一键领取')
+    reai = selclick(reData, '领取奖励')
     if (reai) {
         click(1206,103);
         sleep(3000);
@@ -1567,20 +1601,74 @@ function reward(reData) {
                 click(1039,671); // 点击修炼
                 sleep(1000);
             }
-
             sleep(2000);
+            click(1230,29)
+            sleep(1000);
             return true
         } 
         return false
     }
 
-    if (closeNote(reData,"可加入门派")) {return}
-    if (closeNote(reData,"可执行奇缘")) {return}
-    if (closeNote(reData,"可解除道具封印")) {return}
-    if (closeNote(reData,"已扩充精灵出战")) {return}
-    if (closeNote(reData,"背包里存在推荐装备")) {return}
-    if (closeNote(reData,"可学习新内功")) {return}
-    if (closeNote(reData,"可以在村庄里使用私人仓库")) {return}
+    closeNote(reData,"可加入门派")
+    closeNote(reData,"可执行奇缘")
+    closeNote(reData,"可解除道具封印")
+    closeNote(reData,"已扩充精灵出战")
+    closeNote(reData,"背包里存在推荐装备")
+    closeNote(reData,"可学习新内功")
+    closeNote(reData,"可以在村庄里使用私人仓库")
+
+    return false
+}
+
+//  创建角色
+function create(reData) {
+    // 选择角色界面
+    reai = select(reData, '选择职业')
+    if (reai) {
+        // 选黑道士
+        reai = selclick(reData, '黑道士')
+        if (reai) {
+            sleep(2000);
+            selclick(reData, '选择',true)
+            sleep(500);
+        }
+        return true
+    }
+    // 捏脸界面
+    reai = select(reData,"自定义")
+    if (reai) {
+        //  禁用语或者低俗
+        reai = select(reData,"请重新")
+        if (reai) {
+            selclick(reData,"确定")
+            sleep(2000);
+            return
+        }
+
+        // 打开了小键盘
+        reai = select(reData,"换行")
+        if (reai) {
+            click(1185,343) // 点击缩放的地方
+            sleep(2000);
+            //  请输入名称
+            input(getRandomName())
+            sleep(500);
+        }
+
+        //  请输入名称
+        reai = select(reData,"请输入名称")
+        if (reai) {
+            selclick(reData, '请输入名称')
+            return
+        }
+
+        reai = selclick(reData, '创建角色')
+        if (!reai) {
+            selclick(reData,"确定")
+        }
+        sleep(2000);
+        return true
+    }
 
     return false
 }
@@ -1626,12 +1714,16 @@ function upLevel(){
     var mp =  images.pixel(img, 532, 667); 
     var color1 = images.pixel(img, 459, 666);   // 判断是否是中红药
     var color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
+    // console.log(`color1: ${color1}, color2 : ${color2}`)
 
     // var Mount = images.pixel(img, 1234, 179); //坐骑  -1935583
     // 获取OCR
     var reData = getOcr(img,"ch");
     imgRecycle(img)
     if (reData) {
+        //  创建角色
+        if (create(reData)) {return }
+
         // console.log("处理异常弹窗")
         //  处理异常弹窗
         if (wrong(reData)) {return }
@@ -1707,6 +1799,7 @@ function upLevel(){
             //  通知气泡
             if (color == -1935584) {
                 click(1184,17)
+                sleep(1000);
                 return
             }
             // 领取邮箱
@@ -1755,13 +1848,17 @@ function upLevel(){
                             sleep(4000);
                             console.log("前往庆济")
                             // 前往庆济
-                            click(1128,572);
-                            sleep(2000);
-                            click(1128,572);
+                            // click(1128,572);
+                            // sleep(2000);
+                            // click(1128,572);
                             console.log("点击传送")
                             //  点击寻路
                             sleep(1000);
-                            click(1202,678);
+                            // click(1202,678);
+                            click(430,574);
+                            sleep(1000);
+                            click(430,574);
+                            click(430,574);
                             sleep(10000);
                             if (wait("购买",200000)) {
                                 console.log("找到了")
@@ -1772,7 +1869,7 @@ function upLevel(){
                     // 判断是否是大药 切换药
                     // var color1 = images.pixel(img, 459, 666);   // 红药
                     // var color2 = images.pixel(img, 529, 666);   // 蓝药
-                    if ((color1 != -11661539 && color1 != -13093322) || (color2 != -15912110 && color2 != -13158343) ) {
+                    if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 ) ) {
                         console.log(" 没有大药 ")
                         //  点击第三个药设置 
                         click(610,661);
@@ -1823,6 +1920,11 @@ function upLevel(){
                     }
                 }
             }
+
+            if (lv > 9 && lv <=13 ) {
+                return sleep(360000)
+            }
+
             // 使用觉醒
             if (lv > 16 ) {
                 click(1133,560);   // 觉醒键 
@@ -1848,18 +1950,26 @@ function upLevel(){
                         click(1128,572);
                         console.log("点击传送1")
                         sleep(1000);
-                        click(1058,678);
+                        // click(1058,678);
+                        click(430,574);
+                        sleep(1000);
+                        click(430,574);
+                        click(430,574);
                         sleep(13000);
                     }else{
                         console.log("前往庆济")
                         // 前往庆济
-                        click(1128,572);
-                        sleep(2000);
-                        click(1128,572);
+                        // click(1128,572);
+                        // sleep(2000);
+                        // click(1128,572);
                         console.log("点击传送")
                         //  点击寻路
                         sleep(1000);
-                        click(1202,678);
+                        // click(1202,678);
+                        click(430,574);
+                        sleep(1000);
+                        click(430,574);
+                        click(430,574);                        
                         sleep(38000);
                     }
                 }
@@ -1873,7 +1983,9 @@ function upLevel(){
                     }
                 }
             }
-            click(1197,625);  // 普攻一下
+            if (lv < 19 ) {
+                click(1197,625);  // 普攻一下
+            }
 
             sleep(5000);
             return 
@@ -2375,7 +2487,6 @@ function upLevel(){
                 ocrResults = getOcr(img,"ch");
                 imgRecycle(img)
                 if(ocrResults){
-                    sleep(2000) ;
                     for (let i = 0; i < 7; i++) {
                         sleep(2000);
                         // 天宫   1070,162   
