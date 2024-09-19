@@ -1040,10 +1040,18 @@ function closeX(reData){
     
     reai = select(reData, '龙神器')
     if (reai) {
-        click(1230,29)
+        click(1230,29);
         sleep(2000);
         return true
     }
+
+    reai = select(reData, '远征队')
+    if (reai) {
+        click(1230,29);
+        sleep(2000);
+        return true
+    }
+
     reai = select(reData, '接受委托')
     if (reai) {
         click(795,149)
@@ -1219,10 +1227,10 @@ function reward(reData) {
         sleep(2000);
         return true
     }
-    reai = selclick(reData, '领取奖励')
+    reai = selclick(reData, '完成成就获得')
     if (reai) {
         click(1206,103);
-        sleep(3000);
+        sleep(2000);
         click(1206,103);  // 点击画面
         sleep(1000);
         click(1230,29);  // 退出
@@ -1930,7 +1938,7 @@ function upLevel(){
                 click(1133,560);   // 觉醒键 
                 sleep(10000);  
             }
-            //  检查药回城 TODO
+            //  检查药回城
             if (lv > 20 ) {
                 if (hp == -13093322 || mp == -11776688) {
                     // 回城
@@ -1945,17 +1953,18 @@ function upLevel(){
                     if (reai) {
                         console.log("半兽古墓一 前往庆济")
                         // 前往庆济
-                        click(1128,572);
                         sleep(1000);
-                        click(1128,572);
-                        console.log("点击传送1")
+                        click(1128,572);   //点击庆济
+                        
                         sleep(1000);
-                        // click(1058,678);
-                        click(430,574);
-                        sleep(1000);
-                        click(430,574);
-                        click(430,574);
-                        sleep(13000);
+                        click(1058,678); // 点击瞬移  
+
+                        //  点击位置跑过去
+                        // click(430,574);
+                        // sleep(1000);
+                        // click(430,574);
+                        // click(430,574);
+                        sleep(10000);
                     }else{
                         console.log("前往庆济")
                         // 前往庆济
@@ -1974,18 +1983,23 @@ function upLevel(){
                     }
                 }
             }
-            reai = select(reData,"【精英】比奇城后巷")
-            if (reai) {
-                if (reai.box[0][1] < 114 ) {
-                    reai = select(reData,"12.救出可疑的")
-                    if (reai) {
-                        sleep(50000);
+
+            //  【精英】比奇城后巷 打怪中 长时间等待
+            if (lv >= 19) {
+                reai = select(reData,"【精英】比奇城后巷")
+                if (reai) {
+                    if (reai.box[0][1] < 114 ) {
+                        reai = select(reData,"12.救出可疑的")
+                        if (reai) {
+                            sleep(50000);
+                        }
                     }
                 }
             }
-            if (lv < 19 ) {
-                click(1197,625);  // 普攻一下
-            }
+
+            // if (lv < 19 ) {
+            //     click(1197,625);  // 普攻一下
+            // }
 
             sleep(5000);
             return 
@@ -2012,7 +2026,8 @@ function upLevel(){
                 return    
             }
         }
-        //  TODO  升级到30
+
+        //  升级到40  TODO 整理装备 领取奖励
         if (lv < 40 ) {
             //  查找 找救出可疑的女人
             reai = select(reData,"12.救出可疑的女人")
@@ -2039,7 +2054,7 @@ function upLevel(){
                     click(313,526); // 双击去  476,407
                     sleep(500);
                     click(313,526); // 双击去
-                    sleep(60000);
+                    sleep(73000);
                     // click(395,662);  // 打怪
                 }
                 return
@@ -2049,7 +2064,7 @@ function upLevel(){
 
         reai = select(reData,"击败双门帮")
         reai1 = select(reData,"击败老二")
-        if (reai || reai1) {
+        if (reai.box[0][0] > 700 || reai1.box[0][0] > 700) {
             img = captureScreen();
             var imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
             var code2 = isblue(imgtext2)
@@ -2057,7 +2072,7 @@ function upLevel(){
             imgRecycle(imgtext2)
             imgRecycle(img)
             if (code2) {
-                sleep(7000);
+                sleep(17000);
                 return 
             }else{
                 click(1187,218);
@@ -2078,7 +2093,18 @@ function upLevel(){
                     return
                 }
             }
-            sleep(5000);
+
+            if (lv >= 19) {
+                reai = select(reData,"绑架的背后")
+                if (reai) {
+                    reai = selclick(reData,"25.与京")
+                    if (reai) {
+                        sleep(1000);
+                        return
+                    }
+                }
+            }
+            sleep(2000);
         }else{
             reai = select(reData,"12.找救出可疑的女人")
             if (!reai) {
@@ -2090,7 +2116,7 @@ function upLevel(){
                     console.log(" . ");
                     code = click(1122.5,187);    
                     sleep(2000)
-                }    
+                }
             }
         }
 
@@ -2585,6 +2611,12 @@ function upLevel(){
                 return 
             }
 
+            reai = selclick(reData, '25.与')
+            if (reai) {
+                sleep(2000);
+                return 
+            }
+
             reai = selclick(reData, '品质2武器')
             if (reai) {
                 reai = selclick(reData, '跳过')
@@ -2623,7 +2655,6 @@ function upLevel(){
                             click(1194,234);  // 点击领取的任务
                             sleep(18000);
                             
-                            // todo 未测试
                             return
                         }
                     }
@@ -2684,22 +2715,10 @@ function upLevel(){
                         }
                     }
                 }
-                return
             }
-
             return
         }
 
-        // 半兽古墓
-        // reai = select(reData,"半兽古墓",true)
-        // if (reai) {
-        //     // 这里回去练级 练到30 TODO
-        //     if (lv < 30) {
-        //         // 练级
-
-        //     }
-        // }
-       
         //  跳过
         reai = select(reData,"跳过")
         if (reai) {
@@ -2717,7 +2736,7 @@ function upLevel(){
             return
         }
 
-        click(223 , 560) ; // 点击画面
+        // click(223 , 560) ; // 点击画面
     }
 }
 
