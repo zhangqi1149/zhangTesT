@@ -155,7 +155,7 @@ function init(){
 // 生成随机英文名  名字要求6-12 
 function getRandomName() {
     // 随机生成 2 到 5 之间的长度
-    var length = random(2, 6);
+    var length = random(2, 5);
     
     // 定义字符集，可以根据需要修改
     var characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -168,7 +168,7 @@ function getRandomName() {
     }
     
     // 加上前缀
-    var prefix = "MMOGA ";
+    var prefix = "MMOEXP ";
     var fullName = prefix + name;
     
     return fullName;
@@ -383,7 +383,7 @@ function wrong(reData){
 
     var Load = select(reData,"Loading")
     if (Load){
-        toast(" Load 界面 等待5秒")
+        // toast(" Load 界面 等待5秒")
         sleep(5000);
         return true
     }
@@ -764,6 +764,20 @@ function Loong(reData){
             sleep(1000);
             return true
         }
+        
+        //  服饰 
+        long = select(reData,"心仪的服饰")
+        if (long){ 
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
+        long = select(reData,"最近流行什么")
+        if (long){ 
+            selclick(reData,"跳过")
+            sleep(1000);
+            return true
+        }
 
 
     }
@@ -934,7 +948,7 @@ function Console(reData) {
         return true
     }
 
-    long = select(reData,"中型生命值")
+    long = select(reData,"中型生命值")  // TODO 限制位置
     if (long) {
         long = selclick(reData,"中型生命值")
         if (long) {
@@ -1001,12 +1015,19 @@ function closeNote(reData,src) {
 function closeX(reData){
     var reai = select(reData, '伪像切换')
     if (reai) {
-        toast("伪像切换")
+        // toast("伪像切换")
         click(1230,29);
         sleep(2000);
         return true
     }
-    var reai = select(reData, '大地图')
+    reai = select(reData, '大地图')
+    if (reai) {
+        click(1230,29);
+        sleep(2000);
+        return true
+    }
+
+    reai = select(reData, '奇缘')
     if (reai) {
         click(1230,29);
         sleep(2000);
@@ -1015,7 +1036,7 @@ function closeX(reData){
 
     reai = select(reData, '闭关修炼')
     if (reai) {
-        toast("闭关修炼")
+        // toast("闭关修炼")
         click(1230,29)
         sleep(2000);
         return true
@@ -1522,6 +1543,19 @@ function reward(reData) {
         return false
     }
 
+    // 背包里存在推荐装备
+    reai = selclick(reData, '背包里存在推荐装备')
+    if (reai) {
+        sleep(2000);
+        return true
+    }
+    reai = selclick(reData, '自动镶嵌')
+    if (reai) {
+        sleep(2000);
+        click(730,540);
+        return false
+    }
+    
     // 存在可提升的体质
     reai = selclick(reData, '存在可提升的体质')
     if (reai) {
@@ -1621,7 +1655,7 @@ function reward(reData) {
     closeNote(reData,"可执行奇缘")
     closeNote(reData,"可解除道具封印")
     closeNote(reData,"已扩充精灵出战")
-    closeNote(reData,"背包里存在推荐装备")
+    // closeNote(reData,"背包里存在推荐装备")
     closeNote(reData,"可学习新内功")
     closeNote(reData,"可以在村庄里使用私人仓库")
 
@@ -1650,7 +1684,7 @@ function create(reData) {
         if (reai) {
             selclick(reData,"确定")
             sleep(2000);
-            return
+            return true
         }
 
         // 打开了小键盘
@@ -1661,13 +1695,15 @@ function create(reData) {
             //  请输入名称
             input(getRandomName())
             sleep(500);
+            return true
         }
 
         //  请输入名称
         reai = select(reData,"请输入名称")
         if (reai) {
             selclick(reData, '请输入名称')
-            return
+            sleep(1000);
+            return true
         }
 
         reai = selclick(reData, '创建角色')
@@ -2064,20 +2100,22 @@ function upLevel(){
 
         reai = select(reData,"击败双门帮")
         reai1 = select(reData,"击败老二")
-        if (reai.box[0][0] > 700 || reai1.box[0][0] > 700) {
-            img = captureScreen();
-            var imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
-            var code2 = isblue(imgtext2)
-            console.log(code2)
-            imgRecycle(imgtext2)
-            imgRecycle(img)
-            if (code2) {
-                sleep(17000);
-                return 
-            }else{
-                click(1187,218);
-                sleep(15000);
-                return
+        if (reai || reai1) {
+            if ((reai && reai.box && reai.box[0][0]) || (reai1 && reai1.box && reai1.box[0][0])) {
+                img = captureScreen();
+                var imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
+                var code2 = isblue(imgtext2)
+                console.log(code2)
+                imgRecycle(imgtext2)
+                imgRecycle(img)
+                if (code2) {
+                    sleep(17000);
+                    return 
+                }else{
+                    click(1187,218);
+                    sleep(15000);
+                    return
+                }
             }
         }
 
@@ -2637,7 +2675,6 @@ function upLevel(){
             if (reai) {
                 reai = select(reData,"击败双");
                 if (!reai) {
-                    // 
                     img = captureScreen(); // 重新获取截图
                     reData = getOcr(img,"ch"); // 重新OCR
                     imgRecycle(img);
@@ -2736,7 +2773,11 @@ function upLevel(){
             return
         }
 
-        // click(223 , 560) ; // 点击画面
+        click(223 , 560) ; // 点击画面
+        sleep(50);
+        click(223 , 560) ; // 点击画面
+        sleep(50);
+        click(223 , 560) ; // 点击画面
     }
 }
 
