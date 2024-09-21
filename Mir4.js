@@ -1,30 +1,30 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.0.119:5000/ocr";
+const SERVER_URL = "http://192.168.0.119:5000/ocr";
 
-var Shout = "加我QQ 有好东西"
+const Shout = "加我QQ 有好东西"
 
-var  Save = false  // true   false 
+const  Save = false  // true   false 
 
-var width_screenshot = 1285
-var height_screenshot = 720
+const width_screenshot = 1285
+const height_screenshot = 720
 
-var storage = storages.create("ABC");
+const  storage = storages.create("ABC");
 
 // OCR请求
 function getOcr(img, lang) {
     try {
         // 将截图转换为Base64编码的PNG格式
-        var imgData = images.toBase64(img, "png");
+        let imgData = images.toBase64(img, "png");
 
         // 构造请求的 JSON 数据，添加 lang 字段
-        var jsonData = JSON.stringify({
+        let jsonData = JSON.stringify({
             image: imgData,
             lang: lang  ,// 动态设置语言
             save: Save // true   false 
         });
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        var response = http.postJson(SERVER_URL, jsonData, {
+        let response = http.postJson(SERVER_URL, jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -46,17 +46,17 @@ function getOcr(img, lang) {
 function getCl(img, x1,y1) {
     try {
         // 将截图转换为Base64编码的PNG格式
-        var imgData = images.toBase64(img, "png");
+        let imgData = images.toBase64(img, "png");
 
         // 构造请求的 JSON 数据，添加 lang 字段
-        var jsonData = JSON.stringify({
+        let jsonData = JSON.stringify({
             image: imgData,
             x: x1  , 
             y: y1  
         });
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        var response = http.postJson("http://192.168.0.119:5000/color", jsonData, {
+        let response = http.postJson("http://192.168.0.119:5000/color", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -79,16 +79,16 @@ function getCl(img, x1,y1) {
 function isblue(img) {
     try {
         // 将截图转换为Base64编码的PNG格式
-        var imgData = images.toBase64(img, "png");
+        let imgData = images.toBase64(img, "png");
 
         // 构造请求的 JSON 数据，添加 lang 字段
-        var jsonData = JSON.stringify({
+        let jsonData = JSON.stringify({
             image: imgData,
             save: Save // true   false 
         });
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        var response = http.postJson("http://192.168.0.119:5000/is_blue", jsonData, {
+        let response = http.postJson("http://192.168.0.119:5000/is_blue", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -113,7 +113,7 @@ function wait(str, time) {
     while (Date.now() - startTime < time) {
         // 尝试找到指定的内容
         let img = captureScreen();
-        var reData = getOcr(img,"ch");
+        let reData = getOcr(img,"ch");
         imgRecycle(img)
         if (reData) {
             let top = select(reData,str)
@@ -148,28 +148,28 @@ function init(){
         sleep(3000);
     }
     return false
-    // var grayscaleImage = images.grayscale(img);  // 灰度处理
-    // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
+    // let grayscaleImage = images.grayscale(img);  // 灰度处理
+    // let binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
 }
 
 // 生成随机英文名  名字要求6-12 
 function getRandomName() {
     // 随机生成 2 到 5 之间的长度
-    var length = random(2, 5);
+    let length = random(2, 5);
     
     // 定义字符集，可以根据需要修改
-    var characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var name = "";
+    let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let name = "";
 
     // 循环生成随机字符组成名字
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         var randomIndex = random(0, characters.length - 1);
         name += characters.charAt(randomIndex);
     }
     
     // 加上前缀
-    var prefix = "MMOEXP ";
-    var fullName = prefix + name;
+    let prefix = "MMOEXP ";
+    let fullName = prefix + name;
     
     return fullName;
 }
@@ -222,7 +222,7 @@ function textClick(target,num,num2){
 
 // 查找文本并点击
 function selclick(reData,src,num){
-    var target = select(reData, src,num)
+    let target = select(reData, src,num)
     if(target != null){
         // 计算文本区域的中心点
         let centerX = (target.box[0][0] + target.box[2][0]) / 2;
@@ -249,10 +249,10 @@ function selclick(reData,src,num){
 function cropImage(img, box) {
     // var grayscaleImage = images.grayscale(croppedImage);  // 灰度处理
     // var binaryImage = images.threshold(grayscaleImage, 128, 255, "BINARY");     // 二级化
-    var x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
-    var x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
-    var y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
-    var y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
+    let x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
+    let x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
+    let y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
+    let y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
 
     // 裁剪图像
     return images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
@@ -261,9 +261,9 @@ function cropImage(img, box) {
 // 区域裁剪 没有在用
 function clip(img, box) {
     try {
-        var croppedImage = cropImage(img, box);
+        let croppedImage = cropImage(img, box);
         // 进行 OCR 处理
-        var ocrResults = getOcr(croppedImage, "ch");
+        let ocrResults = getOcr(croppedImage, "ch");
         if (ocrResults && Array.isArray(ocrResults) && ocrResults.length > 0 && ocrResults[0].hasOwnProperty('text')) {
             // 确保 ocrResults[0] 存在并且包含 'text' 属性
             if (ocrResults[0].hasOwnProperty('text')) {
@@ -284,20 +284,20 @@ function clip(img, box) {
 // 区域裁剪
 function clip2(img, box) {
     // 获取裁剪区域的坐标
-    var x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
-    var x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
-    var y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
-    var y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
+    let x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
+    let x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
+    let y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
+    let y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
 
     // 裁剪图像
-    var croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
+    let croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
 
     return croppedImage
 }
 
 //  错误处理
 function wrong(reData){
-    var OUT = select(reData,"服务器连接断开")
+    let OUT = select(reData,"服务器连接断开")
     if (OUT){
         reai = selclick(reData, '前往登录')
         if (reai) {
@@ -948,51 +948,114 @@ function Console(reData) {
         return true
     }
 
-    long = select(reData,"中型生命值")  // TODO 限制位置
+    long = select(reData,"中型生命值")
     if (long) {
-        long = selclick(reData,"中型生命值")
-        if (long) {
-            // 点击 输入框
-            sleep(2000);
+       if (long.box[0][0] > 700) {
+            long = selclick(reData,"中型生命值")
+            if (long) {
+                // 点击 输入框
+                sleep(2000);
 
-            // 点击 + 号  702,395   +100 778,393
-            click(778,393);
-            sleep(1000);
-            click(778,393);
-            sleep(1000);
-            click(778,393);
-            sleep(1000);
-            click(778,393);
-            sleep(1000);
-            click(778,393);
-            sleep(1000);
-             
-            //  购买键
-            click(800,495);
-            sleep(2000);
-        }
+                // 点击 + 号  702,395   +100 778,393
+                click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                
+                //  购买键
+                click(800,495);
+                sleep(2000);
+            }
 
-        long = selclick(reData,"中型魔力恢复")
-        if (long) {
-            sleep(2000);
-            // 点击 输入框
-            click(853,390);
-            sleep(4000);
+            long = selclick(reData,"中型魔力恢复")
+            if (long) {
+                sleep(2000);
+                // 点击 输入框
+                click(853,390);
+                sleep(4000);
 
-            //  上限
-            click(775,489);
-            sleep(1000);
-            //  输入完毕
-            click(775,633);
+                //  上限
+                click(775,489);
+                sleep(1000);
+                //  输入完毕
+                click(775,633);
+                sleep(2000);
+                //  购买键
+                click(800,495);
+                sleep(2000);
+            }
+            click(1219,94); //  X
             sleep(2000);
-            //  购买键
-            click(800,495);
-            sleep(2000);
-        }
-        click(1219,94); //  X
-        sleep(2000);
-        return true
+            return true
+       }
     }
+
+    // // 做装备
+    // long = select(reData,"可制造")
+    // if (long) {
+    //     // 重新获取图
+    //     var img = captureScreen();
+    //     var white = images.pixel(img, 47, 688);   // -2236963 白色  可制造勾选
+
+    //     var arms = images.pixel(img, 258, 74);   // -2236963 橙色色  武器
+    //     var tops = images.pixel(img, 507, 74);   // -2236963 橙色色  衣服
+    //     var glove = images.pixel(img, 756, 74);  // -2236963 橙色色  手套
+    //     if (arms == -1935584 || tops  == -1935584 || glove == -1935584 ) {
+    //         var reData = getOcr(img,"ch");
+    //     }
+    //     imgRecycle(img)
+
+    //     if (reData) {
+    //         long = select(reData,"可交易道具使用警告")
+    //         if (long) {
+    //             //  点击不再提示 
+    //             selclick(reData,"不在提示")
+    //             sleep(1000);
+    //             selclick(reData,"确认")
+    //             sleep(1000);
+    //         }
+
+    //         // 点击勾选可制造
+    //         if (white != -2236963) {
+    //             click(101,683);
+    //             sleep(1000);
+    //         }
+    //         if (arms == -1935584) {
+    //             click(258, 74);
+    //             sleep(1000);
+    //         }
+    //         if (tops == -1935584) {
+    //             click(507, 74);
+    //             sleep(1000);
+    //         }
+    //         if (glove == -1935584) {
+    //             click(756, 74);
+    //             sleep(1000);
+    //         }
+
+    //         for (let i = 0; i < 10; i++) {
+    //             // 点击第一个装备
+    //             click(245,183);
+    //             sleep(1000);
+    //             click(671,469); // 强化装备点确认
+    //             sleep(1000);
+    //             click(1126,674); // 点击制造
+    //             sleep(1000);
+    //         }
+
+
+    //     }
+
+    // }
+
+
+
 
     return false
 }
@@ -1153,6 +1216,13 @@ function closeX(reData){
         return true
     }
 
+    reai = select(reData,"自动装备")
+    if (reai) {
+        click(732,538);
+        sleep(2000);
+        return true
+    }
+
     reai = select(reData,"中型生命")
     if (reai) {
         click(1219,94); //  X
@@ -1206,11 +1276,11 @@ function getlv(lvData){
 //  领取奖励
 function reward(reData) {
     // 领取邮箱
-    reai = select(reData, '一键删除')
+    let reai = select(reData, '一键删除')
     if (reai) {
-        var img = captureScreen();
+        let img = captureScreen();
         // 账号
-        var emil = images.pixel(img, 163, 75);
+        let emil = images.pixel(img, 163, 75);
         if (emil == -1935584) {
             click( 163, 75);
             sleep(2000);
@@ -1242,8 +1312,30 @@ function reward(reData) {
         return true
     }
 
+    // //  背包空间不足
+    // reai = selclick(reData, '背包空间不足')
+    // if (reai) {
+    //     // 处理物品    先售卖一件装备  然后去制造
+    //     sleep(2000);
+    //     //  点击出售
+    //     click(994,124);   // 点击出售
+    //     sleep(2000);
+    //     click(813,564); //  选择一件装备
+    //     sleep(1000);
+    //     click(1161,667); //  点击确定出售
+    //     sleep(1000);
+    //     click(732,455); //  点击确定出售弹窗
+    //     sleep(1000);
+
+    //     // 装备制造
+    //     click(697,672);   // 点击去制造
+    //     sleep(2000);
+    //     return true
+    // }
+    
+
     //  领取成就  
-    var reai = selclick(reData, '可领取成就奖励')
+    reai = selclick(reData, '可领取成就奖励')
     if (reai) {
         sleep(2000);
         return true
@@ -1259,7 +1351,7 @@ function reward(reData) {
         return true
     }
 
-    var reai = selclick(reData, '请领取每日课题奖励')
+    reai = selclick(reData, '请领取每日课题奖励')
     if (reai) {
         sleep(2000);
         return true
@@ -1317,8 +1409,8 @@ function reward(reData) {
     reai = select(reData, '出战效果')
     if (reai) {
         //  重新截图拿到最新的
-        var img = captureScreen();
-        var color = images.pixel(img, 939, 247);    // -1935584  橙色
+        let img = captureScreen();
+        let color = images.pixel(img, 939, 247);    // -1935584  橙色
         if (color == -1935584 ) {
             click(939, 247);
             // 点击召唤  
@@ -1385,8 +1477,8 @@ function reward(reData) {
     if (reai) {
         sleep(3000)
         //  重新截图拿到最新的
-        var img = captureScreen();
-        var color = images.pixel(img, 242, 259);   // -1935584  橙色
+        let img = captureScreen();
+        let color = images.pixel(img, 242, 259);   // -1935584  橙色
         if (color == -1935584 ) {
             
             //  点击石头  908, 191
@@ -1436,22 +1528,22 @@ function reward(reData) {
     if (reai) {
         sleep(3000)
         //  重新截图拿到最新的
-        var img = captureScreen();
+        let img = captureScreen();
         //  拿到最新的数据
-        var reData = getOcr(img,"ch");
+        let reData = getOcr(img,"ch");
         if (reData) {
-            var reai = selclick(reData, '学习',true) 
+            reai = selclick(reData, '学习',true) 
             if (reai) {
                 sleep(1000);
                 click(961,669);
                 sleep(1000);
             }
-            var reai = selclick(reData, '腐败') 
+            reai = selclick(reData, '腐败') 
             if (reai) {
                 click(961,669);
                 sleep(1000);
             }
-            var reai = selclick(reData, '暴血') 
+            reai = selclick(reData, '暴血') 
             if (reai) {
                 click(961,669);
                 sleep(1000);
@@ -1665,7 +1757,7 @@ function reward(reData) {
 //  创建角色
 function create(reData) {
     // 选择角色界面
-    reai = select(reData, '选择职业')
+    let reai = select(reData, '选择职业')
     if (reai) {
         // 选黑道士
         reai = selclick(reData, '黑道士')
@@ -1723,46 +1815,45 @@ function upLevel(){
         throw new Error("请求屏幕捕获权限失败");
     }
     // 截图
-    var img = captureScreen();
+    let img = captureScreen();
     if (!img) {
         console.log("截图失败");
         exit();
     }
 
     // 裁剪图像
-    var attImg = images.clip(img, 522,41,6,3); 
+    let attImg = images.clip(img, 522,41,6,3); 
     //  是否是在打怪
-    var clors = getCl(attImg,1,2)
+    let clors = getCl(attImg,1,2)
     imgRecycle(attImg)
 
     // 是否在自动寻路
-    var imgtext = clip2(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
+    let imgtext = clip2(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
     //  获取颜色
-    var code = isblue(imgtext)
+    let code = isblue(imgtext)
     imgRecycle(imgtext)
 
     // 裁剪等级
-    var croppedImage = images.clip(img, 25, 0, 55, 32);
-    var lvData = getOcr(croppedImage,"ch");
+    let croppedImage = images.clip(img, 25, 0, 55, 32);
+    let lvData = getOcr(croppedImage,"ch");
     imgRecycle(croppedImage);
     // 获取等级
     getlv(lvData)
 
     // 通知区域 橙色
-    var color = images.pixel(img, 1184, 17);
+    let color = images.pixel(img, 1184, 17);
 
     // 邮箱
-    var emil = images.pixel(img, 66, 94); 
+    let emil = images.pixel(img, 66, 94); 
     
-    var hp =  images.pixel(img, 459, 666); 
-    var mp =  images.pixel(img, 532, 667); 
-    var color1 = images.pixel(img, 459, 666);   // 判断是否是中红药
-    var color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
+    let hp =  images.pixel(img, 459, 666); 
+    let mp =  images.pixel(img, 532, 667); 
+    let color1 = images.pixel(img, 459, 666);   // 判断是否是中红药
+    let color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
     // console.log(`color1: ${color1}, color2 : ${color2}`)
 
-    // var Mount = images.pixel(img, 1234, 179); //坐骑  -1935583
     // 获取OCR
-    var reData = getOcr(img,"ch");
+    let reData = getOcr(img,"ch");
     imgRecycle(img)
     if (reData) {
         //  创建角色
@@ -1773,7 +1864,7 @@ function upLevel(){
         if (wrong(reData)) {return }
 
         // 进入游戏界面以前
-        var reai = select(reData, 'REA') 
+        let reai = select(reData, 'REA') 
         if(reai){
             // 进入游戏
             reai = selclick(reData, '点击')
@@ -1814,7 +1905,7 @@ function upLevel(){
             return
         }else{
             //  选择角色界面
-            var role = select(reData, '选择角色') 
+            let role = select(reData, '选择角色') 
             if(role){
                 // 开始游戏
                 reai = selclick(reData, '开始游戏')
@@ -1833,7 +1924,7 @@ function upLevel(){
         //  处理强化 制造 加点
         if (Console(reData)) {return }
 
-        var lv = storage.get("lv",0)
+        let lv = storage.get("lv",0)
         console.log(`人物当前等级: ${lv} `); // 当前等级  
         
         // 领取奖励
@@ -2103,9 +2194,8 @@ function upLevel(){
         if (reai || reai1) {
             if ((reai && reai.box && reai.box[0][0]) || (reai1 && reai1.box && reai1.box[0][0])) {
                 img = captureScreen();
-                var imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
-                var code2 = isblue(imgtext2)
-                console.log(code2)
+                let imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
+                let code2 = isblue(imgtext2)
                 imgRecycle(imgtext2)
                 imgRecycle(img)
                 if (code2) {
@@ -2147,7 +2237,7 @@ function upLevel(){
             reai = select(reData,"12.找救出可疑的女人")
             if (!reai) {
                 // 加入限定的条件 
-                reai3 = select(reData,"近距",true)
+                reai3 = select(reData,"和平",true)
                 reai4 = select(reData,"安全",true)
                 reai5 = select(reData,"普通",true)
                 if (reai3||reai4||reai5) {
@@ -2378,8 +2468,7 @@ function upLevel(){
                 swipe(273, 100, 273, 700, 1000); 
                 img = captureScreen();
                 reData = getOcr(img,"ch");
-                img.recycle(); // 手动释放内存
-                img = null;
+                imgRecycle(img)
                 if (reData) {
                     reai = selclick(reData, '暴血花')
                     if (reai) {
@@ -2392,8 +2481,7 @@ function upLevel(){
                 
                     img = captureScreen();
                     reData = getOcr(img,"ch");
-                    img.recycle(); // 手动释放内存
-                    img = null;
+                    imgRecycle(img)
                     reai = selclick(reData, '饿鬼')
                     if (reai) {
                         sleep(2000);
@@ -2802,15 +2890,15 @@ if (false) {
 
     
     // console.log("截图")
-    var img = captureScreen();
+    let img = captureScreen();
 
     // console.log("开始请求")
-    var reData = getOcr(img,"ch");
+    let reData = getOcr(img,"ch");
     
-    // emil = images.pixel(img, 163, 443);
+    // emil = images.pixel(img, 47, 688);   // -2236963 白色
     // console.log(emil)
 
-    // color = images.pixel(img, 1237, 247);   // -1935584  橙色
+    // color = images.pixel(img, 756, 74);   // -1935584  橙色
     // console.log(color)
     
 }
