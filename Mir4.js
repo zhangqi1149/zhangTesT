@@ -1,14 +1,14 @@
 // 设置服务器地址
-const SERVER_URL = "http://192.168.0.119:5000/ocr";
+var SERVER_URL = "http://192.168.0.119:5000/ocr";
 
-const Shout = "加我QQ 有好东西"
+var Shout = "加我QQ 有好东西"
 
-const  Save = false  // true   false 
+var  Save = false  // true   false 
 
-const width_screenshot = 1285
-const height_screenshot = 720
+var width_screenshot = 1285
+var height_screenshot = 720
 
-const  storage = storages.create("ABC");
+var  storage = storages.create("ABC");
 
 // OCR请求
 function getOcr(img, lang) {
@@ -17,11 +17,17 @@ function getOcr(img, lang) {
         let imgData = images.toBase64(img, "png");
 
         // 构造请求的 JSON 数据，添加 lang 字段
-        let jsonData = JSON.stringify({
+        // let jsonData = JSON.stringify({
+        //     image: imgData,
+        //     lang: lang  ,// 动态设置语言
+        //     save: Save // true   false 
+        // });
+
+        let jsonData = {
             image: imgData,
-            lang: lang  ,// 动态设置语言
-            save: Save // true   false 
-        });
+            lang: lang,
+            save: false
+        };
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
         let response = http.postJson(SERVER_URL, jsonData, {
@@ -49,11 +55,17 @@ function getCl(img, x1,y1) {
         let imgData = images.toBase64(img, "png");
 
         // 构造请求的 JSON 数据，添加 lang 字段
-        let jsonData = JSON.stringify({
+        // let jsonData = JSON.stringify({
+        //     image: imgData,
+        //     x: x1  , 
+        //     y: y1  
+        // });
+
+        let jsonData = {
             image: imgData,
-            x: x1  , 
+            x: x1, 
             y: y1  
-        });
+        };
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
         let response = http.postJson("http://192.168.0.119:5000/color", jsonData, {
@@ -82,11 +94,16 @@ function isblue(img) {
         let imgData = images.toBase64(img, "png");
 
         // 构造请求的 JSON 数据，添加 lang 字段
-        let jsonData = JSON.stringify({
+        // let jsonData = JSON.stringify({
+        //     image: imgData,
+        //     save: Save // true   false 
+        // });
+        
+        let jsonData = {
             image: imgData,
             save: Save // true   false 
-        });
-        
+        };
+
         // 发送 POST 请求，确保 Content-Type 为 application/json
         let response = http.postJson("http://192.168.0.119:5000/is_blue", jsonData, {
             headers: {
@@ -960,6 +977,14 @@ function Console(reData) {
                 click(778,393);
                 sleep(1000);
                 click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                click(778,393);
+                sleep(1000);
+                //  多买一点药
                 sleep(1000);
                 click(778,393);
                 sleep(1000);
@@ -1848,6 +1873,8 @@ function upLevel(){
     
     let hp =  images.pixel(img, 459, 666); 
     let mp =  images.pixel(img, 532, 667); 
+    // console.log(`hp: ${hp}, mp : ${mp}`)
+
     let color1 = images.pixel(img, 459, 666);   // 判断是否是中红药
     let color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
     // console.log(`color1: ${color1}, color2 : ${color2}`)
@@ -1937,14 +1964,17 @@ function upLevel(){
                 sleep(1000);
                 return
             }
-            // 领取邮箱
-            if (emil == -2133216) {
-                //  可以领取
-                click(55,105);
-                sleep(3000);
-                return
-            }
         }
+
+        // 领取邮箱
+        // if (lv > 20) {
+        //     if (emil == -2133216) {
+        //         //  可以领取
+        //         click(55,105);
+        //         sleep(3000);
+        //         return
+        //     }
+        // }
 
         // console.log("关闭所有的弹窗")
         // 关闭所有的弹窗
@@ -1961,7 +1991,7 @@ function upLevel(){
                     // 判断药剂是否还有
                     // var hp =  images.pixel(img, 459, 666); 
                     // var mp =  images.pixel(img, 532, 667); 
-                    if (hp == -13093322 || mp == -11776688) {
+                    if (hp == -13093322 || hp == -13093065 || hp == -13092809  || mp == -11776688 || mp == -11907760 ) {
                         console.log("没药剂了")
                         let buy = select(reData,"购买")
                         if (buy) {
@@ -1969,13 +1999,13 @@ function upLevel(){
                             return
                         } 
                         // 找恢复 向上
-                        let OUT = select(reData,"恢复药")
-                        if (OUT) {
-                            if (OUT.box[0][1] > 20){
-                                textClick(OUT,0,-45)
-                                return
-                            }
-                        }
+                        // let OUT = select(reData,"恢复药")
+                        // if (OUT) {
+                        //     if (OUT.box[0][1] > 20){
+                        //         textClick(OUT,0,-45)
+                        //         return
+                        //     }
+                        // }
                         //  点击地图 去买药的位置
                         reai = selclick(reData,"比奇城")
                         if (reai) {
@@ -2000,40 +2030,41 @@ function upLevel(){
                                 return
                             }
                         }
-                    }
-                    // 判断是否是大药 切换药
-                    // var color1 = images.pixel(img, 459, 666);   // 红药
-                    // var color2 = images.pixel(img, 529, 666);   // 蓝药
-                    if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 ) ) {
-                        console.log(" 没有大药 ")
-                        //  点击第三个药设置 
-                        click(610,661);
-                        sleep(2000);
-        
-                        // 两个药都去掉
-                        click(471,606);
-                        sleep(1000);
-                        click(541,606);
-                        sleep(1000);
-        
-                        //  点击第1个药剂 红
-                        click(891,415); 
-                        sleep(2000);
-                        click(891,415); 
-                        sleep(1000);
-                        click(476, 666); 
-                        sleep(3000);
-                        //  点击第2个药剂 蓝
-                        click(955,415); 
-                        sleep(2000);
-                        click(955,415); 
-                        sleep(1000);
-                        click(539, 666); 
-                        sleep(2000);
+                    }else{
+                        // 判断是否是大药 切换药
+                        // var color1 = images.pixel(img, 459, 666);   // 红药
+                        // var color2 = images.pixel(img, 529, 666);   // 蓝药
+                        if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 ) ) {
+                            console.log(" 没有大药 ")
+                            //  点击第三个药设置 
+                            click(610,661);
+                            sleep(2000);
+            
+                            // 两个药都去掉
+                            click(471,606);
+                            sleep(1000);
+                            click(541,606);
+                            sleep(1000);
+            
+                            //  点击第1个药剂 红
+                            click(891,415); 
+                            sleep(2000);
+                            click(891,415); 
+                            sleep(1000);
+                            click(476, 666); 
+                            sleep(3000);
+                            //  点击第2个药剂 蓝
+                            click(955,415); 
+                            sleep(2000);
+                            click(955,415); 
+                            sleep(1000);
+                            click(539, 666); 
+                            sleep(2000);
 
-                        click(1235,41) // 关闭
-                        sleep(2000);
-                        return  
+                            click(1235,41) // 关闭
+                            sleep(2000);
+                            return  
+                        }
                     }
                 }
             }
@@ -2047,11 +2078,12 @@ function upLevel(){
             if (lv == 14) {
                 OUT = select(reData,"芊菲的下落")
                 if (OUT) {
-                    OUT = select(reData,"1.")
+                    OUT = selclick(reData,"1.")
                     if (OUT) {
                         //  停止打怪
-                        click(395,662); 
+                        // click(395,662); 
                         sleep(5000);  
+                        return
                     }
                 }
             }
@@ -2118,6 +2150,7 @@ function upLevel(){
                     if (reai.box[0][1] < 114 ) {
                         reai = select(reData,"12.救出可疑的")
                         if (reai) {
+                            click(1197,625);  // 普攻一下
                             sleep(50000);
                         }
                     }
@@ -2145,7 +2178,7 @@ function upLevel(){
                     sleep(500)
                     click(330,445);
                     click(330,445);
-                    sleep(7000);
+                    sleep(13000);
                     click(395,662);  // 点击打怪
                     click(1195,630);
                     sleep(27000);
@@ -2214,7 +2247,7 @@ function upLevel(){
         if (code) {
             click(945,574); // 奔跑
             //  切换视角
-            reai = select(reData,"小传子")
+            reai = select(reData,"小传")
             if (reai) {
                 if (reai.box[0][0] < 600) {
                     swipe(721, 360, 10, 0, 1000);
@@ -2226,6 +2259,11 @@ function upLevel(){
                 reai = select(reData,"绑架的背后")
                 if (reai) {
                     reai = selclick(reData,"25.与京")
+                    if (reai) {
+                        sleep(1000);
+                        return
+                    }
+                    reai = selclick(reData,"26.")
                     if (reai) {
                         sleep(1000);
                         return
@@ -2816,7 +2854,7 @@ function upLevel(){
             }
             reai = select(reData, '22.完成击败')  // 陈秋风
             if (reai) {
-                reai = select(reData,"击败老二");
+                reai = select(reData,"老二陈");
                 if (!reai) {
                     selclick(reData, '22.完成击败')
                     sleep(4000);
@@ -2841,6 +2879,19 @@ function upLevel(){
                     }
                 }
             }
+
+            reai = selclick(reData, '28.前')
+            if (reai) {
+                sleep(2000);
+                return 
+            }
+
+            reai = selclick(reData, '29.前')
+            if (reai) {
+                sleep(5000);
+                return 
+            }
+
             return
         }
 

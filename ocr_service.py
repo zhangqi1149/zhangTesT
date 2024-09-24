@@ -1,11 +1,10 @@
 import gc
-import json
+from PIL import Image
 import os
 from datetime import datetime
 
 import cv2
 import numpy as np
-from PIL import Image
 from io import BytesIO
 
 from flask import Flask, request, jsonify
@@ -15,20 +14,23 @@ import base64
 app = Flask(__name__)
 
 # 初始化 OCR 对象
+# 使用轻量级模型来提升速度
 ocr = {
-    'ch': PaddleOCR(use_angle_cls=True, lang='ch'),
-    'en': PaddleOCR(use_angle_cls=True, lang='en')
+    'ch': PaddleOCR(use_angle_cls=False, lang='ch', det_model_dir='path_to_lite_det_model',
+                    rec_model_dir='path_to_lite_rec_model'),
+    'en': PaddleOCR(use_angle_cls=False, lang='en', det_model_dir='path_to_lite_det_model',
+                    rec_model_dir='path_to_lite_rec_model')
 }
+
 
 @app.route('/ocr', methods=['POST'])
 def ocr_service():
     try:
         # 确保接收到的内容是 JSON 格式的字典
-        data = request.get_json()  # 直接获取原始数据作为字符串
-        if not data:
+        # data_v = json.loads(request.get_json())  # 直接获取原始数据作为字符串
+        data_v = request.get_json()  # 直接获取原始数据作为字符串
+        if not data_v:
             return jsonify({"error": "Invalid JSON data"}), 400
-
-        data_v = json.loads(data)
 
         # 从字典中获取图像的 Base64 编码数据
         img_data = data_v.get("image")
@@ -62,7 +64,7 @@ def ocr_service():
         # ocr = PaddleOCR(use_angle_cls=True, lang=lang)
 
         # 执行 OCR 识别
-        result = ocr_instance.ocr(img, cls=True)
+        result = ocr_instance.ocr(img, cls=False)
 
         response = []
         if isinstance(result, list):
@@ -82,7 +84,7 @@ def ocr_service():
         # print("response: ", response)
         # 如果没有识别到任何字，则返回 null
         # 手动清理内存
-        del img_data, img, result, result_list, data, data_v
+        del img_data, img, result, result_list, data_v
         # 仅在这些变量已定义的情况下删除它们
         if 'line' in locals():
             del line
@@ -104,9 +106,9 @@ def ocr_service():
 def color_recognition():
     try:
         # 获取 JSON 数据
-        data = request.get_json()
-        data_v = json.loads(data)
-        if not data:
+        data_v = request.get_json()
+        # data_v = json.loads(data)
+        if not data_v:
             return jsonify({"error": "Invalid JSON data"}), 400
 
         # 从字典中获取图像的 Base64 编码数据
@@ -130,7 +132,7 @@ def color_recognition():
         hex_color = '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2])
 
         # 手动清理不再使用的变量
-        del img_data, img, image, color, data_v, data
+        del img_data, img, image, color, data_v
         gc.collect()  # 强制进行垃圾回收
 
         # 返回颜色的 RGB 值和 16 进制颜色代码
@@ -175,9 +177,9 @@ def is_image_mostly_blue(image):
 def color_is_blue():
     try:
         # 获取 JSON 数据
-        data = request.get_json()
-        data_v = json.loads(data)
-        if not data:
+        data_v = request.get_json()
+        # data_v = json.loads(data)
+        if not data_v:
             return jsonify({"error": "Invalid JSON data"}), 400
 
         # 从字典中获取图像的 Base64 编码数据
@@ -189,24 +191,24 @@ def color_is_blue():
         img = base64.b64decode(img_data)
         image = Image.open(BytesIO(img))
 
-        # # 从 JSON 数据中获取 "save" 字段
-        # save_file = data_v.get("save", False)
-        #
-        # # 如果 save 为 True，保存图片
-        # if save_file:
-        #     # 使用当前时间戳作为文件名
-        #     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        #     img_filename = os.path.join("image", f"{timestamp}.png")
-        #
-        #     # 将图像保存到 'image' 文件夹中
-        #     with open(img_filename, "wb") as f:
-        #         f.write(img)
+        # 从 JSON 数据中获取 "save" 字段
+        save_file = data_v.get("save", False)
+
+        # 如果 save 为 True，保存图片
+        if save_file:
+            # 使用当前时间戳作为文件名
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            img_filename = os.path.join("image", f"{timestamp}.png")
+
+            # 将图像保存到 'image' 文件夹中
+            with open(img_filename, "wb") as f:
+                f.write(img)
 
         # 判断图像是否大部分区域偏蓝
         mostly_blue = is_image_mostly_blue(image)
 
         # 清理 PIL Image 对象
-        del data, img, image, data_v, img_data
+        del img, image, data_v, img_data
         # gc.collect()  # 强制进行垃圾回收
 
         # print("是否大部分区域偏蓝", mostly_blue)
