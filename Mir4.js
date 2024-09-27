@@ -26,7 +26,7 @@ function getOcr(img, lang) {
         let jsonData = {
             image: imgData,
             lang: lang,
-            save: false
+            save: Save
         };
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
@@ -155,10 +155,11 @@ function init(){
     }
     let currentPkg = currentPackage();
     // 是否在游戏
-    if (currentPkg == "com.wemade.mir4global" || currentPkg =="android"){
+    if (currentPkg == "com.wemade.mir4global" || currentPkg =="android" || currentPkg =="com.android.xwkeyboard"){
         return true
     } else {
         toast("目前不在游戏")
+        console.log("当前界面: ",currentPkg);
         app.launch('com.wemade.mir4global')
         sleep(1000);
         app.launch('com.wemade.mir4global')
@@ -341,6 +342,20 @@ function wrong(reData){
             sleep(5000);
             return true
         }
+    }
+
+    //  todo
+    OUT = select(reData,"关闭节电模式")
+    if (OUT){
+        swipe(468, 491, 1000, 0, 500);
+        sleep(5000);
+        return true
+    }
+    OUT = select(reData,"节电模式中")
+    if (OUT){
+        click(644, 614);
+        sleep(5000);
+        return true
     }
     
     OUT = selclick(reData,"据点复活")
@@ -1338,25 +1353,36 @@ function reward(reData) {
     }
 
     // //  背包空间不足
-    // reai = selclick(reData, '背包空间不足')
-    // if (reai) {
-    //     // 处理物品    先售卖一件装备  然后去制造
-    //     sleep(2000);
-    //     //  点击出售
-    //     click(994,124);   // 点击出售
-    //     sleep(2000);
-    //     click(813,564); //  选择一件装备
-    //     sleep(1000);
-    //     click(1161,667); //  点击确定出售
-    //     sleep(1000);
-    //     click(732,455); //  点击确定出售弹窗
-    //     sleep(1000);
+    reai = selclick(reData, '背包空间不足')
+    if (reai) {
+        // 处理物品    先售卖一件装备  然后去制造
+        sleep(2000);
+        click(808,83);   // 点击装备
+        //  点击出售
+        click(994,669);   // 点击出售
+        sleep(2000);
+        click(813,564); //  选择一件装备
+        sleep(1000);
+        click(920,564); //  选择2件装备
+        sleep(1000);
+        click(999,564); //  选择2件装备
+        sleep(1000);
+        click(1097,564); //  选择2件装备
+        sleep(1000);
+        click(1189,564); //  选择2件装备
+        sleep(1000);
+        
+        click(1161,667); //  点击确定出售
+        sleep(1000);
+        click(754,471);    // 点击警告
+        click(732,455); //  点击确定出售弹窗
+        sleep(1000);
 
-    //     // 装备制造
-    //     click(697,672);   // 点击去制造
-    //     sleep(2000);
-    //     return true
-    // }
+        // 装备制造
+        // click(697,672);   // 点击去制造
+        sleep(2000);
+        return true
+    }
     
 
     //  领取成就  
@@ -1869,7 +1895,7 @@ function upLevel(){
     let color = images.pixel(img, 1184, 17);
 
     // 邮箱
-    let emil = images.pixel(img, 66, 94); 
+    // let emil = images.pixel(img, 66, 94); 
     
     let hp =  images.pixel(img, 459, 666); 
     let mp =  images.pixel(img, 532, 667); 
@@ -1991,7 +2017,7 @@ function upLevel(){
                     // 判断药剂是否还有
                     // var hp =  images.pixel(img, 459, 666); 
                     // var mp =  images.pixel(img, 532, 667); 
-                    if (hp == -13093322 || hp == -13093065 || hp == -13092809  || mp == -11776688 || mp == -11907760 ) {
+                    if (hp == -13093322 || hp == -13093065 || hp == -13092809  || mp == -11776688 || mp == -11907760 || mp == -11776432 || mp == -11776431 || mp == -11841968) {
                         console.log("没药剂了")
                         let buy = select(reData,"购买")
                         if (buy) {
@@ -2034,7 +2060,7 @@ function upLevel(){
                         // 判断是否是大药 切换药
                         // var color1 = images.pixel(img, 459, 666);   // 红药
                         // var color2 = images.pixel(img, 529, 666);   // 蓝药
-                        if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 ) ) {
+                        if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551) ) {
                             console.log(" 没有大药 ")
                             //  点击第三个药设置 
                             click(610,661);
@@ -2258,21 +2284,18 @@ function upLevel(){
             if (lv >= 19) {
                 reai = select(reData,"绑架的背后")
                 if (reai) {
-                    reai = selclick(reData,"25.与京")
+                    reai = select(reData,"肉婆婆")
                     if (reai) {
+                        click(1164, 172);
                         sleep(1000);
                         return
                     }
-                    reai = selclick(reData,"26.")
-                    if (reai) {
-                        sleep(1000);
-                        return
-                    }
+
                 }
             }
             sleep(2000);
         }else{
-            reai = select(reData,"12.找救出可疑的女人")
+            reai = select(reData,"可疑的女人")
             if (!reai) {
                 // 加入限定的条件 
                 reai3 = select(reData,"和平",true)

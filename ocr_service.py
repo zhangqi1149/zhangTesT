@@ -1,25 +1,28 @@
-import gc
-from PIL import Image
+import concurrent.futures
+from flask import Flask, request, jsonify
+import base64
 import os
 from datetime import datetime
-
-import cv2
-import numpy as np
+import gc
+from PIL import Image
 from io import BytesIO
-
-from flask import Flask, request, jsonify
+import numpy as np
+import cv2
 from paddleocr import PaddleOCR
-import base64
+from memory_profiler import profile
 
 app = Flask(__name__)
 
+# 创建线程池
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=30)
+
 # 初始化 OCR 对象
-# 使用轻量级模型来提升速度
+# 使用轻量级模型来提升速度  det_limit_side_len=640
 ocr = {
     'ch': PaddleOCR(use_angle_cls=False, lang='ch', det_model_dir='path_to_lite_det_model',
-                    rec_model_dir='path_to_lite_rec_model'),
+                    rec_model_dir='path_to_lite_rec_model', cpu_threads=12, draw_img_save_dir=None, rec_batch_num=4),
     'en': PaddleOCR(use_angle_cls=False, lang='en', det_model_dir='path_to_lite_det_model',
-                    rec_model_dir='path_to_lite_rec_model')
+                    rec_model_dir='path_to_lite_rec_model', draw_img_save_dir=None, rec_batch_num=4)
 }
 
 
@@ -33,7 +36,8 @@ def ocr_service():
             return jsonify({"error": "Invalid JSON data"}), 400
 
         # 从字典中获取图像的 Base64 编码数据
-        img_data = data_v.get("image")
+        # img_data = data_v.get("image")
+        img_data = base64.b64decode(data_v['image'])
         if not img_data:
             return jsonify({"error": "No image data provided"}), 400
 
@@ -64,7 +68,16 @@ def ocr_service():
         # ocr = PaddleOCR(use_angle_cls=True, lang=lang)
 
         # 执行 OCR 识别
-        result = ocr_instance.ocr(img, cls=False)
+        # result = ocr_instance.ocr(img, cls=False)
+
+        # 将图像数据转换为适合 OCR 的格式
+        img_array = cv2.imdecode(np.frombuffer(img_data, np.uint8), cv2.IMREAD_COLOR)
+        if img_array is None:
+            return jsonify({"error": "Image decoding failed"}), 400
+
+        # 使用线程池执行 OCR 识别
+        future = executor.submit(ocr_instance.ocr, img_array, cls=False)
+        result = future.result()
 
         response = []
         if isinstance(result, list):
@@ -84,7 +97,7 @@ def ocr_service():
         # print("response: ", response)
         # 如果没有识别到任何字，则返回 null
         # 手动清理内存
-        del img_data, img, result, result_list, data_v
+        del img_data, img, result, result_list, data_v, save_file
         # 仅在这些变量已定义的情况下删除它们
         if 'line' in locals():
             del line
@@ -132,7 +145,7 @@ def color_recognition():
         hex_color = '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2])
 
         # 手动清理不再使用的变量
-        del img_data, img, image, color, data_v
+        del img_data, img, image, color, data_v, x, y
         gc.collect()  # 强制进行垃圾回收
 
         # 返回颜色的 RGB 值和 16 进制颜色代码
@@ -205,7 +218,10 @@ def color_is_blue():
                 f.write(img)
 
         # 判断图像是否大部分区域偏蓝
-        mostly_blue = is_image_mostly_blue(image)
+        # mostly_blue = is_image_mostly_blue(image)
+        # 使用线程池执行偏蓝检测
+        future = executor.submit(is_image_mostly_blue, image)
+        mostly_blue = future.result()
 
         # 清理 PIL Image 对象
         del img, image, data_v, img_data
