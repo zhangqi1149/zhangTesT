@@ -1871,6 +1871,7 @@ function upLevel(){
         console.log("截图失败");
         exit();
     }
+    let grayscaleImage = images.grayscale(img);
 
     // 裁剪图像
     let attImg = images.clip(img, 522,41,6,3); 
@@ -1906,7 +1907,7 @@ function upLevel(){
     // console.log(`color1: ${color1}, color2 : ${color2}`)
 
     // 获取OCR
-    let reData = getOcr(img,"ch");
+    let reData = getOcr(grayscaleImage,"ch");
     imgRecycle(img)
     if (reData) {
         //  创建角色
