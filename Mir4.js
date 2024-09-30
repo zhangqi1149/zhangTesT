@@ -1714,7 +1714,6 @@ function reward(reData) {
             var img = captureScreen();
             //  法术   
             var color = images.pixel(img, 434, 557); 
-            console.log(color)
             //  命中 
             var color1 = images.pixel(img, 600, 489); 
             //  回避
