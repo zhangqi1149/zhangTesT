@@ -258,7 +258,7 @@ function selclick(reData,src,exactMatch){
         let x_phone = (centerX / 1285) * device.height;
         let y_phone = (centerY / 720) * device.width;
 
-        console.log(`点击${src}: x=${x_phone}, y=${y_phone}`);
+        console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
 
         // 点击坐标
         code = click(x_phone,y_phone);
@@ -431,9 +431,8 @@ function closeX(reData){
 
     // 活力补充
     if (checkAndClick(reData, '活力补充', 950, 164, 2000)) return true;
-    if (select(reData,"请点击")) {
-        if (checkAndClick(reData, '角色', 1196, 52, 2000)) return true;
-    }
+    if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
+
     if (select(reData,"输入数字") &&  selclick(reData,"取消") ) {
         sleep(2000);
         return true
@@ -810,7 +809,7 @@ function Console(reData) {
         // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
         // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
         // [[730.0, 159.0], [853.0, 159.0], [853.0, 177.0], [730.0, 177.0]]
-        if ( (item > 727.0 && item < 731.0 )|| item2 == 156.0) {
+        if ( (item >= 727.0 && item < 731.0 )|| item2 == 156.0) {
             click(945,109);  // 角色
             sleep(2000);
             click(939,222);  // 铁匠
@@ -849,15 +848,14 @@ function Console(reData) {
             return true
         }
 
-        if (selclick(reData, '制造',true)) {
+        if (select(reData,"制造工坊") && selclick(reData, '制造',true)) {
             sleep(1000);
             return true
         }
         // [[205.0, 70.0], [300.0, 70.0], [300.0, 93.0], [205.0, 93.0]] 坐骑
-        if ((item > 203.0 && item < 207.0) && select(reData, '可佩戴')) {
+        if (select(reData, '可佩戴') && (item > 203.0 && item < 207.0)) {
             sleep(1000);
-            click(444,30); // 坐骑
-            sleep(2000);
+            clickWithDelay(444,30,2000); // 坐骑
             return true
         }
         // [[213.0, 422.0], [306.0, 421.0], [307.0, 441.0], [213.0, 442.0]] 装备的高级选项提示位置
@@ -904,7 +902,9 @@ function Console(reData) {
         //     sleep(1000);
         //     return true
         // }
-        if (selectTow(reData, '精灵')) {
+        // console.log("精灵")
+        if (clickTow(reData, '精灵')) {
+            // clickWithDelay(940,200,1000);
             sleep(1000);
             return true
         }
@@ -963,6 +963,7 @@ function Console(reData) {
                 clickWithDelay(778, 393, 1000);
                 clickWithDelay(778, 393, 1000);
                 clickWithDelay(778, 393, 1000);
+                let lv = storage.get("lv",0)
                 if (lv < 30 &&  lv > 21 ) {
                     clickWithDelay(778, 393, 1000);
                     clickWithDelay(778, 393, 1000);
@@ -1202,10 +1203,10 @@ function reward(reData) {
         if (getOcr(img,"ch")) {
             if (selclick(reData, '学习',true) ) {
                 sleep(1000);
-                clickWithDelay(961,669,1000);
+                // clickWithDelay(961,669,1000);
             }
             if (selclick(reData, '腐败') ) {
-                clickWithDelay(961,669,1000);
+                sleep(1000);
             }
             if (selclick(reData, '鬼火') ) {
                 clickWithDelay(961,669,1000);
@@ -1900,9 +1901,16 @@ function upLevel(){
             //  这个背景是蓝色的 导致识别不正确
             if (select(reData, '击败跑来')) {
                 if (clors != -13553096) { 
-                    selclick(reData, '击败跑来')
-                    return  sleep(3000);
+                    // selclick(reData, '击败跑来')
+                    clickWithDelay(1197,625,3000);
+                    return
                 }  
+            }
+            if (selclick(reData,"与陈生")){
+                sleep(2000);
+            }
+            if (selclick(reData,"17.前往")){
+                sleep(2000);
             }
             return
         }
@@ -2120,7 +2128,7 @@ function main(){
 }
 
 // for (let i = 0; i < 1000; i++) {
-    console.log("$$$$$$$$$$$$$$  执行开始!")
+    // console.log("$$$$$$$$$$$$$$  执行开始!")
     main()
     console.log("##############  执行完成")
 // }
