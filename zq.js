@@ -1,6 +1,8 @@
 //
 var SERVER_URL = "http://192.168.0.119:5000";
-var Shout = "加我QQ 有好东西"
+var text = "加我QQ 有好东西" ;
+var interval = 720000 ;    // 12分钟 720000毫秒  *60000
+
 var  Save = false  // true   false 
 
 // var width_screenshot = 1285
@@ -438,6 +440,10 @@ function closeX(reData){
         return true
     }
     if (checkAndClick(reData, '自动装备', 732,538, 2000)) return true;
+    
+    if (select(reData,"选择购买数量") && selclick(reData,"取消")) {
+        sleep(1000);
+    }
 
     let long = select(reData,"中型生命")
     if (long) {
@@ -787,6 +793,7 @@ function Console(reData) {
         let item = menuItem.box[0][0]
         let item2 = menuItem.box[1][1]
         console.log(`请点击菜单按键: ${item}`)
+        console.log(`请点击菜单按键: ${item2}`)
         // [816.0, 269.0], [943.0, 267.0], [944.0, 291.0], [817.0, 293.0] 制造菜单提示位置
         if (item == 816.0 || item == 815.0 || item == 814.0) {
             click(1028,216);  // 制造工坊
@@ -809,7 +816,7 @@ function Console(reData) {
         // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
         // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
         // [[730.0, 159.0], [853.0, 159.0], [853.0, 177.0], [730.0, 177.0]]
-        if ( (item >= 727.0 && item < 731.0 )|| item2 == 156.0) {
+        if ( (item > 727.0 && item < 731.0 )|| item2 == 156.0) {
             click(945,109);  // 角色
             sleep(2000);
             click(939,222);  // 铁匠
@@ -817,7 +824,7 @@ function Console(reData) {
         }
 
         // [[725.0, 381.0], [855.0, 380.0], [855.0, 404.0], [726.0, 405.0]]  //任务提示按键
-        if (item2 > 380.0) {
+        if (item2 > 380.0) {  // TODO 任务提示需要item2
             selclick(reData, '跳过')
             return true
         }
@@ -847,8 +854,18 @@ function Console(reData) {
             sleep(2000);
             return true
         }
+        if (selclick(reData, '高级',true)) {
+            sleep(1000);
+            return true
+        }
+        if (select(reData,"强化")) {
+            selclick(reData, '跳过')
+            sleep(2000);
+            return true
+        }
 
-        if (select(reData,"制造工坊") && selclick(reData, '制造',true)) {
+        if (select(reData,"制造工坊")) {
+            selclick(reData, '制造',true)
             sleep(1000);
             return true
         }
@@ -866,10 +883,7 @@ function Console(reData) {
         //     sleep(1000);
         //     return true
         // }
-        if (selclick(reData, '高级',true)) {
-            sleep(1000);
-            return true
-        }
+
 
         // [[843.0, 236.0], [938.0, 236.0], [938.0, 258.0], [843.0, 258.0]] 辅助装备提示位置
         // [[842.0, 234.0], [937.0, 234.0], [937.0, 257.0], [842.0, 257.0]
@@ -975,6 +989,9 @@ function Console(reData) {
             }
             if (selclick(reData,"中型魔力恢复")) {
                 for (let i = 0; i < 2; i++) {
+                    if (i == 1) {
+                        selclick(reData,"中型魔力恢复")
+                    }
                     sleep(2000);
                     clickWithDelay(853, 390, 4000); // 点击 输入框
                     clickWithDelay(775, 489, 1000); //  上限
@@ -1360,7 +1377,7 @@ function create(reData) {
     // 捏脸界面
     if (select(reData,"自定义")) {
         //  禁用语或者低俗
-        if (select(reData,"请重新")) {
+        if (select(reData,"禁用语")) {
             selclick(reData,"确定");
             sleep(2000);
             return true
@@ -1385,6 +1402,13 @@ function create(reData) {
         return true
     }
     return false
+}
+
+//  喊话   喊话内容 test  喊话间隔 interval   or 服务器拉取
+function Shout() {
+    // 输入
+    // 打开输入法
+    // 打开对话框
 }
 
 //  升级
@@ -1506,6 +1530,13 @@ function upLevel(){
         // console.log("关闭所有的弹窗")
         if (closeX(reData)) {return } // 关闭所有的弹窗
 
+        //  喊话 
+        if (lv >= 40) {
+            // Shout()
+            return 
+        }
+
+
         if (clors == -13553096) {  // 是否在打怪
             console.log("在打怪");
             // 处理取消打怪升级
@@ -1533,20 +1564,17 @@ function upLevel(){
                     if (select(reData,"半兽古墓1")) {
                         console.log("半兽古墓一 前往庆济")
                         // 前往庆济
-                        click(1128,572);
-                        sleep(1000);
-                        click(1128,572);
+                        clickWithDelay(1128,572,1000);
+                        clickWithDelay(1128,572,1000);
                         // console.log("点击传送1")
-                        sleep(1000);
                         click(1058,678);
                         sleep(13000);
                     }else{
                         console.log("前往庆济")
                         // 前往庆济
-                        clickWithDelay(1128,572,2000);
-                        clickWithDelay(1128,572,1000);
-                        //  点击寻路
-                        clickWithDelay(1202,678,38000);
+                        clickWithDelay(430,574,1000);
+                        clickWithDelay(430,574,100);
+                        clickWithDelay(430,574,40000);
                     }
                     return
                 }
@@ -1587,33 +1615,34 @@ function upLevel(){
                             //  点击寻路
                             // click(1202,678);
                             clickWithDelay(430,574,1000);
-                            click(430,574);
-                            sleep(100);
+                            clickWithDelay(430,574,100);
                             clickWithDelay(430,574,10000);
                             return wait("购买",200000)
                         }
                     }else{
-                        // 判断是否是大药 切换药
-                        if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551) ) {
-                            console.log(" 没有大药 ")
-                            //  点击第三个药设置 
-                            clickWithDelay(610,661,3000);
-            
-                            // 两个药都去掉
-                            clickWithDelay(471,606,500);
-                            clickWithDelay(541,606,500);
-            
-                            //  点击第1个药剂 红
-                            clickWithDelay(891,415,2000); 
-                            clickWithDelay(891,415,1000); 
-                            clickWithDelay(476,666,3000); 
-                            //  点击第2个药剂 蓝
-                            clickWithDelay(955,415,2000); 
-                            clickWithDelay(955,415,1000); 
-                            clickWithDelay(539,666,1000); 
+                        if (lv <= 18) {
+                            // 判断是否是大药 切换药
+                            if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551) ) {
+                                console.log(" 没有大药 ")
+                                //  点击第三个药设置 
+                                clickWithDelay(610,661,3000);
+                
+                                // 两个药都去掉
+                                clickWithDelay(471,606,500);
+                                clickWithDelay(541,606,500);
+                
+                                //  点击第1个药剂 红
+                                clickWithDelay(891,415,2000); 
+                                clickWithDelay(891,415,1000); 
+                                clickWithDelay(476,666,3000); 
+                                //  点击第2个药剂 蓝
+                                clickWithDelay(955,415,2000); 
+                                clickWithDelay(955,415,1000); 
+                                clickWithDelay(539,666,1000); 
 
-                            clickWithDelay(1235,41,2000); // 关闭
-                            return  
+                                clickWithDelay(1235,41,2000); // 关闭
+                                return  
+                            }
                         }
                     }
                 }
@@ -1996,6 +2025,9 @@ function upLevel(){
             if (select(reData, '请点击全部')) {
                 return selclick(reData, '跳过');
             }
+            if (select(reData, '与可疑之人交易')) {
+                return swipe(721, 360, 10, 0, 1000);
+            }
             if (select(reData, '21.强化装备')) {
                 sleep(3000)
                 clickWithDelay(809,200,1000); //  选武器 
@@ -2095,6 +2127,11 @@ function upLevel(){
             }
             if (selclick(reData, '29.前')) {
                 return sleep(5000);
+            }
+            if (!code) {
+                if (selclick(reData, '传子对话')) {
+                    return  sleep(2000);
+                }
             }
             return
         }
