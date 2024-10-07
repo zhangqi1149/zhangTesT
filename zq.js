@@ -1,7 +1,8 @@
 //
 var SERVER_URL = "http://192.168.0.119:5000";
-var text = "加我QQ 有好东西" ;
-var interval = 720000 ;    // 12分钟 720000毫秒  *60000
+// var text = "40级了 打不过怪该怎么玩啊" ;
+var text = "At level 40, I can't defeat monsters. How should I play" ;
+var interval = 60000 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
 
@@ -1405,10 +1406,34 @@ function create(reData) {
 }
 
 //  喊话   喊话内容 test  喊话间隔 interval   or 服务器拉取
-function Shout() {
-    // 输入
+function Shout(reData) {
+    // 输出
+    if (select(reData,"换行")) {
+        sleep(2000);
+        input(text);
+        sleep(2000);
+        selclick(reData,"换行")
+        sleep(interval);
+        return true
+    }
+
     // 打开输入法
+    if (selclick(reData,"请输入内容")) {
+        sleep(3000);
+        return true
+    }
+    
+    // 点击全部
+    if (selclick(reData,"全部")) {
+        sleep(3000);
+        return true
+    }
+
     // 打开对话框
+    if (select(reData,"卡组变更")) {
+        clickWithDelay(53,497,3000);
+        return true
+    }
 }
 
 //  升级
@@ -1532,8 +1557,8 @@ function upLevel(){
 
         //  喊话 
         if (lv >= 40) {
-            // Shout()
-            return 
+            Shout(reData);
+            return sleep(interval); // 喊话间隔
         }
 
 
@@ -2176,14 +2201,8 @@ if (false) {
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
     }
-
-    // 强制横屏
-
-
     // console.log("截图")
     let img = captureScreen();
-
-
     let grayscaleImage = images.grayscale(img);
 
     // console.log("开始请求")
@@ -2191,6 +2210,6 @@ if (false) {
 
     // let hp =  images.pixel(img, 522,41);   // -13553096
     // console.log(hp)
-
+    
 }
 
