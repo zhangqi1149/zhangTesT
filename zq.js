@@ -520,6 +520,11 @@ function wrong(reData) {
         sleep(5000);
         return true;
     }
+    // Loading 界面
+    if (select(reData, "购买",true)) {
+        click(1219,93);
+        return true;
+    }
 
     if (select(reData,"关闭节电模式")){
         swipe(468, 491, 1000, 0, 500);
@@ -607,14 +612,17 @@ function Loong(reData){
     }
     // ----   操作类的
     //  设置药剂 和 技能频率
-    if (select(reData,"尝试上下" )){
-        selclick(reData,"跳过")
+    if (selclick(reData,"尝试上下" )){
+        // selclick(reData,"跳过")
         return true;
     }
     if (select(reData,"各种自动")){
         clickWithDelay(668,659,3000);
 
-        click(1195,595);  // 技能释放频率
+        clickWithDelay(1195,595,500);  // 技能释放频率
+        clickWithDelay(1195,595,500);  // 技能释放频率
+        clickWithDelay(1195,595,500);  // 技能释放频率
+        clickWithDelay(1195,595,700);  // 技能释放频率
         clickWithDelay(1195,595,700);  // 技能释放频率
         // click(1195,441);  // 战斗自动锁定
         // click(1195,367);  // 复活时自动返回
@@ -628,7 +636,9 @@ function Loong(reData){
     if (select(reData,"使用频率")){
         clickWithDelay(668,659,3000);
 
-        click(1195,595);  // 技能释放频率
+        clickWithDelay(1195,595,500);  // 技能释放频率
+        clickWithDelay(1195,595,500);  // 技能释放频率
+        clickWithDelay(1195,595,500);  // 技能释放频率
         clickWithDelay(1195,595,700);  // 技能释放频率
         // click(1195,441);  // 战斗自动锁定
         // click(1195,367);  // 复活时自动返回
@@ -990,16 +1000,16 @@ function Console(reData) {
                 clickWithDelay(800, 495, 2000); // 购买
             }
             if (selclick(reData,"中型魔力恢复")) {
-                for (let i = 0; i < 2; i++) {
-                    if (i == 1) {
-                        selclick(reData,"中型魔力恢复")
-                    }
+                // for (let i = 0; i < 2; i++) {
+                //     if (i == 1) {
+                //         selclick(reData,"中型魔力恢复")
+                //     }
                     sleep(2000);
                     clickWithDelay(853, 390, 4000); // 点击 输入框
                     clickWithDelay(775, 489, 1000); //  上限
                     clickWithDelay(775, 633, 2000); //  输入完毕
                     clickWithDelay(800, 495, 2000); //  购买键
-                }
+                // }
             }
             clickWithDelay(1219,94,2000); //  X
             return true
@@ -1177,26 +1187,24 @@ function reward(reData) {
         return true
     }
     if (select(reData, '合成魔石')) {
-        sleep(2000);
+        sleep(1000);
         //  重新截图拿到最新的
         let img = captureScreen();
         if (images.pixel(img, 242, 259) == -1935584 ) {
-            sleep(2000);
+            sleep(1000);
             //  点击石头  908, 191
-            clickWithDelay(911,191,500);
             clickWithDelay(911,191,1000);
             //  装备 1150,674
-            clickWithDelay(1150,674,1000);
+            clickWithDelay(1150,674,500);
             //  槽 224, 284
             clickWithDelay(224,284,1000);
         }
 
         if (images.pixel(img, 217, 357) == -1935584 ) {
-            sleep(2000);
             //  点击石头  1000, 191
             clickWithDelay(1000,191,1000);
             //  装备 1150,674
-            clickWithDelay(1150,674,1000);
+            clickWithDelay(1150,674,500);
             //  槽 193, 382
             clickWithDelay(193,382,1000);
         }
@@ -1439,9 +1447,9 @@ function Shout(reData) {
 
 //  升级
 function upLevel(){
-    // if (!requestScreenCapture(true)) {
-    //     throw new Error("请求屏幕捕获权限失败");
-    // }
+    if (!requestScreenCapture(true)) {
+        throw new Error("请求屏幕捕获权限失败");
+    }
     // console.log("开始截图")
     let img = captureScreen();      // 截图
     // console.log("完成截图")
@@ -1528,7 +1536,6 @@ function upLevel(){
                 }
             }
         }
-        // console.log("处理异常弹窗")
         if (wrong(reData)) {return } //  处理异常弹窗
         if (create(reData)) {return } //  创建角色
         // console.log("处理小青龙")
@@ -1646,7 +1653,7 @@ function upLevel(){
                             return wait("购买",200000)
                         }
                     }else{
-                        if (lv <= 18) {
+                        if (lv <= 19) {
                             // 判断是否是大药 切换药
                             if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551) ) {
                                 console.log(" 没有大药 ")
@@ -2190,10 +2197,10 @@ function main(){
     }
 }
 
-// for (let i = 0; i < 1000; i++) {
+// for (let i = 0; i < 10; i++) {
     // console.log("$$$$$$$$$$$$$$  执行开始!")
     main()
-    console.log("##############  执行完成")
+    // console.log("##############  执行完成")
 // }
 
 

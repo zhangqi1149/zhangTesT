@@ -1242,7 +1242,7 @@ function closeX(reData){
         return true
     }
 
-    reai = select(reData,"角色")
+    reai = select(reData,"角色",true)
     if (reai) {
         click(1196,52);
         sleep(2000);
