@@ -10,14 +10,34 @@
  * @param {*} value    要设置的属性值 
  */
 function SetProp(key,value) {
-    // let res = http.get("http://127.0.0.1:8848/setprop?key="+key+"&value="+value);    // 查看文件
-    // if(res.statusCode != 200){
-    //     toast("请求失败: " + res.statusCode + " " + res.statusMessage);
-    // }else{
-    //     console.log(res.body.string())
-    // }
+    let res = http.get("http://127.0.0.1:8848/setprop?key="+key+"&value="+value);    // 查看文件
+    if(res.statusCode != 200){
+        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+    }else{
+        // console.log(res.body.string())
+        console.log(`key :[${key}]   value : ${value}`)
+    }
+}
 
-    console.log(`key :[${key}]   value : ${value}`)
+function SetProp2(key,value) {
+    let res = http.get("http://127.0.0.1:8848/setprop?key="+key+"&value="+value);    // 查看文件
+    if(res.statusCode != 200){
+        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+    }else{
+        console.log(res.body.string())
+    }
+
+    // console.log(`key :[${key}]   value : ${value}`)
+}
+function SetCom() {
+    let res = http.get("http://127.0.0.1:8848/execute?cmd=reboot");    // 查看文件
+    if(res.statusCode != 200){
+        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+    }else{
+        console.log(res.body.string())
+    }
+
+    // console.log(`key :[${key}]   value : ${value}`)
 }
 
 //  生成MAC地址
@@ -77,7 +97,7 @@ function createRandomUnicastAddress(base, random) {
 /**随机生成MAC 并隐藏WIFI信息
  * 
  */
-function SetWifiinfo() {
+function SetWifi() {
     //  生成MAC地址   TODO 数据要保存
     let MACA = createRandomUnicastAddress(null, () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
     SetProp("MacAddress", MACA)
@@ -483,6 +503,10 @@ let devices = {
  * 
  */ 
 function SetBuild() {
+
+    // android_id  **   d3822eacc81ddf37
+    SetProp("persist.android_id",generateAndroidId())
+    
     // 固化设备版本信息
     let Btags ="release-keys"
     let VersionRelease = "14" // 安卓版本
@@ -535,7 +559,7 @@ function SetBuild() {
     SetProp("persist.ro.product.model",Bmodel)
 
     //  内部代号   sagit
-    SetProp("ro.build.product",Bproduct)
+    SetProp("persist.ro.build.product",Bproduct)
 
     //  主系统级芯片   MSM8998
     SetProp("persist.ro.soc.model",SOC_MODEL);
@@ -571,9 +595,6 @@ function SetBuild() {
     let Bincremental = `eng.${Buser}.${time}.${Math.floor(Math.random() * 100000)}`
     SetProp("persist.ro.build.version.incremental",Bincremental)
 
-    // android_id  **   d3822eacc81ddf37
-    SetProp("persist.android_id",generateAndroidId())
-
 
     //  硬件序列号   e8657075	
     let serl = generateSerialNumber()
@@ -603,6 +624,7 @@ function SetBuild() {
     //  需要保存数据 TODO 
 
     // 动态修改之后必须重启设备!    TODO
+    SetCom()
 
 }
 
@@ -676,8 +698,8 @@ let carriers = {
     us: [ //美国
         {
             name: "Verizon",
-            MCC: 310,
-            MNC: 12,
+            MCC: "310",
+            MNC: "12",
             isoCountryCode: "us",
             carrierId: "310012",
             carrierName: "Verizon Wireless",
@@ -686,8 +708,8 @@ let carriers = {
         },
         {
             name: "AT&T",
-            MCC: 310,
-            MNC: 410,
+            MCC: "310",
+            MNC: "410",
             isoCountryCode: "us",
             carrierId: "310410",
             carrierName: "AT&T",
@@ -696,8 +718,8 @@ let carriers = {
         },
         {
             name: "T-Mobile",
-            MCC: 310,
-            MNC: 260,
+            MCC: "310",
+            MNC: "260",
             isoCountryCode: "us",
             carrierId: "310260",
             carrierName: "T-Mobile USA",
@@ -708,8 +730,8 @@ let carriers = {
     gb: [ // 英国
         {
             name: "EE",
-            MCC: 234,
-            MNC: 30,
+            MCC: "234",
+            MNC: "30",
             isoCountryCode: "gb",
             carrierId: "23430",
             carrierName: "EE",
@@ -718,8 +740,8 @@ let carriers = {
         },
         {
             name: "Vodafone UK",
-            MCC: 234,
-            MNC: 15,
+            MCC: "234",
+            MNC: "15",
             isoCountryCode: "gb",
             carrierId: "23415",
             carrierName: "Vodafone",
@@ -728,8 +750,8 @@ let carriers = {
         },
         {
             name: "O2",
-            MCC: 234,
-            MNC: 10,
+            MCC: "234",
+            MNC: "10",
             isoCountryCode: "gb",
             carrierId: "23410",
             carrierName: "O2",
@@ -738,13 +760,45 @@ let carriers = {
         },
         {
             name: "Three UK",
-            MCC: 234,
-            MNC: 20,
+            MCC: "234",
+            MNC: "20",
             isoCountryCode: "gb",
             carrierId: "23420",
             carrierName: "Three",
             numberPrefix: ["7814", "7914"], // Three 号段
             domain: "three.co.uk"
+        }
+    ],
+    cn: [ // 中国
+        {
+            // name: "中国移动",
+            name: "China Mobile",
+            MCC: `460`,
+            MNC: `07`,
+            isoCountryCode: "cn",
+            carrierId: "46007",
+            numberPrefix: ["134", "135", "136", "137", "138", "139", "150", "151", "152", "157", "158", "159"], // 中国移动号段
+            domain: "chinamobileltd.com"
+        },
+        {
+            // name: "中国联通",
+            name: "China Unicom",
+            MCC: "460",
+            MNC: "06",
+            isoCountryCode: "cn",
+            carrierId: "46006",
+            numberPrefix: ["130", "131", "132", "155", "156"], // 中国联通号段
+            domain: "chinaunicom.com"
+        },
+        {
+            // name: "中国电信",
+            name: "China Telecom",
+            MCC: "460",
+            MNC: "05",
+            isoCountryCode: "cn",
+            carrierId: "46005",
+            numberPrefix: ["133", "153", "180", "181", "189"], // 中国电信号段
+            domain: "chinatelecom.com.cn"
         }
     ]
 };
@@ -754,12 +808,16 @@ let carriers = {
 function getCarrierInfoByPhoneNumber(phoneNumber) {
     // 识别国家代码
     let countryCode = phoneNumber.startsWith("+") ? phoneNumber.split(" ")[0] : "";
+
+    // console.log(countryCode)
     
     let numberWithoutCode = phoneNumber.replace(countryCode, "").replace(/[\s-]/g, "");
     
     // 根据国家代码提取正确长度的号段
     let prefixLength = countryCode === "+44" ? 4 : 3; // 英国号段4位，美国3位
     let numberPrefix = numberWithoutCode.slice(0, prefixLength); // 提取号段
+
+    // console.log(numberPrefix)
 
     // 防止 undefined 问题，先检查是否存在 numberPrefix
     if (countryCode === "+1") {
@@ -770,7 +828,10 @@ function getCarrierInfoByPhoneNumber(phoneNumber) {
         // 英国
         let carrier = carriers.gb.find(c => c.numberPrefix && c.numberPrefix.includes(numberPrefix));
         return carrier ? carrier : "未找到匹配的运营商";
-    } else {
+    } else if (countryCode === "+86") {
+        let carrier = carriers.cn.find(c => c.numberPrefix && c.numberPrefix.includes(numberPrefix));
+        return carrier ? carrier : "未找到匹配的运营商";
+    }else{
         return "未知国家";
     }
 }
@@ -779,6 +840,10 @@ function getCarrierInfoByPhoneNumber(phoneNumber) {
 function SetIMSI(phoneNumber) {
     // 拿到号码 判断号码的国家和运营商
     let phone = getCarrierInfoByPhoneNumber(phoneNumber)
+
+    if (phone == "未知国家" || phone == "未找到匹配的运营商") {
+        return console.log("未知号码 请联系管理员")
+    }
 
     //  设置 gsm.operator.numeric  -->  MCC  +  MNC
     SetProp("gsm.operator.numeric",`${phone.MCC}${phone.MNC},00000`)  // 单卡
@@ -866,18 +931,21 @@ function SetIMSI(phoneNumber) {
 }
 
 
+// SetBuild()
 
-SetWifiinfo()
+
+SetWifi()
 console.log("-----------     ---------------")
 console.log("")
 console.log("")
 console.log("")
-SetIMSI("+1 202-555-0136")
+SetIMSI("+86 11955858542")
 console.log("")
 console.log("")
 console.log("")
-SetBuild()
 
+SetProp2("mutou.location.longitude",116.515227)
+SetProp2("mutou.location.latitude",39.94614)
 
 
 // 美国号码: +1 202-555-0136
@@ -887,3 +955,10 @@ SetBuild()
 // SetIMSI("+1 202-555-0136")
 // console.log("-----------     ---------------")
 // SetIMSI("+44 7911 123456")
+
+
+//  116.515227,39.94614   北京朝阳站   经纬是反的
+
+
+//经 -180 到 180
+//纬 -90  到  90
