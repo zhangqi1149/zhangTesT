@@ -787,7 +787,7 @@ let carriers = {
             MNC: "06",
             isoCountryCode: "cn",
             carrierId: "46006",
-            numberPrefix: ["130", "131", "132", "155", "156"], // 中国联通号段
+            numberPrefix: ["130", "131", "132", "155", "156" ,"185","186","176","166"], // 中国联通号段
             domain: "chinaunicom.com"
         },
         {
@@ -880,8 +880,9 @@ function SetIMSI(phoneNumber) {
     // telephony_manager.imsi0  --> 获得IMSI     IMSI   :   MCC + MNC + MSIN（移动用户识别号）
     SetProp("telephony_manager.imsi0",generateIMSI(phone.MCC,phone.MNC)) // 生成的 IMSI （国际移动用户识别码）
     
+    let cleanNumber = phoneNumber.split(" ")[1]; // 第二部分 不要+86的
     // 设置  手机号码
-    SetProp("telephony_manager.phone.number0", phoneNumber)
+    SetProp("telephony_manager.phone.number0", cleanNumber)
     
     // telephony_manager.nai0  --> 获取网络接入标识符   生成的NAI 需要运营商域名
     SetProp("telephony_manager.nai0",generateNAI(phone.domain))
@@ -931,10 +932,10 @@ function SetIMSI(phoneNumber) {
 }
 
 
-// SetBuild()
+// SetBuild()   // 需要关机的
 
 
-SetWifi()
+// SetWifi()
 console.log("-----------     ---------------")
 console.log("")
 console.log("")
@@ -944,8 +945,10 @@ console.log("")
 console.log("")
 console.log("")
 
-SetProp2("mutou.location.longitude",116.515227)
-SetProp2("mutou.location.latitude",39.94614)
+SetProp2("mutou.location.longitude",38.849587)
+SetProp2("mutou.location.latitude",121.526121)
+
+
 
 
 // 美国号码: +1 202-555-0136
