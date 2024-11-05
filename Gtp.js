@@ -72,72 +72,18 @@ function SetProp(key,value) {
         console.log(`key :[${key}]   value : ${value}`)
     }
 }
-
-//  生成MAC地址
-function isMacAddress(addr) {
-    return Array.isArray(addr) && addr.length === 6;
-}
-
-function longAddrFromByteAddr(addr) {
-    if (!Array.isArray(addr) || !isMacAddress(addr)) {
-        throw new Error(`${addr} was not a valid MAC address`);
-    }
-    let longAddr = 0n; // 使用 BigInt
-    for (let b of addr) {
-        longAddr = (longAddr << 8n) + (BigInt(b) & 0xffn);
-    }
-    return longAddr;
-}
-
-function byteAddrFromLongAddr(addr) {
-    const bytes = [];
-    for (let i = 0; i < 6; i++) {
-        bytes.unshift(Number(addr & 0xffn)); // 将 BigInt 转换为 Number
-        addr >>= 8n;
-    }
-    return bytes;
-}
-
-function createRandomUnicastAddress(base, random) {
-    const VALID_LONG_MASK = (1n << 48n) - 1n;
-    const LOCALLY_ASSIGNED_MASK = longAddrFromByteAddr([0x02, 0x00, 0x00, 0x00, 0x00, 0x00]);
-    const MULTICAST_MASK = longAddrFromByteAddr([0x01, 0x00, 0x00, 0x00, 0x00, 0x00]);
-    const OUI_MASK = longAddrFromByteAddr([0xff, 0xff, 0xff, 0x00, 0x00, 0x00]);
-    const NIC_MASK = longAddrFromByteAddr([0x00, 0x00, 0x00, 0xff, 0xff, 0xff]);
-    const DEFAULT_MAC_ADDRESS = "02:00:00:00:00:00";
-
-    let addr;
-
-    if (!base) {
-        addr = BigInt(random()) & VALID_LONG_MASK;
-    } else {
-        addr = (BigInt(longAddrFromByteAddr(base)) & OUI_MASK) | (NIC_MASK & BigInt(random()));
-    }
-
-    addr |= LOCALLY_ASSIGNED_MASK;
-    addr &= ~MULTICAST_MASK;
-
-    const macArray = byteAddrFromLongAddr(addr);
-    const macString = macArray.map(byte => byte.toString(16).padStart(2, '0')).join(':');
-
-    if (macString === DEFAULT_MAC_ADDRESS) {
-        return createRandomUnicastAddress(base, random);
-    }
-
-    return macString;
-}
-
+ 
 /**随机生成MAC 并隐藏WIFI信息
  * 
  */
 function SetWifi() {
-    //  生成MAC地址   TODO 数据要保存
-    let MACA = createRandomUnicastAddress(null, () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
-    SetProp("MacAddress", MACA)
     //  隐藏连接的WIFI详情
     SetProp("wifiservice.wifi.isEmptyInfo","yes")
     //  隐藏周围的WIFI
     SetProp("wifiservice.wifi.isEmptyScanResults","yes")
 }
 
-SetWifi()
+
+
+
+// SetWifi()

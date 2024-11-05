@@ -1,8 +1,7 @@
-// 本地存储名称
-// var WhatsApp = storages.create("WhatsApp"); 
 
 // 持久化处理  persist. 
 
+let filePath = "/storage/emulated/0/Documents/my_file.json";
 
 /**设置属性
  * 
@@ -15,10 +14,30 @@ function SetProp(key,value) {
         toast("请求失败: " + res.statusCode + " " + res.statusMessage);
     }else{
         // console.log(res.body.string())
-        console.log(`key :[${key}]   value : ${value}`)
+        // console.log(`key :[${key}]   value : ${value}`)
+        console.log(`set : ${key} --> ${[value]}`);
+    }
+    // console.log(`key :[${key}]   value : ${value}`)
+}
+
+/**获取属性
+ * 
+ * @param {string} key 属性
+ */
+function GetProp(key) {
+    let res = http.get("http://127.0.0.1:8848/execute?cmd=getprop "+key);    // 查看文件
+    if(res.statusCode != 200){
+        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+        return ""
+    }else{
+        // console.log(res.body.string())
+        let bodyString = res.body.string(); // 立即读取响应体
+        // console.log(`value : ${bodyString}`)
+        return bodyString
     }
 }
 
+// 重启
 function SetCom() {
     let res = http.get("http://127.0.0.1:8848/execute?cmd=reboot");    // 查看文件
     if(res.statusCode != 200){
@@ -28,6 +47,15 @@ function SetCom() {
     }
 
     // console.log(`key :[${key}]   value : ${value}`)
+}
+
+//  设置属性
+function SetValue(data) {
+    for (let key in data) {
+        if (data.hasOwnProperty(key)) {
+            SetProp(key,data[key])
+        }
+    }
 }
 
 //  生成MAC地址
@@ -645,35 +673,13 @@ let devices = {
  * 
  */ 
 function SetBuild() {
-
-    // android_id  **   d3822eacc81ddf37
-    SetProp("persist.android_id",generateAndroidId())
-    
     // 固化设备版本信息
     let Btags ="release-keys"
     let VersionRelease = "14" // 安卓版本
     let BversionMSdk = "28"  // 安卓api版本
     let BVersionSdk = "34"   // SDK 版本号
     let Btype ="user"
-
-    // 构建类型     userdebug
-    SetProp("persist.ro.build.type",Btype);
     
-    // 构建标签     test-keys
-    SetProp("persist.ro.build.tags",Btags);
-    // 安卓版本  14
-    SetProp("persist.ro.build.version.release",VersionRelease)
-    SetProp("persist.ro.build.version.release_or_codename",VersionRelease)
-    SetProp("persist.ro.build.version.release_or_preview_display",VersionRelease)
-
-    //  安卓SDK版本
-    SetProp("persist.ro.build.version.sdk",BVersionSdk)
-
-    // 安卓 API 级别  14 对应的 28 
-    SetProp("persist.ro.build.version.min_supported_target_sdk",BversionMSdk)
-
-
-
     //  随机获得一部设备信息
     let brands = Object.keys(devices);
     let randomBrand = brands[Math.floor(Math.random() * brands.length)];
@@ -682,9 +688,6 @@ function SetBuild() {
     // 系统前缀
     let Flavors =  ['lineage', 'aosp', 'resurrectionremix', 'pa', 'crdroid', 'aospextended']
     let Flavo = Flavors[Math.floor(Math.random() * Flavors.length)]
-    //  内部代号   lineage-sagit
-    SetProp("persist.ro.product.name",`${Flavo}-`+Bproduct)
-
 
     //  需要随机的设备信息
     let Bproduct = randomDevice.Bproduct // "sagit"
@@ -693,57 +696,22 @@ function SetBuild() {
     let SOC_MODEL = randomDevice.SOC_MODEL // "MSM8998"
 
     let Flavor = `${Flavo}_${Bproduct}-user`   // "lineage_sagit-user"
-    //  设备制造商名称   设备品牌   xiaomi
-    SetProp("persist.ro.product.manufacturer",MANUFACTURER)
-    SetProp("persist.ro.product.brand",MANUFACTURER)
-
-    //  设备型号名称   MI 6 
-    SetProp("persist.ro.product.model",Bmodel)
-
-    //  内部代号   sagit
-    SetProp("persist.ro.build.product",Bproduct)
-
-    //  主系统级芯片   MSM8998
-    SetProp("persist.ro.soc.model",SOC_MODEL);
-
-    //  主板名称    msm8998
-    SetProp("persist.ro.product.board",SOC_MODEL.toLowerCase())
-
 
     let randomDate = generateRandomDate2();  // 随机生成日期  220605 
-    //   [2024-09-05]
-    SetProp("persist.ro.build.version.security_patch",convertToDateFormat(randomDate))
-
-    // 需要生成的数据  
     
     // 构建标识符   AP2A.240805.005
     let Bid = generateBuildId(randomDate)  //  APQ9.220605.056
-    SetProp("persist.ro.build.id",Bid);
 
     // user 随机生成一个
     let Buser = generateRandomUser()
     let Bhost = generateBuildHost(Buser)
-    // user  oem
-    SetProp("persist.ro.build.user",Buser)
-    // host  oem-HM570
-    SetProp("persist.ro.build.host",Bhost)
-
 
     let time = generateRandomDate()
-    //  [ro.build.date.utc]: [1729066785]
-    SetProp("persist.ro.build.date.utc",generateRandomTimestamp(time))
 
     // incremental 随机生成一个  构建版本的增量更新号   eng.oem.20240907.144722
     let Bincremental = `eng.${Buser}.${time}.${Math.floor(Math.random() * 100000)}`
-    SetProp("persist.ro.build.version.incremental",Bincremental)
-
-
     //  硬件序列号   e8657075	
     let serl = generateSerialNumber()
-    SetProp("persist.ro.boot.serialno",serl);
-    SetProp("persist.ro.serialno",serl);
-    
-    
 
     let androidVersions = ['8.0.0', '9', '10', '11', '12', '13',`14`];
     let buildIds = ['OPR1.170623.027', 'QKQ1.190828.002', 'RQ2A.210305.006', 'SP1A.210812.016'];
@@ -753,24 +721,45 @@ function SetBuild() {
     let buildId = buildIds[Math.floor(Math.random() * buildIds.length)];
     let miuiVersion = miuiVersions[Math.floor(Math.random() * miuiVersions.length)];
 
-
-    // 构建版本号  lineage_sagit-userdebug 14 AP2A.240905.003 eng.oem.20241016.161946 test-keys
-    SetProp("persist.ro.build.display.id",`${Flavor} ${VersionRelease} ${Bid} ${Bincremental} ${Btags}`)
+    let MACA = createRandomUnicastAddress(null, () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))    
     
-    // 设备代号 + 构建类型 +Android 版本 +构建 ID +MIUI 版本 +签名类型   sagit-user 8.0.0 OPR1.170623.027 V9.2.3.0.OCAMIEK release-keys
-    SetProp("persist.ro.build.description",`${Bproduct}-user ${androidVersion} ${buildId} ${miuiVersion} `+"release-keys")
+    let Data1 ={
+        "persist.android_id": generateAndroidId(),
+        "persist.ro.build.type": Btype,
+        "persist.ro.build.tags": Btags,
+        "persist.ro.build.version.release": VersionRelease,
+        "persist.ro.build.version.release_or_codename": VersionRelease,
+        "persist.ro.build.version.release_or_preview_display": VersionRelease,
+        "persist.ro.build.version.sdk": BVersionSdk,
+        "persist.ro.build.version.min_supported_target_sdk": BversionMSdk,
+        "persist.ro.product.name": `${Flavo}-`+Bproduct,
+        "persist.ro.product.manufacturer": MANUFACTURER,
+        "persist.ro.product.brand": MANUFACTURER,
+        "persist.ro.product.model": Bmodel,
+        "persist.ro.build.product": Bproduct,
+        "persist.ro.soc.model": SOC_MODEL,
+        "persist.ro.product.board": SOC_MODEL.toLowerCase(),
+        "persist.ro.build.version.security_patch": convertToDateFormat(randomDate),
+        "persist.ro.build.id": Bid,
+        "persist.ro.build.user": Buser,
+        "persist.ro.build.host": Bhost,
+        "persist.ro.build.date.utc": generateRandomTimestamp(time),
+        "persist.ro.build.version.incremental": Bincremental,
+        "persist.ro.boot.serialno": serl,
+        "persist.ro.serialno": serl,
+        "persist.ro.build.display.id": `${Flavor} ${VersionRelease} ${Bid} ${Bincremental} ${Btags}`,
+        "persist.ro.build.description": `${Bproduct}-user ${androidVersion} ${buildId} ${miuiVersion} `+"release-keys",
+        "persist.ro.build.fingerprint": `${MANUFACTURER}/${Bproduct}/${Bproduct}/${androidVersion}/${buildId}/${miuiVersion}:user/release-keys`,
+        "persist.wifi.mac": MACA,
+    }
     
-    //  ro.build.fingerprint   Xiaomi/sagit/sagit:8.0.0/OPR1.170623.027/V9.2.3.0.OCAMIEK:user/release-keys
-    SetProp("persist.ro.build.fingerprint",`${MANUFACTURER}/${Bproduct}/${Bproduct}/${androidVersion}/${buildId}/${miuiVersion}:user/release-keys`)
-
-
-    // mac地址
-    //  生成MAC地址   TODO 数据要保存
-    let MACA = createRandomUnicastAddress(null, () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
-    SetProp("persist.wifi.mac", MACA)
-
- 
-
+    for (let key in Data1) {
+        if (Data1.hasOwnProperty(key)) {
+            // console.log(`set : ${key} --> ${Data1[key]}`);
+            SetProp(key,Data1[key])
+        }
+    }
+    return Data1
 }
 
 
@@ -809,7 +798,6 @@ function generateIMEI() {
     
     return baseIMEI + checksum;
 }
-
 
 //  生成 美国的IMSI
 function generateIMSI(MCC,MNC) {
@@ -981,133 +969,200 @@ function getCarrierInfoByPhoneNumber(phoneNumber) {
     }
 }
 
-// 设置  IMEI   IMSI 
-function SetIMSI(phoneNumber) {
+/**设置  IMEI   IMSI 
+ * 
+ * @param {*} phoneNumber 
+ * @param {*} longitude 
+ * @param {*} latitude 
+ * @returns 
+ */
+function SetIMSI(phoneNumber,longitude,latitude) {
     // 拿到号码 判断号码的国家和运营商
     let phone = getCarrierInfoByPhoneNumber(phoneNumber)
 
     if (phone == "未知国家" || phone == "未找到匹配的运营商") {
-        return console.log("未知号码 请联系管理员")
+        return new Error(`${phone} 未知国家 || 未找到匹配的运营商`);
     }
 
-    //  设置 gsm.operator.numeric  -->  MCC  +  MNC
-    SetProp("gsm.operator.numeric",`${phone.MCC}${phone.MNC},00000`)  // 单卡
+    // 生成需要保存的数据
+    let baseband = generateBasebandVersion();
+    let imei0 = generateIMEI();
+    let imei1 = generateIMEI();
+    let simSerialNumber0 = generateICCID(phone.MCC, phone.MNC);
+    let simSerialNumber1 = generateICCID(phone.MCC, phone.MNC);
 
-    //  设置 gsm.operator.alpha  
-    SetProp("gsm.operator.alpha",phone.name)  // 表示当前连接的网络运营商的名 
-    
-    //  设置 telephony_manager.networktype0   --> 网络类型 和 服务类型 
-    SetProp("telephony_manager.networktype0","13")  // 表示当前连接的网络运营商的名 
-    SetProp("gsm.network.type","LTE, Unknown")  // 表示当前连接的网络服务  LTE 4G网络
-
-    //  国家ISO代码
-    SetProp("telephony_manager.iso0",phone.isoCountryCode) 
-    
-    //  数据网络类型
-    SetProp("telephony_manager.datanetworktype0","13")  
-    SetProp("telephony_manager.datanetworktype1","13")  
-
-
-    // 设置 SIM卡状态
-    SetProp("telephony_manager.simstate0","5")
-    SetProp("gsm.sim.state","LOADED,ABSENT")  
-
-    // gsm.sim.operator.alpha --> 运营商代码
-    SetProp("gsm.sim.operator.alpha",phone.name) 
-   
-    //  gsm.operator.iso-country --> 国家代码
-    SetProp("gsm.operator.iso-country",`[${phone.isoCountryCode}, ]`)
-    SetProp("gsm.sim.operator.iso-country",phone.isoCountryCode)
-    
-    // gsm.sim.operator.numeric --> SIM卡的运营商信息
-    SetProp("gsm.sim.operator.numeric",`${phone.MCC}${phone.MNC},`)
-
-    // telephony_manager.imsi0  --> 获得IMSI     IMSI   :   MCC + MNC + MSIN（移动用户识别号）
-    SetProp("telephony_manager.imsi0",generateIMSI(phone.MCC,phone.MNC)) // 生成的 IMSI （国际移动用户识别码）
-    
     let cleanNumber = phoneNumber.split(" ")[1]; // 第二部分 不要+86的
-    // 设置  手机号码
-    SetProp("telephony_manager.phone.number0", cleanNumber)
+
+    let Data2 = {
+        "gsm.operator.numeric":`${phone.MCC}${phone.MNC},00000`,
+        "gsm.operator.alpha":phone.name,
+        "telephony_manager.networktype0":"13",
+        "gsm.network.type":"LTE, Unknown",
+        "telephony_manager.iso0":phone.isoCountryCode,
+        "telephony_manager.datanetworktype0":"13",
+        "telephony_manager.datanetworktype1":"13",
+        "telephony_manager.simstate0":"5",
+        "gsm.sim.state":"LOADED,ABSENT",
+        "gsm.sim.operator.alpha":phone.name,
+        "gsm.operator.iso-country":`[${phone.isoCountryCode}, ]`,
+        "gsm.sim.operator.iso-country":phone.isoCountryCode,
+        "gsm.sim.operator.numeric":`${phone.MCC}${phone.MNC},`,
+        "telephony_manager.imsi0":generateIMSI(phone.MCC,phone.MNC),
+        "telephony_manager.phone.number0":cleanNumber,
+        "telephony_manager.nai0":generateNAI(phone.domain),
+        "telephony_manager.datastate":"2",
+        "telephony_manager.specificcarrierid0":`${phone.MCC}${phone.MNC}`,
+        "telephony_manager.carrierid0":`${phone.MCC}${phone.MNC}`,
+        "telephony_manager.specificcarrieridname0":phone.isoCountryCode,
+        "telephony_manager.carrieridname0":phone.isoCountryCode,
+        "SubscriptionInfo.mcc":phone.MCC,
+        "SubscriptionInfo.mnc":phone.MNC,
+        "gsm.version.baseband":baseband,
+        "telephony_manager.imei0":imei0,
+        "telephony_manager.imei1":imei1,
+        "telephony_manager.iccid0":simSerialNumber0,
+        "telephony_manager.iccid1":simSerialNumber1,
+        "mutou.location.longitude":longitude,
+        "mutou.location.latitude":latitude,
+    };
+
+    for (let key in Data2) {
+        if (Data2.hasOwnProperty(key)) {
+            // console.log(`set : ${key} --> ${Data1[key]}`);
+            SetProp(key,Data2[key])
+        }
+    }
+
+    return Data2
+}
+ 
+// 保存数据到文件
+function saveDataToFile(phoneNumber, data1, data2) {
+    let cleanNumber = phoneNumber.split(" ")[1]; // 第二部分 不要+86的
+    // 检查文件是否存在
+    let jsonData = {};
+    const file = new java.io.File(filePath);
+    if (file.exists()) {
+        let reader = new java.io.FileReader(file);
+        let bufferedReader = new java.io.BufferedReader(reader);
+        let stringBuilder = new java.lang.StringBuilder();
+        let line;
+        while ((line = bufferedReader.readLine()) !== null) {
+            stringBuilder.append(line);
+        }
+        jsonData = JSON.parse(stringBuilder.toString());
+        bufferedReader.close();
+    }
+
+    // 确保 jsonData 中有正确的键
+    if (!jsonData[cleanNumber]) {
+        jsonData[cleanNumber] = {};
+    }
+
+    // 保存 Data1
+    if (data1) {
+        jsonData[cleanNumber]["Data1"] = data1;
+    }
+
+    // 保存 Data2
+    if (data2) {
+        jsonData[cleanNumber]["Data2"] = data2;
+    }
+
+    // 写回文件
+    const writer = new java.io.FileWriter(file);
+    writer.write(JSON.stringify(jsonData, null, 4));
+    writer.flush();
+    writer.close();
+}
+
+//  读取文件
+function readFile() {
+    let reader = new java.io.BufferedReader(new java.io.FileReader(filePath));
+    let line;
+    let content = '';
+
+    // 逐行读取文件内容
+    while ((line = reader.readLine()) !== null) {
+        content += line + "\n"; // 添加换行符
+    }
     
-    // telephony_manager.nai0  --> 获取网络接入标识符   生成的NAI 需要运营商域名
-    SetProp("telephony_manager.nai0",generateNAI(phone.domain))
+    reader.close();
+    return content.trim(); // 返回内容，去掉末尾的换行符
+}
 
-    // telephony_manager.datastate  --> 数据连接状态  2,DATA_CONNECTED：表示数据连接已建立。
-    SetProp("telephony_manager.datastate","2")
-    
-    // telephony_manager.specificcarrierid0  --> 当前订阅的运营商ID 
-    SetProp("telephony_manager.specificcarrierid0",`${phone.MCC}${phone.MNC}`) 
+//  检查手机号是否存在
+function checkAccount(cleanNumber) {
+    let content = readFile(filePath);
 
-    // telephony_manager.carrieridmccmnc0 --> 运营商ID    MCC + MNC
-    SetProp("telephony_manager.carrierid0",`${phone.MCC}${phone.MNC}`)
+    if (content === null) {
+        return new Error("读取文件时出错!! ");
+    }
 
-    // telephony_manager.specificcarrieridname0   -- 对应的运营商名称
-    SetProp("telephony_manager.specificcarrieridname0",phone.isoCountryCode)
-    
-    
-    // telephony_manager.carrieridname0  订阅的运营商名称
-    SetProp("telephony_manager.carrieridname0",phone.isoCountryCode)
-    
-    //  SubscriptionInfo.mcc
-    SetProp("SubscriptionInfo.mcc",phone.MCC)
+    let data = JSON.parse(content);
 
-    //  SubscriptionInfo.mnc
-    SetProp("SubscriptionInfo.mnc",phone.MNC)
+    // 检查账号是否存在
+    if (data.hasOwnProperty(cleanNumber)) {
+        return data[cleanNumber]; // 返回存在的账号数据
+    } else {
+        return null; // 账号不存在
+    }
+}
 
-    // gsm.version.baseband  --> 设备的基带版本（Baseband version）
-    let baseband = generateBasebandVersion()+","+generateBasebandVersion()
-    SetProp("gsm.version.baseband",baseband) //生成的基带版本
+function main(phoneNumber,longitude,latitude) {
+    // 1.检查配置文件是否存在
+    let file = new java.io.File(filePath);
+    if (!file.exists()) {
+        // 文件不存在  生成当前号码的模拟数据
+        let Data1 = SetBuild()
+        let Data2 = SetIMSI(phoneNumber,longitude,latitude)
+        saveDataToFile(phoneNumber,Data1,Data2)
+        SetCom()  // 重启
+    }else{
+        // 2.如果存在就查找号码
+        let cleanNumber = phoneNumber.split(" ")[1];
+        let data = checkAccount(cleanNumber)
 
-    // telephony_manager.imei0 -->  IMEI 号 15位
-    let imei0 = generateIMEI()
-    let imei1 = generateIMEI()
-    SetProp("telephony_manager.imei0",imei0) // 生成的 IMEI号码
-    SetProp("telephony_manager.imei1",imei1) // 生成的 IMEI号码
+        if (data != null) {
+            // 3.检查静态属性 对的上就向下执行, 否则读取文件静态属性,设置并重启.
+            let aid =  GetProp("persist.android_id")
+            if (aid == "") {
+                throw new Error("请求 android_id 失败");
+            }
+            if (aid.trim() !== data.Data1["persist.android_id"].trim()) {
+                // 回档模拟数据
+                SetValue(data.Data1)
+                SetCom()  // 重启
+            }else{
+                console.log(`不需要重置硬件信息`);
+            }
 
-    // 生成 SIM 卡序列号
-    let simSerialNumber0 = generateICCID(phone.MCC,phone.MNC)
-    let simSerialNumber1 = generateICCID(phone.MCC,phone.MNC)
-
-    //  telephony_manager.iccid0 --> SIM卡的序列号   生成的SIM序列号
-    SetProp("telephony_manager.iccid0",simSerialNumber0)
-    SetProp("telephony_manager.iccid1",simSerialNumber1)
-
-    //  需要保存的信息  phoneNumber     baseband      imei0       imei1      simSerialNumber0  simSerialNumber1
-    //                   电话号码        基带版本   IMEI 1号    IMEI 2号     SIM 1卡序列号       SIM 2卡序列号
+            // 4.检查动态属性 对不上就读取文件静态属性 设置账号属性
+            let imei0 =  GetProp("telephony_manager.imei0")    // 获取卡数据   卡槽id
+            if (imei0 == "") {
+                throw new Error("请求 imei0 失败");
+            }
+            if (imei0.trim() !== data.Data2["telephony_manager.imei0"].trim()) {
+                // 回档模拟数据
+                SetValue(data.Data2)
+            }else{
+                console.log(`不需要重置`);
+            }
+        }else{
+            // 未记录账号信息 生成当前号码的模拟数据
+            let Data1 = SetBuild()
+            let Data2 = SetIMSI(phoneNumber,longitude,latitude)
+            saveDataToFile(phoneNumber,Data1,Data2)
+            SetCom()  // 重启
+        }
+    }
+    //  关闭WiFi
+    SetWifi()
 }
 
 
-// SetBuild()   // 需要关机的
 
+let longitude =  121.630203    // 经 -180 到 180    longitude 
+let latitude = 39.00147        // 纬 -90  到  90    latitude
 
-console.log("-----------     ---------------")
-console.log("")
-console.log("")
-console.log("")
-// SetIMSI("+86 18525473489")
-console.log("")
-console.log("")
-console.log("")
-
-// SetProp("mutou.location.latitude",38.958354)
-// SetProp("mutou.location.longitude",121.527666)
-
-// SetWifi()
-
-
-// 虚拟数据
-function main(phoneNumber){
-    
-    SetBuild()
-
-    SetIMSI(phoneNumber)
-
-}
-
-main("+86 15955858542")
-
-//  116.515227,39.94614   北京朝阳站   经纬是反的
-
-
-//经 -180 到 180
-//纬 -90  到  90
+main("+86 15140482733",longitude,latitude)
