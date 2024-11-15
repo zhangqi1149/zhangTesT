@@ -1109,13 +1109,28 @@ function checkAccount(cleanNumber) {
     }
 }
 
+
+//  设置定位经纬度
+function SetLocation(longitude,latitude) {
+    let Data2 = {
+        "mutou.location.longitude":longitude,
+        "mutou.location.latitude":latitude,
+    };
+
+    // SetProp("mutou.location.longitude",longitude)
+    // SetProp("mutou.location.latitude",latitude)
+    return Data2
+}
+
+
 function main(phoneNumber,longitude,latitude) {
     // 1.检查配置文件是否存在
     let file = new java.io.File(filePath);
     if (!file.exists()) {
         // 文件不存在  生成当前号码的模拟数据
         let Data1 = SetBuild()
-        let Data2 = SetIMSI(phoneNumber,longitude,latitude)
+        // let Data2 = SetIMSI(phoneNumber,longitude,latitude)
+        let Data2 = SetLocation(longitude,latitude)
         saveDataToFile(phoneNumber,Data1,Data2)
         SetCom()  // 重启
     }else{
@@ -1137,21 +1152,37 @@ function main(phoneNumber,longitude,latitude) {
                 console.log(`不需要重置硬件信息`);
             }
 
-            // 4.检查动态属性 对不上就读取文件静态属性 设置账号属性
-            let imei0 =  GetProp("telephony_manager.imei0")    // 获取卡数据   卡槽id
-            if (imei0 == "") {
-                throw new Error("请求 imei0 失败");
-            }
-            if (imei0.trim() !== data.Data2["telephony_manager.imei0"].trim()) {
-                // 回档模拟数据
-                SetValue(data.Data2)
-            }else{
-                console.log(`不需要重置`);
-            }
+            // // 4.检查动态属性 对不上就读取文件静态属性 设置账号属性
+            // let imei0 =  GetProp("telephony_manager.imei0")    // 获取卡数据   卡槽id
+            // if (imei0 == "") {
+            //     throw new Error("请求 imei0 失败");
+            // }
+            // if (imei0.trim() !== data.Data2["telephony_manager.imei0"].trim()) {
+            //     // 回档模拟数据
+            //     SetValue(data.Data2)
+            // }else{
+            //     console.log(`不需要重置`);
+            // }
+
+            //  5. 检查经纬
+            // let latitude = GetProp("mutou.location.latitude")    // 获取卡数据   卡槽id
+            // if (latitude == "") {
+            //     throw new Error("请求 latitude 失败");
+            // }
+            // console.log(String(latitude).trim())
+            // console.log(data.Data2["mutou.location.latitude"])
+            // if (String(latitude).trim() !== String(data.Data2["mutou.location.latitude"]).trim()) {
+            //     // 回档模拟数据
+            //     SetValue(data.Data2)
+            //     console.log(`回档模拟数据2`);
+            // }else{
+            //     console.log(`不需要重置经纬度`);
+            // }
         }else{
             // 未记录账号信息 生成当前号码的模拟数据
             let Data1 = SetBuild()
-            let Data2 = SetIMSI(phoneNumber,longitude,latitude)
+            // let Data2 = SetIMSI(phoneNumber,longitude,latitude)
+            let Data2 = SetLocation(longitude,latitude)
             saveDataToFile(phoneNumber,Data1,Data2)
             SetCom()  // 重启
         }
@@ -1162,7 +1193,9 @@ function main(phoneNumber,longitude,latitude) {
 
 
 
-let longitude =  121.630203    // 经 -180 到 180    longitude 
-let latitude = 39.00147        // 纬 -90  到  90    latitude
+let longitude =  0    // 经 -180 到 180    longitude 
+let latitude = 0  // 纬 -90  到  90    latitude
+main("+86 13149875285",longitude,latitude)
 
-main("+86 15140482733",longitude,latitude)
+
+

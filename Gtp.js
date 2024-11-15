@@ -86,4 +86,4 @@ function SetWifi() {
 
 
 
-// SetWifi()
+SetWifi()
