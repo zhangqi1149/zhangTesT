@@ -259,7 +259,7 @@ function main() {
     let Contr = Find_Control("更多直播");
     if (Contr) { // 在直播间
         // 执行点击操作
-        let targetControl = id("com.ss.android.ugc.aweme:id/gth").findOne(1800);
+        let targetControl = id("com.ss.android.ugc.aweme:id/gth").findOne(1800);  // 点击用户弹出小资料框
         clickobj(targetControl,-25,-80);
         sleep(3000);
     }
@@ -272,7 +272,7 @@ function main() {
 }
 
 // for (let i = 0; i < 12; i++) {
-    main()
+    // main()
     console.log("-----------------------end")
 // }
 
