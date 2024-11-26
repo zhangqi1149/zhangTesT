@@ -1,5 +1,5 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.0.119:5000/ocr";
+var SERVER_URL = "http://192.168.5.112:5000";
 
 var Shout = "加我QQ 有好东西"
 
@@ -30,7 +30,7 @@ function getOcr(img, lang) {
         };
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        let response = http.postJson(SERVER_URL, jsonData, {
+        let response = http.postJson(SERVER_URL+"/ocr", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -68,7 +68,7 @@ function getCl(img, x1,y1) {
         };
         
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        let response = http.postJson("http://192.168.0.119:5000/color", jsonData, {
+        let response = http.postJson(SERVER_URL+"/color", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -105,7 +105,7 @@ function isblue(img) {
         };
 
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        let response = http.postJson("http://192.168.0.119:5000/is_blue", jsonData, {
+        let response = http.postJson(SERVER_URL+"/is_blue", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -145,6 +145,24 @@ function wait(str, time) {
     return false
 }
 
+// 查看控件
+function npackageName() {
+    // 查找屏幕上的所有控件
+    var nodes = className("android.widget.FrameLayout").find();
+    // 遍历找到满足条件的控件
+    for (var i = 0; i < nodes.size(); i++) {
+        var node = nodes.get(i);
+        if (node.packageName() === "com.wemade.mir4global") {
+            // console.log("找到匹配的控件，包名: " + node.packageName());
+            // 可以在这里对控件进行其他操作
+            // toast("找到匹配的控件，包名" + node.packageName())
+            // break; // 如果只需要找到一个，找到后可以跳出循环
+            return true
+        }
+    }
+    return false
+}
+
 // 初始化
 function init(){
     // 权限检查
@@ -153,15 +171,21 @@ function init(){
         auto();
         return false
     }
-    let currentPkg = currentPackage();
+    // let currentPkg = currentPackage();
     // 是否在游戏
-    if (currentPkg == "com.wemade.mir4global" || currentPkg =="android" || currentPkg =="com.android.xwkeyboard"){
+    // if (currentPkg == "com.wemade.mir4global" || currentPkg =="android" || currentPkg =="com.android.xwkeyboard"){
+    //     return true
+    // } else {
+    //     toast("目前不在游戏")
+    //     console.log("当前界面: ",currentPkg);
+    //     app.launch('com.wemade.mir4global')
+    //     sleep(1000);
+    //     app.launch('com.wemade.mir4global')
+    //     sleep(3000);
+    // }
+    if (npackageName()) {
         return true
-    } else {
-        toast("目前不在游戏")
-        console.log("当前界面: ",currentPkg);
-        app.launch('com.wemade.mir4global')
-        sleep(1000);
+    }else{
         app.launch('com.wemade.mir4global')
         sleep(3000);
     }
@@ -1871,7 +1895,7 @@ function upLevel(){
         exit();
     }
     let grayscaleImage = images.grayscale(img);
-
+    
     // 裁剪图像
     let attImg = images.clip(img, 522,41,6,3); 
     //  是否是在打怪
@@ -1885,7 +1909,7 @@ function upLevel(){
     imgRecycle(imgtext)
 
     // 裁剪等级
-    let croppedImage = images.clip(img, 25, 0, 55, 32);
+    let croppedImage = images.clip(img, 11, 0, 60, 32);
     let lvData = getOcr(croppedImage,"ch");
     imgRecycle(croppedImage);
     // 获取等级

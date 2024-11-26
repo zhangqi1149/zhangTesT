@@ -1,5 +1,5 @@
-//
-var SERVER_URL = "http://192.168.0.119:5000";
+// 设置服务器地址
+var SERVER_URL = "http://192.168.2.10:5000";
 // var text = "40级了 打不过怪该怎么玩啊" ;
 var text = "At level 40, I can't defeat monsters. How should I play" ;
 var interval = 60000 ;    // 12分钟 720000毫秒  *60000
@@ -73,6 +73,24 @@ function isblue(img) {
     return null;
 }
 
+// 查看控件
+function npackageName() {
+    // 查找屏幕上的所有控件
+    var nodes = className("android.widget.FrameLayout").find();
+    // 遍历找到满足条件的控件
+    for (var i = 0; i < nodes.size(); i++) {
+        var node = nodes.get(i);
+        if (node.packageName() === "com.wemade.mir4global") {
+            // console.log("找到匹配的控件，包名: " + node.packageName());
+            // 可以在这里对控件进行其他操作
+            // toast("找到匹配的控件，包名" + node.packageName())
+            // break; // 如果只需要找到一个，找到后可以跳出循环
+            return true
+        }
+    }
+    return false
+}
+
 // 初始化
 function init(){
     // 权限检查
@@ -84,15 +102,21 @@ function init(){
         auto();
         return false
     }
-    let currentPkg = currentPackage();
+    // let currentPkg = currentPackage();
     // 是否在游戏
-    if (currentPkg == "com.wemade.mir4global" || currentPkg =="android" || currentPkg =="com.android.xwkeyboard"){
+    // if (currentPkg == "com.wemade.mir4global" || currentPkg =="android" || currentPkg =="com.android.xwkeyboard"){
+    //     return true
+    // } else {
+    //     // toastLog("当前界面: ",currentPkg);
+    //     console.log(currentPkg)
+    //     app.launch('com.wemade.mir4global')
+    //     sleep(1000);
+    //     app.launch('com.wemade.mir4global')
+    //     sleep(3000);
+    // }
+    if (npackageName()) {
         return true
-    } else {
-        // toastLog("当前界面: ",currentPkg);
-        console.log(currentPkg)
-        app.launch('com.wemade.mir4global')
-        sleep(1000);
+    }else{
         app.launch('com.wemade.mir4global')
         sleep(3000);
     }
@@ -258,13 +282,15 @@ function selclick(reData,src,exactMatch){
         let centerY = (target.box[0][1] + target.box[2][1]) / 2;
 
         // 将坐标从截图转换到设备屏幕坐标
-        let x_phone = (centerX / 1285) * device.height;
-        let y_phone = (centerY / 720) * device.width;
+        // let x_phone = (centerX / 1285) * device.height;
+        // let y_phone = (centerY / 720) * device.width;
 
-        console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
+        // console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
+        console.log(`selclick-点击${src}: x=${centerX}, y=${centerY}`);
 
         // 点击坐标
-        code = click(x_phone,y_phone);
+        code = click(centerX,centerY);
+        // code = click(x_phone,y_phone);
         if (!code) {
             console.log(`selclick ${src} 点击失败`)
             return false
@@ -472,6 +498,9 @@ function wrong(reData) {
         selclick(reData,"确定",true);
         throw new Error("游戏更新");
     }
+    if (selclick(reData,"重新连接")) {
+        return true
+    }
     // 服务器连接断开 -> 前往登录
     if (select(reData, "服务器连接断开")) {
         return ClickSleep(reData, '前往登录');
@@ -546,7 +575,7 @@ function handleQingGong(reData) {
         {text: "看到轻功按键了吗", x: 1221, y: 400},
         {text: "触发2段跳跃", x: 1221, y: 400},
         {text: "对墙壁点击", x: 1221, y: 400},
-        {text: "瞬间快速地", x: 1060, y: 531, extraClick: [1204, 400]}
+        {text: "瞬间快速地", x: 1060, y: 531, extraClick: [1106, 512]}  //  [1204, 400]
     ];
 
     for (let step of qinggongSteps) {
@@ -579,6 +608,7 @@ function Loong(reData){
 
     //  -------- 轻功
     if (handleQingGong(reData)) return true;
+
 
     if (select(reData,"还要再跳一次")){  // 跳跃2次
         click(1221,400);
@@ -806,7 +836,8 @@ function Console(reData) {
         console.log(`请点击菜单按键: ${item}`)
         console.log(`请点击菜单按键: ${item2}`)
         // [816.0, 269.0], [943.0, 267.0], [944.0, 291.0], [817.0, 293.0] 制造菜单提示位置
-        if (item == 816.0 || item == 815.0 || item == 814.0) {
+        // [[821.0, 277.0], [984.0, 270.0], [986.0, 297.0], [822.0, 305.0]]
+        if (item == 816.0 || item == 815.0 || item == 814.0 || item == 821.0) {
             click(1028,216);  // 制造工坊
             sleep(2000);
             return true
@@ -827,7 +858,8 @@ function Console(reData) {
         // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
         // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
         // [[730.0, 159.0], [853.0, 159.0], [853.0, 177.0], [730.0, 177.0]]
-        if ( (item > 727.0 && item < 731.0 )|| item2 == 156.0) {
+        // [[733.0, 164.0], [857.0, 164.0], [857.0, 183.0], [733.0, 183.0]]
+        if ( (item > 727.0 && item < 734.0 )|| item2 == 156.0) {
             click(945,109);  // 角色
             sleep(2000);
             click(939,222);  // 铁匠
@@ -1323,37 +1355,37 @@ function reward(reData) {
     if (select(reData, '法术攻击')) {
         let img = captureScreen();
         if (images.pixel(img, 290, 34) == -1935584 ) {
-            if (images.pixel(img, 434, 557) == -1935584 ) {  //  法术 
+            if (images.pixel(img, 434, 557) == -1935584 || images.pixel(img, 425, 561) == -1935584 ) {  //  法术 
                 clickWithDelay(400,600,1000);  // 点击法伤
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img, 600, 489) == -1935584 ) {  //  命中 
+            if (images.pixel(img, 600, 489) == -1935584 || images.pixel(img, 595, 492) == -1935584 ) {  //  命中 
                 clickWithDelay(564,524,1000);  // 点击命中
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img, 203, 326) == -1935584 ) {  //  生命
+            if (images.pixel(img, 203, 326) == -1935584 || images.pixel(img, 189, 326) == -1935584 ) {  //  生命
                 clickWithDelay(166,357,1000);  // 点击生命
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img, 666, 326) == -1935584 ) {  //  魔力
+            if (images.pixel(img, 666, 326) == -1935584 || images.pixel(img, 663, 326) == -1935584 ) {  //  魔力
                 clickWithDelay(629,357,1000);  // 点击魔力
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img, 271, 489) == -1935584 ) {  //  回避
+            if (images.pixel(img, 271, 489) == -1935584 || images.pixel(img, 257, 498) == -1935584) {  //  回避
                 clickWithDelay(234,524,1000);  // 点击回避
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img, 589, 177) == -1935584 ) {  //  法术防御
+            if (images.pixel(img, 589, 177) == -1935584 || images.pixel(img, 1054, 155) == -1935584) {  //  法术防御
                 clickWithDelay(562,200,1000);  // 点击法术防御
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img, 260, 177) == -1935584 ) {  //  物理防御
+            if (images.pixel(img, 260, 177) == -1935584 || images.pixel(img, 258, 160) == -1935584) {  //  物理防御
                 clickWithDelay(234,200,1000);  // 点击物理防御
                 clickWithDelay(1039,671,3000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
@@ -1392,6 +1424,15 @@ function create(reData) {
             sleep(2000);
             return true
         }
+        // TODO 
+        if (select(reData,"?123")) {
+            clickWithDelay(116,671); // 点击缩放的地方
+            input(getRandomName());  //  请输入名称
+            sleep(500);
+            return true
+        }
+
+
         // 打开了小键盘
         if (select(reData,"换行")) {
             clickWithDelay(1185,343,2000); // 点击缩放的地方
@@ -1414,14 +1455,14 @@ function create(reData) {
     return false
 }
 
-//  喊话   喊话内容 test  喊话间隔 interval   or 服务器拉取
+//  喊话   喊话内容 test  喊话间隔 interval
 function Shout(reData) {
     // 输出
-    if (select(reData,"换行")) {
+    if (select(reData,"换行") || (select(reData,"符") && select(reData,"123"))) {
         sleep(2000);
         input(text);
         sleep(2000);
-        selclick(reData,"换行")
+        // selclick(reData,"换行")
         sleep(interval);
         return true
     }
@@ -1471,13 +1512,13 @@ function upLevel(){
     // console.log(code);
 
     // 裁剪等级
-    let croppedImage = images.clip(img, 25, 0, 55, 32);
+    let croppedImage = images.clip(img, 11, 0, 60, 32);
     let lvData = getOcr(croppedImage,"ch");
     imgRecycle(croppedImage);
     getlv(lvData) // 获取等级
 
     // 通知区域 橙色
-    let color = images.pixel(img, 1184, 17);
+    let color = images.pixel(img, 1200, 17);  // 1184, 17
     sleep(5);
     // let emil = images.pixel(img, 66, 94);  // 邮箱
     
@@ -1551,6 +1592,16 @@ function upLevel(){
         //         return
         //     }
         // }
+
+        // console.log("关闭所有的弹窗")
+        if (closeX(reData)) {return } // 关闭所有的弹窗
+
+        //  喊话 
+        if (lv >= 40) {
+            Shout(reData);
+            return  // 喊话间隔
+        }
+
         if (lv > 11 ) {  // 领取奖励
             // 根据气泡领取
             if (reward(reData)) {return }
@@ -1559,14 +1610,6 @@ function upLevel(){
                 clickWithDelay(1184,17,1000);
                 return
             }
-        }
-        // console.log("关闭所有的弹窗")
-        if (closeX(reData)) {return } // 关闭所有的弹窗
-
-        //  喊话 
-        if (lv >= 40) {
-            Shout(reData);
-            return sleep(interval); // 喊话间隔
         }
 
 
@@ -1624,7 +1667,7 @@ function upLevel(){
             return 
         }
         // console.log("切换药剂")
-        if (lv > 17) {   //  切换药剂   在城镇的时候 
+        if (lv > 17 && lv < 40 ) {   //  切换药剂   在城镇的时候 
             //  检查城镇
             let reai = select(reData,"比奇城",true)
             if (reai) {
@@ -1655,7 +1698,7 @@ function upLevel(){
                     }else{
                         if (lv <= 19) {
                             // 判断是否是大药 切换药
-                            if ((color1 != -11661539 && color1 != -13093322 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551) ) {
+                            if ((color1 != -11661539 && color1 != -13093322 && color1 != -7204829 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551 && color2 != -15575908) ) {
                                 console.log(" 没有大药 ")
                                 //  点击第三个药设置 
                                 clickWithDelay(610,661,3000);
@@ -1683,7 +1726,7 @@ function upLevel(){
         }
 
         // console.log("去挂机打怪")
-        if (lv >= 9 && lv < 13) {  // 去挂机打怪
+        if (lv >= 9 && lv < 13 ) {  // 去挂机打怪
             reai = select(reData,"芊菲的下落")
             if (reai) {
                 // 去银杏谷练级
@@ -2197,10 +2240,10 @@ function main(){
     }
 }
 
-// for (let i = 0; i < 10; i++) {
-    // console.log("$$$$$$$$$$$$$$  执行开始!")
+// for (let i = 0; i < 1; i++) {
+//     console.log("$$$$$$$$$$$$$$  执行开始!")
     main()
-    // console.log("##############  执行完成")
+//     console.log("##############  执行完成")
 // }
 
 
@@ -2211,13 +2254,15 @@ if (false) {
     }
     // console.log("截图")
     let img = captureScreen();
-    let grayscaleImage = images.grayscale(img);
+    // let grayscaleImage = images.grayscale(img);
 
     // console.log("开始请求")
-    let reData = getOcr(grayscaleImage,"ch");
+    // let reData = getOcr(grayscaleImage,"ch");
+    // let reData = getOcr(img,"ch");
 
     // let hp =  images.pixel(img, 522,41);   // -13553096
     // console.log(hp)
-    
+
 }
 
+ 

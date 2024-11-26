@@ -16,7 +16,7 @@
  * 
 */
 
-let Num = 120      // 关注人数
+let Num = 200      // 关注人数
 let Age = 21       // 年龄
 let Lv = 5        // 财富等级
 let storage = storages.create("ABC");  // 创建存储对象
@@ -47,13 +47,13 @@ function manage_value() {
  * @returns 
  */
 function init(){
-    manage_value()  // 初始今日数据 删除其余的数据
+    // manage_value()  // 初始今日数据 删除其余的数据
     // 检查进入关注是否到达数量了
-    let a = storage.get(today)
-    if (a[0].e_num <= 0 ) {
-        toast("今日账号关注到上限了");
-        return false
-    }
+    // let a = storage.get(today)
+    // if (a[0].e_num <= 0 ) {
+    //     toast("今日账号关注到上限了");
+    //     return false
+    // }
 
     // 权限检查
     if (!auto.service) {
@@ -68,6 +68,7 @@ function init(){
         return true
     } else {
         console.log("不在抖音界面,当前界面: ",currentPkg);
+        back();
         app.launch('com.ss.android.ugc.aweme')
         sleep(7000);   // 等待未成年结束
     }
@@ -95,6 +96,41 @@ function traverseUIObject(uiobj, depth) {
     }
 }
 
+//  随机点击一个表情按钮
+function emote_b() {
+    // 获取所有控件
+    let allNodes = className("android.widget.FrameLayout").find(); // 根据类名获取控件，常见按钮是 Button 类型
+    let matchedNodes = []; // 用于存储匹配的控件
+
+    // 遍历控件，查找包含“按钮”的控件
+    for (let i = 0; i < allNodes.length; i++) {
+        let node = allNodes[i];
+        let desc = node.desc(); // 获取 content-desc 属性
+        if (desc && desc.indexOf("], 按钮") !== -1) { // 检查是否包含“按钮”
+            // console.log(` desc : ${desc},`)
+            matchedNodes.push(node);
+        }
+    }
+
+    // 输出匹配的控件信息
+    // matchedNodes.forEach((node, index) => {
+    //     console.log(`控件 ${index + 1}:`);
+    //     console.log(`描述: ${node.desc()}`);
+    //     console.log(`坐标: ${node.bounds()}`);
+    // });
+    
+    // console.log("阿斯顿 ",matchedNodes.length)
+    if (matchedNodes.length > 28) {
+        let node = matchedNodes[getRandomInt(1,28)]
+        let bounds = node.bounds(); // 获取控件的边界
+        let x = Math.floor((bounds.left + bounds.right) / 2); // 计算中心点 x 坐标
+        let y = Math.floor((bounds.top + bounds.bottom) / 2); // 计算中心点 y 坐标
+        httpclick(x, y); // 模拟点击
+        console.log(`点击了控件: ${node.desc()}`);
+        return true
+    }
+    return false
+}
 
 // 检查参数
 function inspect() {
@@ -169,7 +205,7 @@ function swipes() {
  * @returns 
  */
 function Find_Control(str) {
-    let targetControl = textContains(str).findOne(800); 
+    let targetControl = textContains(str).findOne(500); 
     if (targetControl) {
         if (targetControl.visibleToUser()) {
             return targetControl
@@ -312,10 +348,10 @@ function generate() {
     // 生成行为id  根据id去生成行为参数
     let id = getRandomInt(1,2); 
     if (id == 1) { // 刷推荐视频指标  e_time : 看13-20分钟就停了  (e_sleep : 切换视频的时间  8-15 秒 具体执行的时候随机)
-        return storage.put(today,[{e_num: a[0].e_num, e_id: 1, e_time: addRandomMinutes(5,8), e_sleep: 0, e_count: 0}])
+        return storage.put(today,[{e_num: a[0].e_num, e_id: 1, e_time: addRandomMinutes(5,10), e_sleep: 0, e_count: 0}])
     }
     if (id == 2) { // 直播间关注指标   e_count  关注数量 2 - 4 个   (e_sleep 随机切换直播间 具体执行的时候随机)
-        return storage.put(today,[{e_num: a[0].e_num, e_id: 2, e_time: 0, e_sleep:0, e_count:getRandomInt(2,4)}])
+        return storage.put(today,[{e_num: a[0].e_num, e_id: 2, e_time: 0, e_sleep:0, e_count:getRandomInt(8,15)}])
     }
     if (id == 3) { // 纯刷直播间指标 e_time 停留时长 15 - 17   (e_sleep 随机切换直播间 具体执行的时候随机)
         return storage.put(today,[{e_num: a[0].e_num, e_id: 3, e_time:addRandomMinutes(15,17), e_sleep:0, e_count:0}])
@@ -393,14 +429,37 @@ function interest() {
     }
 }
 
-//  刷视频向上
+//  刷视频执行动作
 function brush() {
-    swipes()
-    sleep(randomDelay(15,22)) // 随机sleep
+    // 遇到直播间直接下滑动    
+    if (descContains("未点赞，喜欢").findOne(500) == null) {
+        console.log("未点赞，喜欢")
+        return  swipes(); 
+    }
+    
+    swipes() // 向上刷
+    sleep(50);
+    if (getRandomInt(1, 6) == 5) {  // 随机连刷
+        swipes();
+    }
+    sleep(randomDelay(15,22)); // 随机sleep
+    //  随机评论
+    let rani = getRandomInt(1, 10)
+    if ( rani > 8) {
+        P_s = descContains("评论").findOne(500)
+        if (P_s) {
+            clickobj(P_s);
+        }
+    }
 }
 
 //  当前界面  -1 指重新执行 0可以执行命令
 function enter_interface(e_id) {
+    // if (Find_Control("常用功能")) {
+    //     back()
+    //     return -1
+    // }
+
     if (e_id == 1) { // 推荐视频  1-20
         // 到时间了就重置
         if (!compareTime()) {
@@ -412,6 +471,12 @@ function enter_interface(e_id) {
         if (desc("已选中，推荐，按钮").findOne(500)) {
             console.log("已选中")
             return 0
+        }
+
+        if (Find_Control("直播广场")) {
+            back();
+            sleep(2000);
+            return -1
         }
         
         // let cl =  desc("关闭").findOne(500)
@@ -430,6 +495,32 @@ function enter_interface(e_id) {
         //     return 0
         // }
 
+        let buttont =  desc("[呲牙], 按钮").findOne(500)
+        if (buttont) {
+            console.log("[呲牙], 按钮")
+            let emo = getRandomInt(2,5)
+            for (let i = 0; i < emo; i++) {
+                emote_b()
+            }
+            sleep(1000);
+            let button = className("android.widget.Button").text("发送").findOne();
+            if (button) {
+                clickobj(button)
+            }
+            sleep(2000);
+            back()
+            return -1 
+        }
+
+
+        // 在评论区界面
+        if (desc("放大评论区").findOne(500)) {
+            P_l = desc("表情").findOne(500)
+            if (P_l) {
+                clickobj(P_l);
+            }
+            return -1 
+        }
 
         back();  // 返回
         return -1
@@ -469,6 +560,19 @@ function enter_interface(e_id) {
             swipes(); //  下滑
             sleep(5000);  // 等待控价加载
         }
+
+        let f_z = Find_Control("直播广场")
+        if (f_z) {
+            clickobj(f_z);
+            sleep(2000);
+            return -1
+        }
+
+        if (Find_Control("观看历史")) {
+            clickCenter();
+            return -1
+        }
+
 
         console.log("2.5")
         if (text("个人中心").findOne(500)) {
@@ -518,6 +622,11 @@ function enter_interface(e_id) {
                 // console.log("直播按钮")
                 clickobj(button);
                 sleep(4000); //等待加载控件
+            }else{
+                // 点击侧边栏
+                let targetControl2 = descContains("侧边栏").findOne(500);
+                clickobj(targetControl2);
+                sleep(2000);
             }
             return -1
         }
@@ -567,6 +676,17 @@ function enter_interface(e_id) {
             sleep(5000);
             return -1
         }
+
+        // 更换进入直播间方式
+        let S_n = desc("首页，按钮").findOne(500);
+        if (S_n) {
+            // 点击侧边栏
+            let targetControl2 = descContains("侧边栏").findOne(500);
+            clickobj(targetControl2);
+            sleep(2000);
+            return -1 
+        }
+
         console.log("9")
         back();
         return -1
@@ -645,23 +765,34 @@ function main() {
     // 检查参数
     if (inspect()) {
         // 执行操作
-        console.log("执行操作")
+        // console.log("执行操作")
+        toast("执行操作")
         execute()
     }else{
-        console.log("生成参数")
+        // console.log("生成参数")
+        toast("生成新的行为")
         // 生成行为参数
         generate()
     }
 }
 
-for (let i = 0; i < 2000; i++) {
+// for (let i = 0; i < 110; i++) {
+//     main()
+//     let e = storage.get(today)
+//     console.log("==============",e)
+// }
+
+manage_value()  // 初始今日数据 删除其余的数据
+while (true){
+    // 检查进入关注是否到达数量了
+    let a = storage.get(today)
+    if (a[0].e_num <= 0 ) {
+        toast("今日账号关注到上限了");
+        home(); 
+        break
+    }
+
     main()
-    let e = storage.get(today)
-    console.log("==============",e)
 }
 
-
 // id  com.ss.android.ugc.aweme:id/z3w  是管理员
-
-// console.log("抖音号 ====== : ",Find_Control("抖音号"))
-// console.log(id("android:id/content").findOne().childCount())

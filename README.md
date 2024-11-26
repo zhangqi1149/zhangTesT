@@ -6,17 +6,17 @@
     可以不计算的就不计算
 
 
-    // 设置屏幕密度为 320 dpi
-    // shell("wm density 320", true);
+    // 设置屏幕密度为 320 dpi   adb shell wm density 当前屏幕密度
+    // shell("wm density 320", true); adb shell wm density 320
 
-    // 设置屏幕分辨率为 720x1280 像素
-    // shell("wm size 720x1280", true);
+    // 设置屏幕分辨率为 720x1280 像素   adb shell wm size
+    // shell("wm size 720x1280", true);   adb shell wm size 720x1280
 
     // var currentPackage = currentPackage();  // 获取当前应用的包名
     // var currentActivity = currentActivity();  // 获取当前应用的 Activity 名称
 
     // console.log("当前应用包名: " + currentPackage);
-    // 当前应用包名: com.huawei.android.launcher  // 桌面
+    // 当前应用包名: com.huawei.android.launcher  // 桌面  
     // 当前应用包名: com.wemade.mir4global   // 传奇4
     // console.log("当前应用的 Activity: " + currentActivity);
     // 当前应用的 Activity: com.huawei.android.launcher.unihome.UniHomeLauncher  // 桌面
