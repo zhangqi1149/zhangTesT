@@ -6,6 +6,9 @@ var interval = 60000 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
 
+// SetCom('wm size | grep "Override size"')         // 获取当前的屏幕物理尺寸
+// SetCom('wm density | grep "Override density"')   // 获取当前的密度
+
 // var width_screenshot = 1285
 // var height_screenshot = 720
 var storage = storages.create("ABC");
@@ -71,6 +74,15 @@ function isblue(img) {
         console.error("请求失败: ", e);
     }
     return null;
+}
+
+function SetCom(str) {
+    let res = http.get("http://127.0.0.1:8848/execute?cmd="+str);    // 查看文件
+    if(res.statusCode != 200){
+        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+    }else{
+        console.log(res.body.string())
+    }
 }
 
 // 查看控件
@@ -179,7 +191,7 @@ function getRandomName() {
     }
     
     // 加上前缀
-    let prefix = "MMOEXP ";
+    let prefix = "igokay ";  
     let fullName = prefix + name;
     return fullName;
 }
@@ -267,6 +279,24 @@ function select(ocrResults, targetText,exactMatch) {
     return null;
 }
 
+/** 发包点击
+ * 
+ * @param {string} key 属性
+ */
+function httpclick(x,y) {
+    // let res = http.get("http://127.0.0.1:8848/execute?cmd=input tap 500 1000");    // 查看文件
+    let res = http.get("http://127.0.0.1:8848/execute?cmd=input tap "+`${x} ${y}`);    // 查看文件
+    if(res.statusCode != 200){
+        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+        return false
+    }else{
+        // console.log(res.body.string())
+        // let bodyString = res.body.string(); // 立即读取响应体
+        // console.log(`value : ${bodyString}`)
+        return true
+    }
+}
+
 /** 查找文本并点击
  * 
  * @param {Array} reData 
@@ -286,10 +316,12 @@ function selclick(reData,src,exactMatch){
         // let y_phone = (centerY / 720) * device.width;
 
         // console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
-        console.log(`selclick-点击${src}: x=${centerX}, y=${centerY}`);
+        console.log(`selclick-点击 ${src}: x=${centerX}, y=${centerY}`);
 
         // 点击坐标
+        // code = httpclick(centerX,centerY);
         code = click(centerX,centerY);
+        // console.log("code",code)
         // code = click(x_phone,y_phone);
         if (!code) {
             console.log(`selclick ${src} 点击失败`)
@@ -432,10 +464,10 @@ function clickTow(reData,src){
 
 // 关闭窗口
 function closeX(reData){
-    if (checkAndClick(reData, '伪像切换', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '大地图', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '奇缘', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '闭关修炼', 1230, 29, 2000)) return true;
+    if (checkAndClick(reData, '伪像切换', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '奇缘', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '闭关修炼', 1241, 29, 2000)) return true;
     if (select(reData, '可佩戴')) {
         clickWithDelay(948,200,1000);// 选中
         clickWithDelay(1150,675,2000); // 购买
@@ -444,19 +476,19 @@ function closeX(reData){
         return true
     }
 
-    if (checkAndClick(reData, '龙神器', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '远征队', 1230, 29, 2000)) return true;
+    if (checkAndClick(reData, '龙神器', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '远征队', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '接受委托', 795, 149, 2000)) return true;
-    if (checkAndClick(reData, '切换频道', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '一键删除', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '合成魔', 1230, 29, 2000)) return true;
+    if (checkAndClick(reData, '切换频道', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '一键删除', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '合成魔', 1241, 29, 2000)) return true;
     
     // 利用活力
     if (checkAndClick(reData, '利用活力', 223, 560, 1200)) return true;
     if (checkAndClick(reData, '战斗设置', 1235, 41, 2000)) return true;
     if (checkAndClick(reData, '快捷栏设置', 1235, 41, 2000)) return true;
-    if (checkAndClick(reData, '特殊强化', 1230, 29, 2000)) return true;
-    if (checkAndClick(reData, '精灵合成', 1230, 29, 2000)) return true;
+    if (checkAndClick(reData, '特殊强化', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '精灵合成', 1241, 29, 2000)) return true;
 
     // 活力补充
     if (checkAndClick(reData, '活力补充', 950, 164, 2000)) return true;
@@ -490,12 +522,21 @@ function closeX(reData){
 
 // 处理弹窗函数
 function wrong(reData) {
+    // 临时维护
+    if (select(reData,"Temporary Maintenance")) {
+        console.log("游戏临时维护");
+        // 杀掉游戏
+        SetCom("pm clear com.wemade.mir4global")
+        throw new Error("游戏临时维护")
+    }
     // 更新维护
     if (select(reData,"更新维护公告")) { 
+        SetCom("pm clear com.wemade.mir4global")
         throw new Error("更新维护公告");
     }
     if (select(reData,"存在最新版本")) { 
         selclick(reData,"确定",true);
+        SetCom("pm clear com.wemade.mir4global")
         throw new Error("游戏更新");
     }
     if (selclick(reData,"重新连接")) {
@@ -505,9 +546,13 @@ function wrong(reData) {
     if (select(reData, "服务器连接断开")) {
         return ClickSleep(reData, '前往登录');
     }
-    // 网络问题 -> 重新尝试   TODO 这里要杀掉整个游戏才行 需要root权限
+    if (select(reData,"服务器断开连接")) {
+        return ClickSleep(reData,"确认")
+    }
+    // 网络问题 -> 重新尝试 
     if (select(reData, "网络套")) {
-        return ClickSleep(reData, '重新尝试', 5000, true);
+        SetCom("pm clear com.wemade.mir4global")
+        return true;
     }
     // 重新尝试
     if (select(reData, "重新尝试")) {
@@ -835,15 +880,23 @@ function Console(reData) {
         let item2 = menuItem.box[1][1]
         console.log(`请点击菜单按键: ${item}`)
         console.log(`请点击菜单按键: ${item2}`)
+
+        if (item == 820.0 && item2 <= 157) {
+            selclick(reData, '跳过')
+            return true
+        }
+
         // [816.0, 269.0], [943.0, 267.0], [944.0, 291.0], [817.0, 293.0] 制造菜单提示位置
         // [[821.0, 277.0], [984.0, 270.0], [986.0, 297.0], [822.0, 305.0]]
-        if (item == 816.0 || item == 815.0 || item == 814.0 || item == 821.0) {
+        // if (item == 816.0 || item == 815.0 || item == 814.0 || item == 821.0) {
+        if (item >= 814.0 && item <= 823.0) {
             click(1028,216);  // 制造工坊
             sleep(2000);
             return true
         }
         // [[900.0, 155.0], [1049.0, 149.0], [1050.0, 177.0], [902.0, 183.0]] 精灵菜单提示位置
-        if (item == 900.0 || item == 901.0 ) {
+        // [[910.0, 159.0], [1058.0, 155.0], [1059.0, 182.0], [911.0, 187.0]]
+        if (item == 900.0 || item == 901.0 || item == 910.0) {
             click(1120,105);  // 精灵
             sleep(2000);
             return true
@@ -855,6 +908,13 @@ function Console(reData) {
             return true
         }
 
+        // [[725.0, 381.0], [855.0, 380.0], [855.0, 404.0], [726.0, 405.0]]  //任务提示按键
+        // [[732.0, 394.0], [857.0, 394.0], [857.0, 413.0], [732.0, 413.0]]  任务
+        if (item2 > 380.0) {  // TODO 任务提示需要item2
+            selclick(reData, '跳过')
+            return true
+        }
+        
         // [[727.0, 156.0], [854.0, 156.0], [854.0, 179.0], [727.0, 179.0]]  角色菜单提示位置
         // [[728.0, 156.0], [855.0, 156.0], [855.0, 179.0], [728.0, 179.0]]
         // [[730.0, 159.0], [853.0, 159.0], [853.0, 177.0], [730.0, 177.0]]
@@ -864,12 +924,6 @@ function Console(reData) {
             sleep(2000);
             click(939,222);  // 铁匠
             return true 
-        }
-
-        // [[725.0, 381.0], [855.0, 380.0], [855.0, 404.0], [726.0, 405.0]]  //任务提示按键
-        if (item2 > 380.0) {  // TODO 任务提示需要item2
-            selclick(reData, '跳过')
-            return true
         }
         // if (selclick(reData, '跳过')) {
         //     console.log("$$$$$$$$$$$$ 请点击菜单按键 跳过");
@@ -881,7 +935,7 @@ function Console(reData) {
     let buttonItem = select(reData, '请点击按键')
     if (buttonItem) {
         let item = buttonItem.box[0][0]
-        // let item2 = buttonItem.box[1][1]
+        let item2 = buttonItem.box[0][1]
         console.log(`请点击按键: ${item}`)
         // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
         // if (item == 754.0 || item == 752.0 || item == 751.0) {
@@ -889,6 +943,13 @@ function Console(reData) {
         //     sleep(1000);
         //     return true
         // }
+
+        // [[899.0, 74.0], [991.0, 74.0], [991.0, 97.0], [899.0, 97.0]]  任务提示
+        if (item2 <= 74) {
+            selclick(reData,"跳过")
+            return true;
+        }
+
 
         // [[936.0, 348.0], [1029.0, 348.0], [1029.0, 371.0], [936.0, 371.0]] 解除封印
         // // 未匹配的全跳过
@@ -906,6 +967,13 @@ function Console(reData) {
             sleep(2000);
             return true
         }
+
+        if (select(reData,"解除封印")) {
+            selclick(reData, '跳过')
+            sleep(2000);
+            return true
+        }
+
 
         if (select(reData,"制造工坊")) {
             if (selclick(reData, '制造',true)) {
@@ -969,6 +1037,9 @@ function Console(reData) {
         return true
     }
     if (select(reData, '传承装备')) {
+        if (select(reData,"活力魔石")) {
+            return checkAndClick(reData, '请点击。', 278,200, 1000);
+        }
         let der = select(reData, '请点击。')
         if (der) {
             let item = der.box[0][0];
@@ -1106,8 +1177,6 @@ function reward(reData) {
         clickWithDelay(1097,564,1500); //  选择2件装备
         clickWithDelay(1189,564,1500); //  选择2件装备
 
-        // todo
-        
         click(1161,667); //  点击确定出售
         sleep(1000);
         click(754,471);    // 点击警告
@@ -1299,7 +1368,8 @@ function reward(reData) {
 
     if (select(reData, '太定')) {
         let img = captureScreen();
-        if (images.pixel(img, 43, 146) == -1935584 ) {
+        // if (images.pixel(img, 43, 146) == -1935584 ) {
+        if (images.pixel(img, 33, 151) == -1935584 ) {
             //  有需要升级的地方
             let img2 = captureScreen();
             //  天宫  color == -8108002
@@ -1315,17 +1385,17 @@ function reward(reData) {
                 clickWithDelay(1039,671,4000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img2, 454, 605) == -1935584 ) {
+            if (images.pixel(img2, 459, 604) == -1935584 ) {
                 clickWithDelay(424,645,1000);
                 clickWithDelay(1039,671,4000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img2, 578, 605) == -1935584 ) {
+            if (images.pixel(img2, 583, 604) == -1935584 ) {
                 clickWithDelay(547,645,1000);
                 clickWithDelay(1039,671,4000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
             }
-            if (images.pixel(img2, 711, 605) == -1935584 ) {
+            if (images.pixel(img2, 710, 604) == -1935584 ) {
                 clickWithDelay(672,645,1000);
                 clickWithDelay(1039,671,4000); // 点击修炼
                 clickWithDelay(1039,671,1000); // 点击修炼
@@ -1393,6 +1463,7 @@ function reward(reData) {
             imgRecycle(img)
             return true
         } 
+        imgRecycle(img)
         return false
     }
 
@@ -1407,6 +1478,10 @@ function reward(reData) {
 
 //  创建角色
 function create(reData) {
+    if ((!select(reData,"请输入名称") && select(reData,"创建角色"))) {
+        selclick(reData, '确定',true)
+        return true
+    }
     // 选择角色界面
     if (select(reData, '选择职业')) {
         if (selclick(reData, '黑道士')) {  // 选黑道士
@@ -1424,19 +1499,18 @@ function create(reData) {
             sleep(2000);
             return true
         }
-        // TODO 
-        if (select(reData,"?123")) {
-            clickWithDelay(116,671); // 点击缩放的地方
-            input(getRandomName());  //  请输入名称
-            sleep(500);
-            return true
-        }
-
+        // // TODO 
+        // if (select(reData,"?123")) {
+        //     clickWithDelay(116,671); // 点击缩放的地方
+        //     input(getRandomName());  //  请输入名称
+        //     sleep(500);
+        //     return true
+        // }
 
         // 打开了小键盘
-        if (select(reData,"换行")) {
-            clickWithDelay(1185,343,2000); // 点击缩放的地方
+        if (select(reData,"换行") || select(reData,"拼音")) {
             input(getRandomName());  //  请输入名称
+            clickWithDelay(1185,343,2000); // 点击缩放的地方
             sleep(500);
             return true
         }
@@ -1446,8 +1520,8 @@ function create(reData) {
             sleep(1000);
             return true
         }
-        if (!selclick(reData, '创建角色')) {
-            selclick(reData,"确定");
+        if (!selclick(reData, '创建角色')) {   
+            selclick(reData,"确定");   // 键盘不一样
         }
         sleep(2000);
         return true
@@ -1531,7 +1605,7 @@ function upLevel(){
     sleep(5);
     let color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
     sleep(5);
-    let clors =  images.pixel(img, 522,41);   // 判断是否在打怪
+    let clors =  images.pixel(img, 522,41);   // 判断是否在打怪  
     sleep(5);
     // console.log(`color1: ${color1}, color2 : ${color2}`)
 
@@ -1539,6 +1613,7 @@ function upLevel(){
     let reData = getOcr(grayscaleImage,"ch");
     imgRecycle(img)
     if (reData) {
+        if (wrong(reData)) {return } //  处理异常弹窗
         // 进入游戏界面以前
         if(select(reData, 'REA') ){
             // 进入游戏
@@ -1573,11 +1648,11 @@ function upLevel(){
                 // 开始游戏
                 if (selclick(reData, '开始游戏')) {
                     // console.log("点击界面进入游戏");
-                    sleep(5000);
+                    return sleep(5000);
                 }
             }
         }
-        if (wrong(reData)) {return } //  处理异常弹窗
+        // console.log("创建角色")
         if (create(reData)) {return } //  创建角色
         // console.log("处理小青龙")
         if (Loong(reData)) {return }  // 处理小青龙
@@ -1593,8 +1668,6 @@ function upLevel(){
         //     }
         // }
 
-        // console.log("关闭所有的弹窗")
-        if (closeX(reData)) {return } // 关闭所有的弹窗
 
         //  喊话 
         if (lv >= 40) {
@@ -1612,8 +1685,11 @@ function upLevel(){
             }
         }
 
+        // console.log("关闭所有的弹窗")
+        if (closeX(reData)) {return } // 关闭所有的弹窗
 
-        if (clors == -13553096) {  // 是否在打怪
+
+        if (clors == -13553096 || clors == -13487302) {  // 是否在打怪   
             console.log("在打怪");
             // 处理取消打怪升级
             if (lv == 13) {
@@ -1733,17 +1809,19 @@ function upLevel(){
                 reai = selclick(reData,"银")
                 if (reai) {
                     sleep(2000);
-                    clickWithDelay(330,445,500);
-                    click(330,445);
-                    clickWithDelay(330,445,13000);
+                    clickWithDelay(312,471,500);
+                    click(312,471);
+                    clickWithDelay(312,471,13000);
+                    
                     click(395,662);  // 点击打怪
                     clickWithDelay(1195,630,27000);
                 }
-                return    
+                return  
             }
+            if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return ;
         }
 
-        //  升级到40  TODO 整理装备 领取奖励
+        //  升级到40
         if (lv < 40 ) {
             //  查找 找救出可疑的女人
             if (select(reData,"12.救出可疑的女人")) {
@@ -1816,13 +1894,12 @@ function upLevel(){
         }else{
             if (!select(reData,"救出可疑的女人")) {
                 // 加入限定的条件 
-                if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"安全",true) || select(reData,"普通",true) || select(reData,"绑架的背后")) {
+                if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true) || select(reData,"安全",true) || select(reData,"普通",true) || select(reData,"绑架的背后")) {
                     console.log(" . ");
                     clickWithDelay(1122.5,187,2000);    
                 }
             }
         }
-
         //  ********   剧情任务
         // 漆黑的密道
         if (select(reData, '漆黑的')) {
@@ -2014,9 +2091,9 @@ function upLevel(){
             if (selclick(reData,"与陈生")){
                 sleep(2000);
             }
-            if (selclick(reData,"17.前往")){
-                sleep(2000);
-            }
+            // if (selclick(reData,"17.前往")){
+            //     sleep(2000);
+            // }
             return
         }
         // 芊菲的下落
@@ -2240,11 +2317,12 @@ function main(){
     }
 }
 
-// for (let i = 0; i < 1; i++) {
-//     console.log("$$$$$$$$$$$$$$  执行开始!")
+for (let i = 0; i < 1; i++) {
+    // console.log("$$$$$$$$$$$$$$  执行开始!")
     main()
-//     console.log("##############  执行完成")
-// }
+    // console.log("##############  执行完成")
+    // sleep(1000);
+}
 
 
 if (false) {
@@ -2252,7 +2330,6 @@ if (false) {
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
     }
-    // console.log("截图")
     let img = captureScreen();
     // let grayscaleImage = images.grayscale(img);
 
@@ -2262,7 +2339,12 @@ if (false) {
 
     // let hp =  images.pixel(img, 522,41);   // -13553096
     // console.log(hp)
-
+ 
 }
 
- 
+// for (let i = 0; i < 10; i++) {
+//     console.time("ocrExecutionTime");  // 开始计时
+//     let img = captureScreen();
+//     let reData = getOcr(img,"ch");
+//     console.timeEnd("ocrExecutionTime");  // 输出执行时间
+// }
