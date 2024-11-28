@@ -1,5 +1,5 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.2.10:5000";
+var SERVER_URL = "http://192.168.2.77:5000";
 // var text = "40级了 打不过怪该怎么玩啊" ;
 var text = "At level 40, I can't defeat monsters. How should I play" ;
 var interval = 60000 ;    // 12分钟 720000毫秒  *60000
@@ -464,6 +464,8 @@ function clickTow(reData,src){
 
 // 关闭窗口
 function closeX(reData){
+    if (checkAndClick(reData, '已付款的商品将发放至商店保管箱', 1130, 66, 2000)) return true;
+
     if (checkAndClick(reData, '伪像切换', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '奇缘', 1241, 29, 2000)) return true;
@@ -1242,7 +1244,7 @@ function reward(reData) {
     if (select(reData, '出战效果')) {
         //  重新截图拿到最新的
         let img = captureScreen();
-        if (images.pixel(img, 939, 247) == -1935584 ) {
+        if (images.pixel(img, 939, 247) == -1935584 || images.pixel(img, 945, 255) == -1935584) {
             clickWithDelay(939, 247,2000);
             // 点击召唤  
             clickWithDelay(1130,666,1000);
@@ -1250,7 +1252,7 @@ function reward(reData) {
             // 点击上面的位置
             clickWithDelay(916,121,2000);
         }
-        if (images.pixel(img, 1034, 247) == -1935584 ) {
+        if (images.pixel(img, 1034, 247) == -1935584 || images.pixel(img, 1043, 255) == -1935584) {
             sleep(1000);
             clickWithDelay(1034,247,2000);
             // 点击召唤  
@@ -1259,14 +1261,14 @@ function reward(reData) {
             // 点击上面的位置
             clickWithDelay(1011,121,1000);
         }
-        if (images.pixel(img, 1130, 247) == -1935584 ) {
+        if (images.pixel(img, 1130, 247) == -1935584 || images.pixel(img, 1143, 255) == -1935584) {
             sleep(1000);
             clickWithDelay(1130,247,2000);
             // 点击召唤  
             clickWithDelay(1130,666,1000);
         }
 
-        if (images.pixel(img, 1237, 247) == -1935584 ) {
+        if (images.pixel(img, 1237, 247) == -1935584 || images.pixel(img, 1239, 255) == -1935584) {
             sleep(1000);
             clickWithDelay(1207,247,2000);
             // 点击召唤  
@@ -1291,7 +1293,7 @@ function reward(reData) {
         sleep(1000);
         //  重新截图拿到最新的
         let img = captureScreen();
-        if (images.pixel(img, 242, 259) == -1935584 ) {
+        if (images.pixel(img, 242, 259) == -1935584 || images.pixel(img, 228, 253) == -1935584 ) {
             sleep(1000);
             //  点击石头  908, 191
             clickWithDelay(911,191,1000);
@@ -1301,7 +1303,7 @@ function reward(reData) {
             clickWithDelay(224,284,1000);
         }
 
-        if (images.pixel(img, 217, 357) == -1935584 ) {
+        if (images.pixel(img, 217, 357) == -1935584 || images.pixel(img, 212, 356) == -1935584 ) {
             //  点击石头  1000, 191
             clickWithDelay(1000,191,1000);
             //  装备 1150,674
@@ -2317,12 +2319,12 @@ function main(){
     }
 }
 
-for (let i = 0; i < 1; i++) {
+// for (let i = 0; i < 1; i++) {
     // console.log("$$$$$$$$$$$$$$  执行开始!")
     main()
     // console.log("##############  执行完成")
     // sleep(1000);
-}
+// }
 
 
 if (false) {
@@ -2339,6 +2341,8 @@ if (false) {
 
     // let hp =  images.pixel(img, 522,41);   // -13553096
     // console.log(hp)
+    console.log()
+    console.log()
  
 }
 
