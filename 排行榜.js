@@ -1,5 +1,5 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.2.7:5000";
+var SERVER_URL = "http://192.168.2.77:5000";
 // var text = "40级了 打不过怪该怎么玩啊" ;
 var text = "At level 40, I can't defeat monsters. How should I play" ;
 var interval = 60000 ;    // 12分钟 720000毫秒  *60000
@@ -1562,6 +1562,25 @@ function Shout(reData) {
     }
 }
 
+function Ranking(reData) {
+    if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true) || select(reData,"安全",true) || select(reData,"普通",true) || select(reData,"绑架的背后")) {
+        clickWithDelay(1230,29,1200);  
+    }
+    if (select(reData,"快速设置")) {
+        if (selclick(reData,"排位",true)) {
+            return true
+        }
+    }
+    if (select(reData,"个人")) {
+        // 
+        if (select(reData,"全部")) { // 才打开
+            // 选择未喊话分组
+        }
+    }
+
+    return true
+}
+
 //  升级
 function upLevel(){
     if (!requestScreenCapture(true)) {
@@ -1670,21 +1689,10 @@ function upLevel(){
         //     }
         // }
 
-
-        //  喊话 
-        if (lv >= 40) {
-            Shout(reData);
-            return  // 喊话间隔
-        }
-
-        if (lv > 11 ) {  // 领取奖励
-            // 根据气泡领取
-            if (reward(reData)) {return }
-            //  通知气泡
-            if (color == -1935584) {
-                clickWithDelay(1184,17,1000);
-                return
-            }
+        // TODO 排行榜 是否是第一个账号
+        if (lv >= 10 ) {
+            console.log(" 排行榜喊话")
+            return Ranking(reData)
         }
 
         // console.log("关闭所有的弹窗")
@@ -1693,114 +1701,7 @@ function upLevel(){
 
         if (clors == -13553096 || clors == -13487302) {  // 是否在打怪   
             console.log("在打怪");
-            // 处理取消打怪升级
-            if (lv == 13) {
-                if (select(reData,"芊菲的下落")) {
-                    if (selclick(reData,"1.")) {
-                        sleep(5000);  
-                        return
-                    }
-                }
-            }
-            // 使用觉醒
-            if (lv > 16 ) {
-                clickWithDelay(1133,560,10000);   // 觉醒键 
-            }
-            
-            //  检查药回城 
-            if (lv > 20 ) {
-                if (hp == -13093322 || mp == -11776688) {
-                    // 回城
-                    sleep(2000);
-                    clickWithDelay(1133,95,2000); //点击大地图
-                    clickWithDelay(200,25,2000); //点比奇地区
-                    clickWithDelay(582,412,2000); //点比奇城
-                    if (select(reData,"半兽古墓1")) {
-                        console.log("半兽古墓一 前往庆济")
-                        // 前往庆济
-                        clickWithDelay(1128,572,1000);
-                        clickWithDelay(1128,572,1000);
-                        // console.log("点击传送1")
-                        click(1058,678);
-                        sleep(13000);
-                    }else{
-                        console.log("前往庆济")
-                        // 前往庆济
-                        clickWithDelay(430,574,1000);
-                        clickWithDelay(430,574,100);
-                        clickWithDelay(430,574,40000);
-                    }
-                    return
-                }
-            }
-            let reai = select(reData,"【精英】比奇城后巷")
-            if (reai) {
-                if (reai.box[0][1] < 114 ) {
-                    if (select(reData,"12.救出可疑的")) {
-                        sleep(50000);
-                    }
-                }
-            }
-            // clickWithDelay(1197,625,5000);  // 普攻一下
             return 
-        }
-        // console.log("切换药剂")
-        if (lv > 17 && lv < 40 ) {   //  切换药剂   在城镇的时候 
-            //  检查城镇
-            let reai = select(reData,"比奇城",true)
-            if (reai) {
-                // 判断人在不在比奇城
-                if (reai.box[0][0] > 1058 && reai.box[0][1] < 112 ) {
-                    // 判断药剂是否还有
-                    // var hp =  images.pixel(img, 459, 666); 
-                    // var mp =  images.pixel(img, 532, 667); 
-                    if (hp == -13093322 || hp == -13093065 || hp == -13092809  || mp == -11776688 || mp == -11907760 || mp == -11776432 || mp == -11776431 || mp == -11841968) {
-                        console.log("没药剂了")
-                        let buy = select(reData,"购买")
-                        if (buy) {
-                            textClick(buy,-45,0)
-                            return
-                        } 
-                        //  点击地图 去买药的位置
-                        if (selclick(reData,"比奇城")) {
-                            // 进入地图
-                            sleep(4000);
-                            console.log("前往庆济")
-                            //  点击寻路
-                            // click(1202,678);
-                            clickWithDelay(430,574,1000);
-                            clickWithDelay(430,574,100);
-                            clickWithDelay(430,574,10000);
-                            return wait("购买",200000)
-                        }
-                    }else{
-                        if (lv <= 19) {
-                            // 判断是否是大药 切换药
-                            if ((color1 != -11661539 && color1 != -13093322 && color1 != -7204829 && color1 != -11791328 && color1 != -11791842 || color1 == -11791841) || (color2 != -15912110 && color2 != -13158343 && color2 != -15780527 && color2 != -15911855 && color2 != -15780525 && color2 != -13092551 && color2 != -15575908) ) {
-                                console.log(" 没有大药 ")
-                                //  点击第三个药设置 
-                                clickWithDelay(610,661,3000);
-                
-                                // 两个药都去掉
-                                clickWithDelay(471,606,500);
-                                clickWithDelay(541,606,500);
-                
-                                //  点击第1个药剂 红
-                                clickWithDelay(891,415,2000); 
-                                clickWithDelay(891,415,1000); 
-                                clickWithDelay(476,666,3000); 
-                                //  点击第2个药剂 蓝
-                                clickWithDelay(955,415,2000); 
-                                clickWithDelay(955,415,1000); 
-                                clickWithDelay(539,666,1000); 
-
-                                clickWithDelay(1235,41,2000); // 关闭
-                                return  
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         // console.log("去挂机打怪")
@@ -1821,53 +1722,6 @@ function upLevel(){
                 return  
             }
             if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return ;
-        }
-
-        //  升级到40
-        if (lv < 40 ) {
-            //  查找 找救出可疑的女人
-            if (select(reData,"12.救出可疑的女人")) {
-                console.log("练级到40")
-                reai = select(reData,"【精英】比奇城后巷")
-                if (reai) {
-                    if (reai.box[0][1] < 114 ) {
-                        click(395,662);
-                        sleep(2000);
-                        return
-                    }
-                }else{
-                    clickWithDelay(1133,95,3000); //点击大地图
-                    clickWithDelay(200,25,1500); //点比奇地区
-                    clickWithDelay(582,412,1500); //点比奇城
-                    // clickWithDelay(456,84,2000); // 比奇后巷
-                    clickWithDelay(1214,156,2000); // 更改难度
-                    clickWithDelay(313,526,500); // 双击去  476,407
-                    clickWithDelay(313,526,73000); // 双击去
-                    // click(395,662);  // 打怪
-                }
-                return
-            }
-        }
-
-        if (lv > 14) {
-            let reai = select(reData,"击败双门帮")
-            let reai1 = select(reData,"击败老二")
-            if (reai || reai1) {
-                if ((reai && reai.box && reai.box[0][0]) || (reai1 && reai1.box && reai1.box[0][0])) {
-                    let img = captureScreen();
-                    let imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
-                    let code2 = isblue(imgtext2)
-                    imgRecycle(imgtext2)
-                    imgRecycle(img)
-                    if (code2) {
-                        sleep(17000);
-                        return 
-                    }else{
-                        clickWithDelay(1187,218,15000);
-                        return
-                    }
-                }
-            }
         }
 
         //  是否在自动做任务
@@ -2098,198 +1952,6 @@ function upLevel(){
             // }
             return
         }
-        // 芊菲的下落
-        // if (select(reData, '芊菲的下落')) {
-        //     if (selclick(reData, '击败突')) {
-        //         sleep(3000);
-        //     }
-        //     return
-        // }
-
-        // 寻求灵药
-        if (select(reData,"寻求灵药")) {
-            if (selclick(reData, '7.与')) {
-                return sleep(4000);
-            }
-            if (selclick(reData, '8.制')) {
-                sleep(4000);
-                clickWithDelay(1125,676,3000);
-                clickWithDelay(723,600,3000); //  穿戴
-                return clickWithDelay(1230,29,1000);
-            }
-
-            //  这个不可以自动
-            if (select(reData, '22.带') || selclick(reData, '跳过')) {
-                sleep(1200);
-                swipe(208, 543, 208, 400, 5000); 
-                selclick(reData, '22.带')
-                return sleep(21000);
-            }
-            if (select(reData, '21.获')) {
-                sleep(20000);
-                clickWithDelay(326,638,4000);
-                return click(326,638);
-            }
-            if (selclick(reData, '3.采')) {
-                sleep(3000);
-                clickWithDelay(326,638,8000);
-                return click(326,638);
-            }
-            if (selclick(reData, '6.修炼')) {
-                selclick(reData, '跳过')
-                sleep(2000)
-                let img = captureScreen();
-                let ocrResults = getOcr(img,"ch");
-                imgRecycle(img)
-                if(ocrResults){
-                    for (let i = 0; i < 7; i++) {
-                        sleep(2000);
-                        // 天宫   1070,162   
-                        if (i==0||i==1||i==2) {
-                            click(1070,162);
-                        }
-
-                        // 持律   1070,219 
-                        if (i==3||i==4||i==5) {
-                            click(1070,219);
-                        }
-
-                        if (i==6) {
-                            click(1070,278);
-                        }
-
-                        click(1070,666); // 点击修炼
-                        sleep(4000);
-                        click(1070,666); // 点击修炼
-                        click(1070,666); // 点击修炼
-                        // 脉天   1070,278
-
-                        // 太定   1070,340
-                    }
-        
-                    // 关闭
-                    click(1230,29);
-                    sleep(2000) ;
-                }
-                return
-            }
-            return
-        }
-        // 比奇城风云
-        if (select(reData,"比奇城风")) {
-            if (select(reData, '请点击全部')) {
-                return selclick(reData, '跳过');
-            }
-            if (select(reData, '与可疑之人交易')) {
-                return swipe(721, 360, 10, 0, 1000);
-            }
-            if (select(reData, '21.强化装备')) {
-                sleep(3000)
-                clickWithDelay(809,200,1000); //  选武器 
-                clickWithDelay(1100,667,3000); // 强化
-                clickWithDelay(1100,667,2000);
-                
-                clickWithDelay(610,383,1000); //  确认点击
-                return clickWithDelay(732,472,2000);
-            }
-            return
-        }
-        // 逃离银杏谷 
-        if(select(reData,"逃离银杏谷")){
-            if (select(reData, '请点击全部') && selclick(reData, '跳过')) {
-                sleep(600);
-            }
-            return
-        }
-        // 绑架的背后   精英任务  
-        if (select(reData,"绑架的背后")) {
-            if (select(reData, '银杏谷采')) {
-                sleep(8000);
-                return clickWithDelay(326,638,128000);
-            }
-            if (selclick(reData, '4.与')) {
-                return  sleep(2000);
-            }
-            if (selclick(reData, '25.与')) {
-                return sleep(2000);
-            }
-            if (selclick(reData, '品质2武器')) {
-                selclick(reData, '跳过')
-                sleep(3000);
-                clickWithDelay(1125,676,3000);
-                clickWithDelay(723,600,3000); //  穿戴
-                clickWithDelay(1230,29,1000);
-            }
-            if (select(reData, '18.完成丹')) {
-                if (!select(reData,"击败双")) {
-                    let img = captureScreen(); // 重新获取截图
-                    let reData = getOcr(img,"ch"); // 重新OCR
-                    imgRecycle(img);
-                    if (reData) {
-                        if (select(reData, '奇缘')) {
-                            // 丹鹰的护卫
-                            sleep(3000);
-                            clickWithDelay(1094,597,2000);   // 点击领取
-                            clickWithDelay(1230,29,3000);    // 退出
-                            clickWithDelay(1194,234,18000);  // 点击领取的任务
-                            return
-                        }
-                    }
-                }
-                return
-            }
-            if (select(reData, '20.完成朱千')) {
-                if (!select(reData,"击败双")) {
-                    selclick(reData, '20.完成朱千')
-                    sleep(4000);
-                    let img = captureScreen(); // 重新获取截图
-                    let reData = getOcr(img,"ch"); // 重新OCR
-                    imgRecycle(img);
-                    if (reData) {
-                        if (select(reData, '奇缘')) {
-                            // 丹鹰的护卫
-                            sleep(3000);
-                            clickWithDelay(1094,597,2000);   // 点击领取
-                            clickWithDelay(1230,29,3000);    // 退出
-                            clickWithDelay(1194,234,18000);  // 点击领取的任务
-                            return
-                        }
-                    }
-                }
-                return
-            }
-            if (select(reData, '22.完成击败')) {  // 陈秋风
-                if (!select(reData,"老二陈")) {
-                    selclick(reData, '22.完成击败')
-                    sleep(4000);
-                    let img = captureScreen(); // 重新获取截图
-                    let reData = getOcr(img,"ch"); // 重新OCR
-                    imgRecycle(img);
-                    if (reData) {
-                        if (select(reData, '奇缘') ) {
-                            // 丹鹰的护卫
-                            sleep(3000);
-                            clickWithDelay(1158,426,2000);   // 点击领取
-                            clickWithDelay(1230,29,3000);    // 退出
-                            clickWithDelay(1194,234,18000);  // 点击领取的任务
-                            return
-                        }
-                    }
-                }
-            }
-            if (selclick(reData, '28.前')) {
-                return  sleep(2000);
-            }
-            if (selclick(reData, '29.前')) {
-                return sleep(5000);
-            }
-            if (!code) {
-                if (selclick(reData, '传子对话')) {
-                    return  sleep(2000);
-                }
-            }
-            return
-        }
 
         //  跳过
         reai = select(reData,"跳过")
@@ -2321,7 +1983,7 @@ function main(){
 
 // for (let i = 0; i < 1; i++) {
     // console.log("$$$$$$$$$$$$$$  执行开始!")
-    main()
+    // main()
     // console.log("##############  执行完成")
     // sleep(1000);
 // }
@@ -2337,12 +1999,11 @@ if (false) {
 
     // console.log("开始请求")
     // let reData = getOcr(grayscaleImage,"ch");
-    // let reData = getOcr(img,"ch");
+    let reData = getOcr(img,"ch");
 
     // let hp =  images.pixel(img, 522,41);   // -13553096
     // console.log(hp)
-    console.log()
-    console.log()
+    Ranking(reData)
  
 }
 
@@ -2352,3 +2013,15 @@ if (false) {
 //     let reData = getOcr(img,"ch");
 //     console.timeEnd("ocrExecutionTime");  // 输出执行时间
 // }
+
+
+
+
+/**
+ * 打开排行榜界面
+ * 1.获取当前排行榜的角色名字
+ * 2.记录名字点击进入个人界面
+ * 3.点击对话
+ * 4.开始输入广告文本
+ * 5.输入完毕就对话列表
+ */
