@@ -1,7 +1,9 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.2.77:5000";
+var SERVER_URL = "http://192.168.1.128:5000";
+// var SERVER_URL = "http://192.168.1.142:5000"; // 本地
 // var text = "40级了 打不过怪该怎么玩啊" ;
-var text = "At level 40, I can't defeat monsters. How should I play" ;
+// var text1 = "All servers sell gold at a low price.   trading platform: w-w-w.igokay.com" ;
+var text1 = "The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 60000 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
@@ -12,6 +14,60 @@ var  Save = false  // true   false
 // var width_screenshot = 1285
 // var height_screenshot = 720
 var storage = storages.create("ABC");
+let today = new Date().toISOString().split('T')[0];  // 获取今日日期，格式为 YYYY-MM-DD
+
+let careers = [
+    "战士",
+    "法师",
+    "道士",
+    "弩手",
+    "武士",
+    "黑道士"
+];
+
+manage_value()
+//  管理存储值
+function manage_value() {
+    // 获取保存的所有键列表，如果没有保存过键列表，则默认为空数组
+    var keys = storage.get("keysList", []);
+    // 如果键不存在，将今天的日期添加到 keysList 中
+    if (!keys.includes(today)) {
+        keys.push(today);                 // 当前职业 : e_career  喊了话的战斗力 : e_war  当前职业喊的数量 : e_count  停止时间 : e_time
+        storage.put(today,{e_career:'战士', e_war:0, e_count:0 ,e_time:0})  // 职业  战力值  喊话的数量  休息时间
+        storage.put("keysList", keys);  // 更新键列表
+    }
+    
+    // 遍历之前保存的所有键，并删除不符合条件的键
+    keys.forEach(function(key) {
+        // console.log(key)
+        if (key !== today) {
+            storage.remove(key);  // 删除不是今天的数据
+        }
+    });
+}
+
+//  生成未来时间 
+function addRandomMinutes(min, max) {
+    let now = new Date();  // 获取当前时间
+    let randomMinutes = Math.floor(Math.random() * (max - min + 1)) + min; // 生成 min 到 max 之间的随机分钟数
+    now.setMinutes(now.getMinutes() + randomMinutes); // 当前时间加上随机分钟数，自动处理进位
+    return now;
+}
+
+//  对比时间
+function compareTime() {
+    let now = new Date();  // 获取当前时间
+    let a = storage.get(today)
+    let futureTime = new Date(a.e_time)
+    // 比较时间戳
+    if (futureTime > now) {
+        // console.log('未来时间大于当前时间');
+        return true
+    } else {
+        // console.log('未来时间小于当前时间');
+        return false
+    }
+}
 
 // OCR请求
 function getOcr(img, lang) {
@@ -97,6 +153,8 @@ function npackageName() {
             // 可以在这里对控件进行其他操作
             // toast("找到匹配的控件，包名" + node.packageName())
             // break; // 如果只需要找到一个，找到后可以跳出循环
+            node.recycle();  // 释放控件资源
+            sleep(100);
             return true
         }
     }
@@ -260,6 +318,7 @@ function select(ocrResults, targetText,exactMatch) {
     }
     for (let i = 0; i < ocrResults.length; i++) {
         let item = ocrResults[i];
+        // console.log("item.text:",item.text)
         if (item && item.text !== undefined) {
             if (exactMatch) {
                 if (item.text === targetText) {
@@ -276,6 +335,7 @@ function select(ocrResults, targetText,exactMatch) {
             console.error(`第 ${i} 项缺少 text 属性`, item);
         }
     }
+    // console.log("没找到 :",targetText);
     return null;
 }
 
@@ -343,12 +403,16 @@ function textClick(target,x,y){
     let centerX = (target.box[0][0] + target.box[2][0]) / 2;
     let centerY = (target.box[0][1] + target.box[2][1]) / 2;
     // 将坐标从截图转换到设备屏幕坐标
-    let x_phone = (centerX / 1285) * device.height;
-    let y_phone = (centerY / 720) * device.width;
-    console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
+    // let x_phone = (centerX / 1285) * device.height;
+    // let y_phone = (centerY / 720) * device.width;
+    // console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
+
+
+    console.log(`点击${target.text}: x=${centerX}, y=${centerY}`);
 
     // 点击坐标
-    click(x_phone+x,y_phone+y);
+    // click(x_phone+x,y_phone+y);
+    click(centerX+x,centerY+y);
 }
 
 /** 点击等待
@@ -417,7 +481,7 @@ function closeNote(reData,src) {
 //  查找第二个指示字符
 function selectTow(ocrResults, targetText) {
     if (!Array.isArray(ocrResults)) {
-        console.error(`OCR 结果不是数组: ${targetText}`);
+        console.error(`第二个指示字符 OCR 结果不是数组: ${targetText}`);
         return null;
     }
     let num = 0
@@ -1480,7 +1544,7 @@ function reward(reData) {
 
 //  创建角色
 function create(reData) {
-    if ((!select(reData,"请输入名称") && select(reData,"创建角色"))) {
+    if ((!select(reData,"请输入名称") && select(reData,"创建角色") && select(reData, '确定',true))) {
         selclick(reData, '确定',true)
         return true
     }
@@ -1510,7 +1574,7 @@ function create(reData) {
         // }
 
         // 打开了小键盘
-        if (select(reData,"换行") || select(reData,"拼音")) {
+        if (select(reData,"换行") || select(reData,"拼音")|| select(reData,"QWERTY")||select(reData,"English")) {
             input(getRandomName());  //  请输入名称
             clickWithDelay(1185,343,2000); // 点击缩放的地方
             sleep(500);
@@ -1522,67 +1586,201 @@ function create(reData) {
             sleep(1000);
             return true
         }
-        if (!selclick(reData, '创建角色')) {   
+        if (!selclick(reData, '创建角色')) {
             selclick(reData,"确定");   // 键盘不一样
         }
         sleep(2000);
+        // return true
+    }
+    if (selclick(reData,"创建角色")) {
         return true
     }
     return false
 }
-
-//  喊话   喊话内容 test  喊话间隔 interval
-function Shout(reData) {
-    // 输出
-    if (select(reData,"换行") || (select(reData,"符") && select(reData,"123"))) {
-        sleep(2000);
-        input(text);
-        sleep(2000);
-        // selclick(reData,"换行")
-        sleep(interval);
-        return true
+ 
+// 查找后面的文本
+function getNextText(ocrResult,targetText) {
+    if (!Array.isArray(ocrResult)) {
+        console.error(`getNextText 结果不是数组: ${targetText}`);
+        return null;
     }
-
-    // 打开输入法
-    if (selclick(reData,"请输入内容")) {
-        sleep(3000);
-        return true
+    for (let i = 0; i < ocrResult.length; i++) {
+      if (ocrResult[i].text.trim().replace(/[.,]/g, '') === targetText.replace(/[.,]/g, '')) {
+        // 如果目标文本不是最后一个，返回下一个文本
+        if (i + 1 < ocrResult.length) {
+          return ocrResult[i + 1].text;
+        } else {
+          return null; // 如果目标文本是最后一个，返回 null
+        }
+      }
     }
-    
-    // 点击全部
-    if (selclick(reData,"全部")) {
-        sleep(3000);
-        return true
-    }
-
-    // 打开对话框
-    if (select(reData,"卡组变更")) {
-        clickWithDelay(53,497,3000);
-        return true
-    }
+    return null; // 如果没有找到目标文本，返回 null
 }
+ 
 
+// 排行榜喊话
 function Ranking(reData) {
-    if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true) || select(reData,"安全",true) || select(reData,"普通",true) || select(reData,"绑架的背后")) {
-        clickWithDelay(1230,29,1200);  
+/**
+ * 打开排行榜界面
+ * 1.获取当前排行榜角色的战斗力
+ * 2.记录战斗力点击进入个人界面
+ * 3.点击对话
+ * 4.开始输入广告文本
+ * 5.输入完毕就对话列表
+ *          需要存的值为  喊了话的战斗力 e_war  当前职业  e_career     当前职业喊的数量  e_count
+ *                     storage.put(today,{e_career:'战斗力 (战士)', e_war:"", e_count:0 ,e_time:0})
+ */
+    let care = storage.get(today)
+
+    if (select(reData,"对方已将你屏蔽")|| selclick(reData,"确认")) {
+        sleep(1000);
+        clickWithDelay(48,33,1000);
+        return true
     }
+    //  对话框
+    if (select(reData,"聊天") && select(reData,"门派")) {
+        if (select(reData,"拼音")||select(reData,"QWERTY")) {
+            input(text1)  // 喊 TODO
+            sleep(1000);
+
+            // clickWithDelay(840,524,1000); // 发送
+            let hc =  select(reData,"?123")
+            if (hc) {
+                textClick(hc,496,0)
+                sleep(2000);
+                clickWithDelay(633,105,2000); // 关闭对话
+                clickWithDelay(633,40,1000);  // 关闭对话框
+            }
+            return true
+        }
+        // 请输入内容
+        if (selclick(reData,"请输入内容")) {
+            return true;
+        }
+        return true
+    }
+
+    //  进入对话界面
+    if (select(reData,"其他玩家信息")) {
+        // let img = captureScreen();
+        // let croppedImage = images.clip(img, 54, 79, 127, 42); // 战斗力
+        // let lvData = getOcr(croppedImage,"ch");
+        // imgRecycle(img)
+        // imgRecycle(croppedImage)
+        // if (lvData) {
+        //     let lvtext =lvData[0].text
+        //     console.log(lvtext)
+
+            let dh = select(reData,"对话")
+            textClick(dh,0,-30)
+            return true;
+        // }
+    }
+
+    
+    // 检查当前喊话进度  更换职业
+    if (care.e_count == 100) {
+        let index = careers.indexOf(care.e_career); // 当前职业的index
+        if (index == careers.length -1) {
+            // 一轮喊完了  休息一小时
+            console.log("一轮喊完了  休息一小时")
+            storage.push(today,{e_career:"战士", e_war:"", e_count:0 ,e_time:addRandomMinutes(40,60)})
+        }else{
+            console.log("更换职业")
+            storage.push(today,{e_career:careers[index+1], e_war:"", e_count:0 ,e_time:0})
+        }
+        return false
+    }
+
+    // 在排行榜界面
+    console.log(`排行榜进度 :${care.e_career},`,)
+    if (select(reData,"每日服务器")) {
+        // 选择职业 下拉框
+        if (select(reData,"战士") && select(reData,"法师")) {
+            return selclick(reData, care.e_career.trim());
+        }
+        // console.log("0")
+        // 没有选择分组
+        if (select(reData,"全部") || select(reData, care.e_career.trim()) == null) { // 才打开不是当前分组
+            if (selclick(reData,"全部") || selclick(reData,"战斗力（")) {
+                return 
+            }
+        }
+    }
+    // console.log("1")
+    // 记录战斗力
+    if (select(reData,care.e_career.trim())) {
+        // 开始挑选
+        console.log("开始挑选",care.e_war)
+        // 重新截图
+        let img = captureScreen(); 
+        let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
+        let croppedImage2 = images.clip(img, 200, 645, 48, 38); // 100 排名    
+        imgRecycle(img);
+        let crop = getOcr(croppedImage,"ch");
+        let crop2 = getOcr(croppedImage2,"ch");
+        imgRecycle(croppedImage);
+        imgRecycle(croppedImage2);
+
+        if (care.e_war == 0) {
+            //  未点击过
+            console.log(crop[0].text)
+            storage.put(today,{e_career:care.e_career, e_war:crop[0].text, e_count:1 ,e_time:0})
+            if (selclick(reData,crop[0].text)) {
+                return true;
+            }
+        }else{
+            let nt = getNextText(crop,care.e_war)
+            if ( nt == null) {
+                console.log("向上滑动")
+                swipe(600, 400, 600, 345, 500); 
+                sleep(2000);
+                console.log("到头了",crop2);
+                if (crop2) {
+                    if (crop2[0].text.trim() == 100 ) {
+                        console.log("到头了");
+                        // 点击右上角退出
+                        clickWithDelay(1235,41,2000); // 关闭窗口
+                    }
+                }
+                return true;
+            }else{
+                selclick(reData,nt);
+                storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
+                sleep(1500);
+                return true;
+            }
+        }
+        return
+    }
+
+    // 在游戏界面
+    if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true)||select(reData,"安全",true) ) {
+        console.log("在游戏界面")
+        clickWithDelay(1230,29,1200);
+        return 
+    }
+    console.log("快速设置")
+    // 打开了 设置
     if (select(reData,"快速设置")) {
         if (selclick(reData,"排位",true)) {
             return true
-        }
-    }
-    if (select(reData,"个人")) {
-        // 
-        if (select(reData,"全部")) { // 才打开
-            // 选择未喊话分组
         }
     }
 
     return true
 }
 
+
+
 //  升级
 function upLevel(){
+    //  是否休息
+    if (compareTime()) {
+        sleep(600000); // 休息 10分钟
+        return false
+    }
+
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
     }
@@ -1612,23 +1810,8 @@ function upLevel(){
     imgRecycle(croppedImage);
     getlv(lvData) // 获取等级
 
-    // 通知区域 橙色
-    let color = images.pixel(img, 1200, 17);  // 1184, 17
-    sleep(5);
-    // let emil = images.pixel(img, 66, 94);  // 邮箱
-    
-    let hp =  images.pixel(img, 459, 666);
-    sleep(5);
-    let mp =  images.pixel(img, 532, 667); 
-    // console.log(`hp: ${hp}, mp : ${mp}`)
-    sleep(5);
-    let color1 = images.pixel(img, 459, 666);   // 判断是否是中红药
-    sleep(5);
-    let color2 = images.pixel(img, 529, 666);   // 判断是否是中蓝药
-    sleep(5);
     let clors =  images.pixel(img, 522,41);   // 判断是否在打怪  
     sleep(5);
-    // console.log(`color1: ${color1}, color2 : ${color2}`)
 
     // 获取OCR
     let reData = getOcr(grayscaleImage,"ch");
@@ -1672,6 +1855,9 @@ function upLevel(){
                     return sleep(5000);
                 }
             }
+        }
+        if (selclick(reData,"前往登录")) {
+            return
         }
         // console.log("创建角色")
         if (create(reData)) {return } //  创建角色
@@ -1983,29 +2169,47 @@ function main(){
 
 // for (let i = 0; i < 1; i++) {
     // console.log("$$$$$$$$$$$$$$  执行开始!")
-    // main()
+    main()
     // console.log("##############  执行完成")
     // sleep(1000);
+    // console.log(storage.get(today))
 // }
 
 
-if (false) {
-    // console.log("开始请求截图")
-    if (!requestScreenCapture(true)) {
-        throw new Error("请求屏幕捕获权限失败");
+// for (let i = 0; i < 10; i++) {
+    if (false) {
+        // console.log("开始请求截图")
+        if (!requestScreenCapture(true)) {
+            throw new Error("请求屏幕捕获权限失败");
+        }
+        let img = captureScreen();
+        // let grayscaleImage = images.grayscale(img);
+    
+        // console.log("开始请求")
+        // let reData = getOcr(grayscaleImage,"ch");
+        // let reData = getOcr(img,"ch");
+    
+        // let hp =  images.pixel(img, 522,41);   // -13553096
+        // console.log(hp)
+        // Ranking(reData)
+    
+        // let croppedImage = images.clip(img, 365, 307, 219, 391); //所有的名字
+        // let croppedImage = images.clip(img, 200, 305, 42, 402); // 前面的排名数字
+        // let croppedImage = images.clip(img, 54, 79, 127, 42); // 战斗力
+        // console.log(lvData)
+        // let lvData = getOcr(croppedImage,"ch");
+        let croppedImage = images.clip(img, 200, 645, 48, 38); // 100 战力    +48  +38
+        let lvData = getOcr(croppedImage,"ch");
+        console.log(lvData)
+        if (lvData[0].text.trim() == 100 ) {
+            console.log("到头了");
+            // 点击右上角退出
+            clickWithDelay(1235,41,2000); // 关闭窗口
+        }
+        
     }
-    let img = captureScreen();
-    // let grayscaleImage = images.grayscale(img);
-
-    // console.log("开始请求")
-    // let reData = getOcr(grayscaleImage,"ch");
-    let reData = getOcr(img,"ch");
-
-    // let hp =  images.pixel(img, 522,41);   // -13553096
-    // console.log(hp)
-    Ranking(reData)
- 
-}
+// }
+// input(getRandomName())
 
 // for (let i = 0; i < 10; i++) {
 //     console.time("ocrExecutionTime");  // 开始计时
@@ -2015,13 +2219,5 @@ if (false) {
 // }
 
 
+// storage.put(today,{e_career:"战士", e_war:"237,118", e_count:23 ,e_time:0})
 
-
-/**
- * 打开排行榜界面
- * 1.获取当前排行榜的角色名字
- * 2.记录名字点击进入个人界面
- * 3.点击对话
- * 4.开始输入广告文本
- * 5.输入完毕就对话列表
- */

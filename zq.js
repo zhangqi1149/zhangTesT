@@ -1,5 +1,6 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.2.7:5000";
+var SERVER_URL = "http://192.168.1.128:5000";
+// var SERVER_URL = "http://192.168.1.142:5000"; //本地
 // var text = "40级了 打不过怪该怎么玩啊" ;
 var text = "At level 40, I can't defeat monsters. How should I play" ;
 var interval = 60000 ;    // 12分钟 720000毫秒  *60000
@@ -97,6 +98,7 @@ function npackageName() {
             // 可以在这里对控件进行其他操作
             // toast("找到匹配的控件，包名" + node.packageName())
             // break; // 如果只需要找到一个，找到后可以跳出循环
+            node.recycle();  // 释放控件资源
             return true
         }
     }
@@ -1510,7 +1512,7 @@ function create(reData) {
         // }
 
         // 打开了小键盘
-        if (select(reData,"换行") || select(reData,"拼音")) {
+        if (select(reData,"换行") || select(reData,"拼音")|| select(reData,"QWERTY")) {
             input(getRandomName());  //  请输入名称
             clickWithDelay(1185,343,2000); // 点击缩放的地方
             sleep(500);
