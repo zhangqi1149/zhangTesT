@@ -1430,8 +1430,14 @@ function init() {
         auto();
         throw new Error("请求无障碍权限失败");
     }
+    // 锁屏了就打开
+    if (!device.isScreenOn()) {
+        device.wakeUpIfNeeded() // 唤醒
+        swipe(232, 1000, 232, 200, 800);  // 打开
+    }
     if (!requestScreenCapture(true)) {
-        throw new Error("请求屏幕捕获权限失败");
+        // throw new Error("请求屏幕捕获权限失败");
+        console.log("请求屏幕捕获权限失败")
     }
     if (!packageNameEndsWith("mir4global")) {
         app.launch('com.wemade.mir4global')

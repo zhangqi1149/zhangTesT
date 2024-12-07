@@ -1,8 +1,10 @@
 // 设置服务器地址
-// var SERVER_URL = "http://192.168.1.128:5000";
-var SERVER_URL = "http://192.168.1.142:5000"; // 本地
+var SERVER_URL = "http://192.168.1.128:5000";
+// var SERVER_URL = "http://192.168.1.142:5000"; // 本地
 
-var text1 = "全球最低金币 支持PlayPal保证付款。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+// var text = "40级了 打不过怪该怎么玩啊" ;
+// var text1 = "All servers sell gold at a low price.   trading platform: w-w-w.igokay.com" ;
+var text1 = "The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 60000 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
@@ -14,6 +16,15 @@ var  Save = false  // true   false
 // var height_screenshot = 720
 var storage = storages.create("ABC");
 let today = new Date().toISOString().split('T')[0];  // 获取今日日期，格式为 YYYY-MM-DD
+
+// let careers = [
+//     "战士",
+//     "法师",
+//     "道士",
+//     "弩手",
+//     "武士",
+//     "黑道士"
+// ];
 
 let careers = [
     "战士",
@@ -148,10 +159,7 @@ function npackageName() {
     for (let i = 0; i < nodes.size(); i++) {
         let node = nodes.get(i);
         if (node.packageName() === "com.wemade.mir4global") {
-            // console.log("找到匹配的控件，包名: " + node.packageName());
-            // toast("找到匹配的控件，包名" + node.packageName())
-            // break; // 如果只需要找到一个，找到后可以跳出循环
-            nodes.recycle();  // 释放控件资源
+
             sleep(100);
             return true
         }
@@ -628,7 +636,7 @@ function wrong(reData) {
         // SetCom("pm clear com.wemade.mir4global")
         throw new Error("游戏临时维护")
     }
-    if (selclick(reData,"前往登录")) {
+    if (selclick(reData,"前往登录")||selclick(reData,"重新连接")||selclick(reData,"重新登录")) {
         sleep(2000);
         return true
     }
@@ -640,7 +648,8 @@ function wrong(reData) {
     if (select(reData,"存在最新版本")||select(reData,"无法确认版本")) { 
         selclick(reData,"确定",true);
         // SetCom("pm clear com.wemade.mir4global")
-        throw new Error("游戏更新");
+        // throw new Error("游戏更新");
+        return true
     }
     if (select(reData,"提示") && select(reData,"更新信息")) {
         selclick(reData,"游戏结束");
@@ -1643,7 +1652,7 @@ function text3(str) {
         // 截取图片
         let img = captureScreen(); 
         let grayscaleImage = images.grayscale(img);
-        // OCR识别一下 
+        // OCR识别一下
         imgRecycle(img)
         // 找对应的内容
         let reData4 = getOcr(grayscaleImage,"ch");
@@ -1654,7 +1663,6 @@ function text3(str) {
                 return true
             }
         }
-        sleep(1000);
     }
     return false
 }
@@ -1673,7 +1681,7 @@ function Ranking(reData) {
  *                     storage.put(today,{e_career:'战斗力 (战士)', e_war:"", e_count:0 ,e_time:0})
  */
     console.log(" 排行榜喊话")
-
+    let care = storage.get(today)
     //  输入法是打开的情况
     let ts = className("android.widget.EditText").findOne(1000)
     if (ts) {
@@ -1687,7 +1695,8 @@ function Ranking(reData) {
         clickWithDelay(633,40,1000);  // 关闭对话框
         return true
     }
-    let care = storage.get(today)
+
+    //  对话框
     if (select(reData,"聊天") && select(reData,"门派")) {
         // 请输入内容
         if (selclick(reData,"请输入内容")) {
@@ -1699,12 +1708,15 @@ function Ranking(reData) {
     //  进入对话界面
     if (select(reData,"其他玩家信息")) {
         if (selclick(reData,"确认",true)) {
+            sleep(1000);
             clickWithDelay(48,33,1000);
             return true
         }
         let dh = select(reData,"对话")
         if (dh) {
             textClick(dh,0,-30)
+            sleep(2000);
+            // 等待切换显示
             return true
         }
         // 等待切换界面
@@ -1716,7 +1728,7 @@ function Ranking(reData) {
         } 
         return true
     }
-
+    
     // 检查当前喊话进度  更换职业
     if (care.e_count == 100) {
         let index = careers.indexOf(care.e_career); // 当前职业的index
@@ -1800,7 +1812,6 @@ function Ranking(reData) {
         return 
     }
     // console.log("快速设置")
-
     // 打开了 设置
     if (select(reData,"快速设置")) {
         if (selclick(reData,"排位",true)) {
@@ -1896,9 +1907,9 @@ function upLevel(){
                 // 进入游戏   TODO待测
                 if (selclick(reData, '登录游戏',true)) {
                     // console.log("登录游戏");
-                    sleep(5000);
+                sleep(5000);
                 }
-            } 
+            }
             return
         }else{
             //  选择角色界面
@@ -2249,6 +2260,11 @@ function upLevel(){
 
 // 主函数
 function main(){
+    // 锁屏
+    if (!device.isScreenOn()) {
+        device.wakeUpIfNeeded() // 唤醒
+        swipe(232, 1000, 232, 200, 800);  // 打开
+    }
     // 初始化
     if (init()) {
         upLevel()
@@ -2257,7 +2273,7 @@ function main(){
 
 // for (let i = 0; i < 30; i++) {
     // console.log("$$$$$$$$$$$$$$  执行开始!")
-    main()
+    // main()
     // console.log("##############  执行完成")
     // sleep(1000);
     // console.log(storage.get(today))
@@ -2281,7 +2297,7 @@ function main(){
         // console.log(hp)
         // Ranking(reData)
         
-        
+    
         // let croppedImage = images.clip(img, 365, 307, 219, 391); //所有的名字
         // let croppedImage = images.clip(img, 200, 305, 42, 402); // 前面的排名数字
         // let croppedImage = images.clip(img, 54, 79, 127, 42); // 战斗力
