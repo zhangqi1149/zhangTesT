@@ -1,9 +1,8 @@
 // 设置服务器地址
 var SERVER_URL = "http://192.168.1.128:5000";
-// var SERVER_URL = "http://192.168.1.142:5000"; //本地
 // var text = "40级了 打不过怪该怎么玩啊" ;
-var text = "At level 40, I can't defeat monsters. How should I play" ;
-var interval = 60000 ;    // 12分钟 720000毫秒  *60000
+var text = "全球最低金币 使用PlayPal保证付款。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
 
@@ -255,27 +254,26 @@ function ClickSleep(reData, text, waitTime, exactMatch) {
  *
  */
 function select(ocrResults, targetText,exactMatch) {
-    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
+   exactMatch = (exactMatch !== undefined) ? exactMatch : false;
     if (!Array.isArray(ocrResults)) {
         console.error(`OCR 结果不是数组: ${targetText}`);
         return null;
     }
-    for (let i = 0; i < ocrResults.length; i++) {
-        let item = ocrResults[i];
-        if (item && item.text !== undefined) {
-            if (exactMatch) {
-                if (item.text === targetText) {
-                    // console.log("找到目标文本:", item);
-                    return item;
-                }
-            }else{
-                if (item.text.includes(targetText)) {
-                    // console.log("模糊查找目标文本:", item.text);
-                    return item;
-                }
+    for (let i = 0; i < ocrResults[0].length; i++) {
+        let item = ocrResults[0][i];
+        // console.log(item)
+        if (exactMatch) {
+            // console.log("进行精准查询 :",item[1][0])
+            if (item[1][0] === targetText) {
+                // console.log("找到目标文本:", item);
+                return item;
             }
-        } else {
-            console.error(`第 ${i} 项缺少 text 属性`, item);
+        }else{
+            // console.log("进行模糊查询 :",item[1][0])
+            if (item[1][0].includes(targetText)) {
+                // console.log("模糊查找目标文本:", item.text);
+                return item;
+            }
         }
     }
     return null;
@@ -310,8 +308,8 @@ function selclick(reData,src,exactMatch){
     var target = select(reData, src,exactMatch)
     if(target != null){
         // 计算文本区域的中心点
-        let centerX = (target.box[0][0] + target.box[2][0]) / 2;
-        let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+        let centerX = (target[0][0][0] + target[0][2][0]) / 2;
+        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
 
         // 将坐标从截图转换到设备屏幕坐标
         // let x_phone = (centerX / 1285) * device.height;
@@ -1536,18 +1534,27 @@ function create(reData) {
 //  喊话   喊话内容 test  喊话间隔 interval
 function Shout(reData) {
     // 输出
-    if (select(reData,"换行") || (select(reData,"符") && select(reData,"123"))) {
-        sleep(2000);
-        input(text);
-        sleep(2000);
-        // selclick(reData,"换行")
+    //  输入法是打开的情况
+    let ts = className("android.widget.EditText").findOne(1000)
+    if (ts) {
+        console.log("输入法打开了")
+        // 输入文字
+        ts.setText(text)
+        sleep(500);
+        // 点击发送
+        click(1187,683)
+        sleep(1000);
+        clickWithDelay(1194,629,500); // 攻击一下防止掉线
+        click(1194,629)
+        clickWithDelay(952,656,500); // 攻击一下防止掉线
+        click(952,656)
         sleep(interval);
         return true
     }
 
     // 打开输入法
     if (selclick(reData,"请输入内容")) {
-        sleep(3000);
+        sleep(1500);
         return true
     }
     
@@ -1566,6 +1573,20 @@ function Shout(reData) {
 
 //  升级
 function upLevel(){
+    //  输入法是打开的情况
+    let ts = className("android.widget.EditText").findOne(1000)
+    if (ts) {
+        console.log("输入法打开了")
+        // 输入文字
+        ts.setText(text)
+        sleep(500);
+        // 点击发送
+        click(1187,683)
+        sleep(interval);
+        click(244,670);
+        return true
+    }
+
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
     }
@@ -1618,6 +1639,11 @@ function upLevel(){
     imgRecycle(img)
     if (reData) {
         if (wrong(reData)) {return } //  处理异常弹窗
+        //  喊话 
+        if (lv >= 40) {
+            Shout(reData);
+            return  // 喊话间隔
+        }
         // 进入游戏界面以前
         if(select(reData, 'REA') ){
             // 进入游戏
