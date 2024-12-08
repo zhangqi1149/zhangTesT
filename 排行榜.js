@@ -164,7 +164,7 @@ function npackageName() {
             return true
         }
     }
-    nodes.recycle();
+    nodes = null;
     return false
 }
 
@@ -179,8 +179,9 @@ function packageNameEndsWith(suffix) {
             return true;  // 找到匹配的控件，返回 true
         }
     }
+    // nodes.recycle();  // 返回的是个集合 没有recycle方法  置为null 取消引用让GC去清理
+    nodes = null;
     
-    nodes.recycle();  // 如果没有找到匹配的控件，释放资源
     return false;  // 没有找到匹配的控件，返回 false
 }
 
@@ -637,6 +638,7 @@ function wrong(reData) {
         throw new Error("游戏临时维护")
     }
     if (selclick(reData,"前往登录")||selclick(reData,"重新连接")||selclick(reData,"重新登录")) {
+        selclick(reData,"确认")
         sleep(2000);
         return true
     }
@@ -1425,7 +1427,8 @@ function reward(reData) {
         //  重新截图拿到最新的   TODO 多学几个技能  找蓝色的地方
         let img = captureScreen();
         //  拿到最新的数据
-        if (getOcr(img,"ch")) {
+        reData = getOcr(img,"ch")
+        if (reData) {
             if (selclick(reData, '学习',true) ) {
                 sleep(1000);
                 // clickWithDelay(961,669,1000);
@@ -1872,6 +1875,11 @@ function upLevel(){
         // 进入游戏界面以前
         if(select(reData, 'REA') ){
             // 进入游戏
+            if (select(reData,"资格的证明")) {
+                selclick(reData,"登录游戏",true)
+                sleep(2000);
+                return true
+            }
             if (selclick(reData, '点击')) {
                 // console.log("点击界面进入游戏");
                 sleep(5000);
@@ -1885,11 +1893,6 @@ function upLevel(){
             if (selclick(reData,"Google登录")) {
                 sleep(5000);
                 return 
-            }
-            if (select(reData,"资格的证明")) {
-                selclick(reData,"登录游戏",true)
-                sleep(2000);
-                return true
             }
             if (select(reData, '退出登录') ) {
                 if (!select(reData, '选项')) {
@@ -2273,7 +2276,7 @@ function main(){
 
 // for (let i = 0; i < 30; i++) {
     // console.log("$$$$$$$$$$$$$$  执行开始!")
-    // main()
+    main()
     // console.log("##############  执行完成")
     // sleep(1000);
     // console.log(storage.get(today))

@@ -1,8 +1,9 @@
 
 // 设置服务器地址
 // var SERVER_URL = "http://192.168.1.142:5000";   // 本地调试
-var SERVER_URL = "http://192.168.1.128:5000";  // 服务器1
+// var SERVER_URL = "http://192.168.1.128:5000";  // 服务器1
 // var SERVER_URL = "http://192.168.1.94:5000";  // 服务器2
+var SERVER_URL = "http://192.168.1.94:8000";  // 服务器2
 // 喊话内容
 var text1 = "The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 // 截图图片是否保存
@@ -18,30 +19,37 @@ function getOcr(img) {
         
         console.time("********&&& getOCR");  // 开始计时
 
-        // console.time("tobase64");  // 开始计时
+        console.time("tobase64");  // 开始计时
         // 将截图转换为Base64编码的PNG格式
         let imgData = images.toBase64(img, "png");
-        // console.timeEnd("tobase64");  // 输出执行时间
+        console.timeEnd("tobase64");  // 输出执行时间
 
         // 构造请求的 JSON 数据，添加 lang 字段
         let jsonData = {
             "base64_str": imgData,
         };
         
-        // console.time("httppost");  // 开始计时
+        console.time("httppost");  // 开始计时
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        let response = http.postJson("http://192.168.1.94:8000/ocr/predict-by-base64", jsonData, {
+        let response = http.postJson(SERVER_URL+"/ocr/predict-by-base64", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
             timeout: 10000 // 设置超时时间为10秒
         });
-        
-        // console.timeEnd("httppost");  // 输出执行时间
-        // console.timeEnd("********&&& getOCR");  // 输出执行时间
+        // let response = http.postJson("http://192.168.1.94:9080/ocr", jsonData, {
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     timeout: 10000 // 设置超时时间为10秒
+        // });
+
+        console.timeEnd("httppost");  // 输出执行时间
 
         if (response.statusCode == 200) {
+            console.time("JSON.parse");  // 开始计时
             let result = JSON.parse(response.body.string());
+            console.time("JSON.parse");  // 开始计时
             console.log("****************** OCR  time : ", result.time)
             return result.data;
             // return JSON.parse(response.body.string());
@@ -1195,22 +1203,22 @@ function closeX(reData){
 
 function getData(v, x, y, width, height) {
     // 结果数组
-    const result = [];
+    let result = [];
 
     // 遍历每个识别到的区域
     v.forEach(item => {
         item.forEach(innerItem => {
             // 获取区域的四个点
-            const points = innerItem[0];
+            let points = innerItem[0];
             //console.log(points)
-            const text = innerItem[1][0];
+            let text = innerItem[1][0];
             //console.log(text)
-            const score = innerItem[1][1];
+            let score = innerItem[1][1];
             //console.log(score)
 
             // 获取坐标范围
-            const [x1, y1] = points[0];
-            const [x2, y2] = points[2];
+            let [x1, y1] = points[0];
+            let [x2, y2] = points[2];
 
             // 检查指定区域与当前区域是否重叠
             if (x1 >= x && y1 >= y && x2 <= x + width && y2 <= y + height) {
@@ -1335,7 +1343,7 @@ function Ranking(reData) {
             if (care.e_war == 0) {
                 //  未点击过
                 if (crop) {
-                    console.log(crop[0][1])
+                    // console.log(crop[0][1])
                     storage.put(today,{e_career:care.e_career, e_war:crop[0][0][1][0], e_count:1 ,e_time:0})
                     if (selclick(reData,crop[0][1][0])) {
                         return true;
@@ -1356,6 +1364,10 @@ function Ranking(reData) {
                     // let crop2 = getOcr(croppedImage2,"ch");
                     let crop = getData(reData, 1097, 305, 91, 402);
                     let crop2 = getData(reData,  200, 645, 48, 38);
+
+                    if (select(reData,"其他玩家")) {
+                        break
+                    }
                     // console.log("Data ",crop2[0][1][0])
                     // console.log("Data ",crop2.length)
                     // imgRecycle(croppedImage);
@@ -1374,20 +1386,21 @@ function Ranking(reData) {
                     // console.log("获取排名结束 :",care.e_war)
                     //  截图获得战力是否匹配我要的
                     // console.log("内置数据 ",care)
-                    let nt = getNextText(crop,care.e_war)
-                    // console.log("获取的nt :",nt)
-                    if (nt != null) {
-                        console.log("  * 点击这个 :")
-                        selclick(reData,nt);
-                        storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
-                        sleep(1500);
-                        // return true;
-                        break
+                    if (crop) {
+                        let nt = getNextText(crop,care.e_war)
+                        // console.log("获取的nt :",nt)
+                        if (nt != null) {
+                            console.log("  * 点击这个 :")
+                            selclick(reData,nt);
+                            storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
+                            // sleep(1500);
+                            return true;
+                            // break
+                        }
+                        console.log("  @ 滑动一下")
+                        swipe(1128, 657, 1128, 375, 200)
                     }
-                    console.log("  @ 滑动一下")
-                    swipe(1128, 657, 1128, 375, 200)
                 }
-
             }
             return
         }
@@ -1510,7 +1523,7 @@ function main(){
             }
             return
         }else{
-            console.log("选择角色  ")
+            // console.log("选择角色  ")
             //  选择角色界面
             if(select(Data, '选择角色')){
                 // 开始游戏
@@ -1856,8 +1869,8 @@ function main(){
     }
 }
 
-// storage.put(today,{e_career:'法师', e_war:0, e_count:100 ,e_time:0}) 
-// for (let i = 0; i < 1; i++) {
+// storage.put(today,{e_career:'弩手', e_war:0, e_count:0 ,e_time:0}) 
+// for (let i = 0; i < 10; i++) {
     main()
 // }
 
@@ -1868,8 +1881,12 @@ function main(){
 
 // let img = captureScreen();
 // let grayscaleImage = images.grayscale(img); 
-// let reData = getOcr(grayscaleImage);
 
+// let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
+// let croppedImage2 = images.clip(img, 200, 645, 48, 38); // 100 排名
+
+// let reData = getOcr(croppedImage2);
+// console.log("data",reData)
 // selclick(reData,"排位")
 
 
@@ -1877,3 +1894,7 @@ function main(){
 // console.log(storage.get(today))
 
 // swipe(1128, 657, 1128, 475, 333)
+
+// shell("adb shell am force-stop org.mutou.mutou.v6");
+// powerDialog()
+
