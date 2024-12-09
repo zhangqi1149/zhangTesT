@@ -10,6 +10,826 @@ let filePath = "/storage/emulated/0/Documents/config.txt";
 
 var storage = storages.create("ABC");
 
+
+let Servers = {
+	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
+		"Id": "200",
+		"Server": "SA011",
+		"OCRip":"http://192.168.1.94",
+		"port" : "8001"
+	},
+	"befb893f": {
+		"Id": "199",
+		"Server": "SA012",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"99863ada-8921-4df4-a8d0-a6d5feaa6f35": {
+		"Id": "198",
+		"Server": "SA013",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"418527e2-ca21-45fd-be46-c46003f0eadf": {
+		"Id": "197",
+		"Server": "SA014",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"54203733-7890-40dc-97d4-c6234826107b": {
+		"Id": "196",
+		"Server": "SA021",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"69561c02-bb04-4403-8d3f-e14a125777c8": {
+		"Id": "195",
+		"Server": "SA022",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"09759f37-2602-4ed4-acd0-d8b83df325e5": {
+		"Id": "194",
+		"Server": "SA023",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"9ac8ecdf-acb2-4a3f-981f-12796fa4df9d": {
+		"Id": "193",
+		"Server": "SA031",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"c805c45c-29db-40c2-9a7e-e618d94a5481": {
+		"Id": "192",
+		"Server": "SA032",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"3a7e8e3d-1476-47fa-870b-41fe7639666c": {
+		"Id": "191",
+		"Server": "SA033",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"3c48acb4-2d07-44d5-8755-131de595f7b8": {
+		"Id": "190",
+		"Server": "SA034",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"362753d2-9c4e-4f4a-b6ac-40f9845a30bf": {
+		"Id": "189",
+		"Server": "SA041",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+    "1ef2dbc4-634c-4721-ac65-ca4106fe6d28": {
+		"Id": "188",
+		"Server": "SA043",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"4e8a403b-4887-4248-835b-7967ce71c62d": {
+		"Id": "187",
+		"Server": "SA044",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"603dc59b-7e09-4c8a-8284-2b0831ed731e": {
+		"Id": "186",
+		"Server": "SA051",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"5e4a803e-8159-41b2-bd72-7db6a306ae14": {
+		"Id": "185",
+		"Server": "SA052",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"7618ee50-4199-4ca3-83cc-2d26bc693efd": {
+		"Id": "184",
+		"Server": "SA053",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"5c4680fb-6f71-4306-91ea-e9d14a3f9c89": {
+		"Id": "183",
+		"Server": "SA054",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"779ff20d-6c04-4b21-94c5-d968d17ade1b": {
+		"Id": "182",
+		"Server": "SA061",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"23ab0919-15b3-4377-b58c-b8ade4ef8151": {
+		"Id": "181",
+		"Server": "SA071",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"b17895f8-937d-465c-a90c-cd44d3de7721": {
+		"Id": "180",
+		"Server": "SA072",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"2f44aae3-2d77-4706-928b-c989cd3a8a56": {
+		"Id": "179",
+		"Server": "SA081",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"1e82aa35-b79b-41d9-a8e8-d3d4d712d45e": {
+		"Id": "178",
+		"Server": "SA082",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"cd324f29-72bf-4902-b466-bf02c05b29f9": {
+		"Id": "177",
+		"Server": "SA083",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"6dc4afc3-943c-4df2-a895-8ef1f3244f67": {
+		"Id": "176",
+		"Server": "SA062",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+    "79ee6eab-e562-4d62-9880-027296a17564": {
+		"Id": "175",
+		"Server": "SA063",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"2259877e-5b94-45d4-a2f2-b085b680b5f3": {
+		"Id": "174",
+		"Server": "SA064",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"bf01a49e-449a-4062-a1b3-99d626518403": {
+		"Id": "173",
+		"Server": "SA073",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"63b73ee4": {
+		"Id": "172",
+		"Server": "NA011",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"9434ba65": {
+		"Id": "171",
+		"Server": "NA012",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"99f502fd": {
+		"Id": "170",
+		"Server": "NA021",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"b53d9b12": {
+		"Id": "169",
+		"Server": "NA022",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"c63ab7dc": {
+		"Id": "168",
+		"Server": "NA023",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"d8de1484": {
+		"Id": "167",
+		"Server": "NA031",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"10e56bcc": {
+		"Id": "166",
+		"Server": "NA032",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"30d5a6a8": {
+		"Id": "165",
+		"Server": "NA033",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"dff4a00": {
+		"Id": "164",
+		"Server": "NA034",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"c61320d3": {
+		"Id": "163",
+		"Server": "NA042",
+		"OCRip":"http://192.168.1.94",
+		"port":"8003",
+
+	},
+	"c9e6d3ef": {
+		"Id": "162",
+		"Server": "NA043",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"84761629": {
+		"Id": "161",
+		"Server": "NA044",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"a0673f35": {
+		"Id": "160",
+		"Server": "NA013",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"98fadf9d": {
+		"Id": "159",
+		"Server": "NA014",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"c2df4216": {
+		"Id": "158",
+		"Server": "NA051",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"e363abda": {
+		"Id": "157",
+		"Server": "NA054",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"8da15129": {
+		"Id": "156",
+		"Server": "NA064",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"244e67d6": {
+		"Id": "155",
+		"Server": "NA083",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"8f1383bc": {
+		"Id": "154",
+		"Server": "NA052",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"12238381": {
+		"Id": "153",
+		"Server": "NA053",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"1f08528f": {
+		"Id": "152",
+		"Server": "NA062",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"6df167cc": {
+		"Id": "151",
+		"Server": "NA061",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+	"895f0f14": {
+		"Id": "150",
+		"Server": "NA071",
+		"OCRip":"http://192.168.1.94",
+		"port":"8004",
+	},
+    "712ba73f": {
+		"Id": "149",
+		"Server": "NA072",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"9c9eb045": {
+		"Id": "148",
+		"Server": "NA073",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"bd253a0d": {
+		"Id": "147",
+		"Server": "NA074",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"c27bf550": {
+		"Id": "146",
+		"Server": "NA081",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"5b2adda0": {
+		"Id": "145",
+		"Server": "NA082",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"b9ad4ca5-c7c6-49cd-bdd7-bcaaef39388b": {
+		"Id": "144",
+		"Server": "EU043",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"5b408a2b-bad8-433d-b34e-ae6a92f469df": {
+		"Id": "143",
+		"Server": "EU011",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"d35cefcd-305d-466f-8d51-db923813e672": {
+		"Id": "142",
+		"Server": "EU021",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"9eba95cf-fffa-4597-a73c-ea6377a851e4": {
+		"Id": "141",
+		"Server": "EU041",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"a7ff01f5-7502-4b4b-a63a-7287abebb965": {
+		"Id": "140",
+		"Server": "EU012",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"1f049432-9494-440e-b004-511309a5e6a9": {
+		"Id": "139",
+		"Server": "EU013",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"0e3400fb-6a11-468c-b21e-2e8ec262a8cf": {
+		"Id": "138",
+		"Server": "EU014",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+	"1f2dfb0a-9546-468f-b685-187444763cc9": {
+		"Id": "137",
+		"Server": "EU022",
+		"OCRip":"http://192.168.1.94",
+		"port":"8005",
+	},
+    	
+	"980dfa3f-1cf3-4864-a7d8-8b44cf7b5691": {
+		"Id": "136",
+		"Server": "EU023",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"d05726f5-e587-4657-9c44-eaf132d5eb01": {
+		"Id": "135",
+		"Server": "EU024",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"756996c8-f937-45f4-a426-57ee86a8caf7": {
+		"Id": "134",
+		"Server": "EU031",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"48a36291-0202-4513-8977-02b4a1199be8": {
+		"Id": "133",
+		"Server": "EU032",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"6588b429-83d1-4e8e-8a52-d1bdc2fa4bdc": {
+		"Id": "132",
+		"Server": "EU033",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"2e8887ce-5d4b-47df-b80a-5046bb228274": {
+		"Id": "131",
+		"Server": "EU034",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"fa9ee7b3-4131-43c9-977d-a8ffbc7e471e": {
+		"Id": "130",
+		"Server": "EU042",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"63d74fc5-978c-4e59-b162-dabddac2183b": {
+		"Id": "129",
+		"Server": "BASIA001",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"237e1f42-4bdb-4a03-a6f1-923332f33b45": {
+		"Id": "128",
+		"Server": "BASIA002",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"b645032e-ef99-4a28-a0dc-a633eec7867d": {
+		"Id": "127",
+		"Server": "BNA011",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"bd9ddb80-8e31-4bf2-8aaa-5df15efc07ae": {
+		"Id": "126",
+		"Server": "BEU031",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"4f2cd5fa-47f3-4d9c-847c-1879ce2d8c75": {
+		"Id": "125",
+		"Server": "BSA021",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"22c22383-d02a-4c81-808f-f9a7c2cc831d": {
+		"Id": "124",
+		"Server": "BINMENA041",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+
+
+    "b402fcdb": {
+        "Id": "123",
+        "Server": "ASIA011",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "1ef862e0": {
+        "Id": "122",
+        "Server": "ASIA012",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "96a294d0": {
+        "Id": "121",
+        "Server": "ASIA013",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "f54f8429-8fc9-45be-be3d-db3d0bf99475": {
+        "Id": "120",
+        "Server": "ASIA014",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "71d8a433-4789-4dd5-a6da-2604c958615e": {
+        "Id": "119",
+        "Server": "ASIA021",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
+        "Id": "118",
+        "Server": "ASIA022",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "b491a690-521c-4a2e-8a7e-21e979085e67": {
+        "Id": "117",
+        "Server": "ASIA023",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "edcef95f-c98a-4107-a76b-715908e0e659": {
+        "Id": "116",
+        "Server": "ASIA024",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "12fdc099-8351-4a20-a046-a74b8adcfa83": {
+        "Id": "115",
+        "Server": "ASIA031",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "4cd13a96-4b51-4862-b503-5881f339242a": {
+        "Id": "114",
+        "Server": "ASIA032",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
+        "Id": "113",
+        "Server": "ASIA033",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "408830f3-7f73-44d1-b33c-c79d18fc4de4": {
+        "Id": "112",
+        "Server": "ASIA041",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "40e83d09-d549-443d-bfc4-d004bd693d19": {
+        "Id": "111",
+        "Server": "ASIA042",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },    
+
+    "50e7f21d-2508-4cab-97e9-8a676e0986ea": {
+        "Id": "110",
+        "Server": "ASIA043",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "047a7c32-de99-4bd9-8503-a11050de37b5": {
+        "Id": "109",
+        "Server": "ASIA051",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "da727009-8386-4aa3-b7ad-b12e069f7eba": {
+        "Id": "108",
+        "Server": "ASIA052",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "b546783d-1a82-4465-938b-07fe5fa1cda7": {
+        "Id": "107",
+        "Server": "ASIA053",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "d6e6a347-c8e7-462d-90be-de1e35da5848": {
+        "Id": "106",
+        "Server": "ASIA054",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
+        "Id": "105",
+        "Server": "ASIA061",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "3207acb8-545c-460b-8237-30c9aaef161a": {
+        "Id": "104",
+        "Server": "ASIA062",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
+        "Id": "103",
+        "Server": "ASIA063",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
+        "Id": "102",
+        "Server": "ASIA064",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "0f8f4a18-d173-4045-a0f1-f991d681700c": {
+        "Id": "101",
+        "Server": "ASIA071",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "a4a38793-f81f-4fe6-95cd-e12343fa5768": {
+        "Id": "100",
+        "Server": "ASIA072",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
+        "Id": "99",
+        "Server": "ASIA073",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },
+    "1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
+        "Id": "98",
+        "Server": "ASIA081",
+        "OCRip":"http://192.168.1.128",
+		"port":"8003",
+    },    
+    "45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
+        "Id": "97",
+        "Server": "ASIA082",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "970c32eb-b623-4764-8743-b5685e308fb5": {
+        "Id": "96",
+        "Server": "ASIA083",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
+        "Id": "95",
+        "Server": "ASIA343",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
+        "Id": "94",
+        "Server": "ASIA342",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "843e61dd-3243-4196-ad84-347d1d33ceb6": {
+        "Id": "93",
+        "Server": "ASIA341",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
+        "Id": "92",
+        "Server": "ASIA333",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "5d75350e-975e-43e6-b8ab-7ff58df796ad": {
+        "Id": "91",
+        "Server": "ASIA332",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "beb9afa5-1898-499e-93a7-706034a5c0df": {
+        "Id": "90",
+        "Server": "ASIA331",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+	"2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
+        "Id": "89",
+        "Server": "ASIA324",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+	"355f4465-1f65-469c-bf6c-81f629bc5b2d": {
+        "Id": "88",
+        "Server": "ASIA323",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "187eb6fb-520b-4cf0-b469-0c34d21b3711": {
+        "Id": "87",
+        "Server": "ASIA322",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "502ea617-95c7-4345-9c9b-07de90939c3c": {
+        "Id": "86",
+        "Server": "ASIA321",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "5cf80fc6-b4b2-4034-990a-42900fba3630": {
+        "Id": "85",
+        "Server": "ASIA314",
+        "OCRip":"http://192.168.1.128",
+		"port":"8004",
+    },
+    "ded8b096-6ff9-4436-9a15-d960e05e683e": {
+        "Id": "84",
+        "Server": "ASIA313",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
+        "Id": "83",
+        "Server": "ASIA312",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
+        "Id": "82",
+        "Server": "ASIA311",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "bd36bbe9-383e-4f09-824f-e60a313746eb": {
+        "Id": "81",
+        "Server": "ASIA353",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "6e4c7f85-e171-414c-bbd2-f7333b48d605": {
+        "Id": "80",
+        "Server": "ASIA351",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
+        "Id": "79",
+        "Server": "ASIA353",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
+        "Id": "78",
+        "Server": "ASIA354",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "73b351fe-9789-4a7d-b27f-ec431b16677b": {
+        "Id": "77",
+        "Server": "ASIA361",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
+        "Id": "76",
+        "Server": "ASIA362",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "7df85b12-105d-438c-a2e7-f487b1ded057": {
+        "Id": "75",
+        "Server": "ASIA363",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "18055116-dd62-4365-9917-501ec0bf8bd5": {
+        "Id": "74",
+        "Server": "ASIA364",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
+        "Id": "73",
+        "Server": "ASIA371",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
+        "Id": "72",
+        "Server": "ASIA372",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+    "2b808dbf-8156-4f42-a458-56313648a57a": {
+        "Id": "71",
+        "Server": "ASIA373",
+        "OCRip":"http://192.168.1.128",
+		"port":"8005",
+    },
+}
+
+ 
+// 原始别名
+let Bm = readLastLine().trim()
+console.log("Bm :", Bm )
+
+
+if (Servers[Bm].OCRip == null) {
+	throw new Error(" 不存在的id ")
+}
+
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
+
+// console.log( "sertraline ",SERVER_URL+"/ocr/predict-by-base64")
+// console.log(SERVER_URL[0])
+console.log(SERVER_URL)
+
+
+
+
 // ---------------------------------------------- 网络请求
 function getOcr(img) {
     try {
@@ -34,12 +854,6 @@ function getOcr(img) {
             },
             timeout: 10000 // 设置超时时间为10秒
         });
-        // let response = http.postJson("http://192.168.1.94:9080/ocr", jsonData, {
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     timeout: 10000 // 设置超时时间为10秒
-        // });
 
         console.timeEnd("httppost");  // 输出执行时间
 
@@ -212,7 +1026,7 @@ function select(ocrResults, targetText,exactMatch) {
     }
     for (let i = 0; i < ocrResults[0].length; i++) {
         let item = ocrResults[0][i];
-        // console.log(item)
+        // console.log(item[1][0])
         if (exactMatch) {
             // console.log("进行精准查询 :",item[1][0])
             if (item[1][0] === targetText) {
@@ -615,532 +1429,6 @@ function init() {
     return false
 }
 
-let Servers = {
-	"5e19856c-7435-4426-813d-4c0b3899399b": {
-		"id": "000",
-		"Server": "[ASIA3] ASIA343"
-	},
-	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
-		"Id": "200",
-		"Server": "[SA1] SA011"
-	},
-	"befb893f": {
-		"Id": "199",
-		"Server": "[SA1] SA012"
-	},
-	"99863ada-8921-4df4-a8d0-a6d5feaa6f35": {
-		"Id": "198",
-		"Server": "[SA1] SA013"
-	},
-	"418527e2-ca21-45fd-be46-c46003f0eadf": {
-		"Id": "197",
-		"Server": "[SA1] SA014"
-	},
-	"54203733-7890-40dc-97d4-c6234826107b": {
-		"Id": "196",
-		"Server": "[SA1] SA021"
-	},
-	"69561c02-bb04-4403-8d3f-e14a125777c8": {
-		"Id": "195",
-		"Server": "[SA1] SA022"
-	},
-	"09759f37-2602-4ed4-acd0-d8b83df325e5": {
-		"Id": "194",
-		"Server": "[SA1] SA023"
-	},
-	"9ac8ecdf-acb2-4a3f-981f-12796fa4df9d": {
-		"Id": "193",
-		"Server": "[SA1] SA031"
-	},
-	"c805c45c-29db-40c2-9a7e-e618d94a5481": {
-		"Id": "192",
-		"Server": "[SA1] SA032"
-	},
-	"3a7e8e3d-1476-47fa-870b-41fe7639666c": {
-		"Id": "191",
-		"Server": "[SA1] SA033"
-	},
-	"3c48acb4-2d07-44d5-8755-131de595f7b8": {
-		"Id": "190",
-		"Server": "[SA1] SA034"
-	},
-	"362753d2-9c4e-4f4a-b6ac-40f9845a30bf": {
-		"Id": "189",
-		"Server": "[SA1] SA041"
-	},
-	"1ef2dbc4-634c-4721-ac65-ca4106fe6d28": {
-		"Id": "188",
-		"Server": "[SA1] SA043"
-	},
-	"4e8a403b-4887-4248-835b-7967ce71c62d": {
-		"Id": "187",
-		"Server": "[SA1] SA044"
-	},
-	"603dc59b-7e09-4c8a-8284-2b0831ed731e": {
-		"Id": "186",
-		"Server": "[SA2] SA051"
-	},
-	"5e4a803e-8159-41b2-bd72-7db6a306ae14": {
-		"Id": "185",
-		"Server": "[SA2] SA052"
-	},
-	"7618ee50-4199-4ca3-83cc-2d26bc693efd": {
-		"Id": "184",
-		"Server": "[SA2] SA053"
-	},
-	"5c4680fb-6f71-4306-91ea-e9d14a3f9c89": {
-		"Id": "183",
-		"Server": "[SA2] SA054"
-	},
-	"779ff20d-6c04-4b21-94c5-d968d17ade1b": {
-		"Id": "182",
-		"Server": "[SA2] SA061"
-	},
-	"23ab0919-15b3-4377-b58c-b8ade4ef8151": {
-		"Id": "181",
-		"Server": "[SA2] SA071"
-	},
-	"b17895f8-937d-465c-a90c-cd44d3de7721": {
-		"Id": "180",
-		"Server": "[SA2] SA072"
-	},
-	"2f44aae3-2d77-4706-928b-c989cd3a8a56": {
-		"Id": "179",
-		"Server": "[SA2] SA081"
-	},
-	"1e82aa35-b79b-41d9-a8e8-d3d4d712d45e": {
-		"Id": "178",
-		"Server": "[SA2] SA082"
-	},
-	"cd324f29-72bf-4902-b466-bf02c05b29f9": {
-		"Id": "177",
-		"Server": "[SA2] SA083"
-	},
-	"6dc4afc3-943c-4df2-a895-8ef1f3244f67": {
-		"Id": "176",
-		"Server": "[SA2] SA062"
-	},
-	"79ee6eab-e562-4d62-9880-027296a17564": {
-		"Id": "175",
-		"Server": "[SA2] SA063"
-	},
-	"2259877e-5b94-45d4-a2f2-b085b680b5f3": {
-		"Id": "174",
-		"Server": "[SA2] SA064"
-	},
-	"bf01a49e-449a-4062-a1b3-99d626518403": {
-		"Id": "173",
-		"Server": "[SA2] SA073"
-	},
-	"63b73ee4": {
-		"Id": "172",
-		"Server": "[NA1] NA011"
-	},
-	"9434ba65": {
-		"Id": "171",
-		"Server": "[NA1] NA012"
-	},
-	"99f502fd": {
-		"Id": "170",
-		"Server": "[NA1] NA021"
-	},
-	"b53d9b12": {
-		"Id": "169",
-		"Server": "[NA1] NA022"
-	},
-	"c63ab7dc": {
-		"Id": "168",
-		"Server": "[NA1] NA023"
-	},
-	"d8de1484": {
-		"Id": "167",
-		"Server": "[NA1] NA031"
-	},
-	"10e56bcc": {
-		"Id": "166",
-		"Server": "[NA1] NA032"
-	},
-	"30d5a6a8": {
-		"Id": "165",
-		"Server": "[NA1] NA033"
-	},
-	"dff4a00 ": {
-		"Id": "164",
-		"Server": "[NA1] NA034"
-	},
-	"c61320d3": {
-		"Id": "163",
-		"Server": "[NA1] NA042"
-	},
-	"c9e6d3ef": {
-		"Id": "162",
-		"Server": "[NA1] NA043"
-	},
-	"84761629": {
-		"Id": "161",
-		"Server": "[NA1] NA044"
-	},
-	"a0673f35": {
-		"Id": "160",
-		"Server": "[NA1] NA013"
-	},
-	"98fadf9d": {
-		"Id": "159",
-		"Server": "[NA1] NA014"
-	},
-	"c2df4216": {
-		"Id": "158",
-		"Server": "[NA2] NA051"
-	},
-	"e363abda": {
-		"Id": "157",
-		"Server": "[NA2] NA054"
-	},
-	"8da15129": {
-		"Id": "156",
-		"Server": "[NA2] NA064"
-	},
-	"244e67d6": {
-		"Id": "155",
-		"Server": "[NA2] NA083"
-	},
-	"8f1383bc": {
-		"Id": "154",
-		"Server": "[NA2] NA052"
-	},
-	"12238381": {
-		"Id": "153",
-		"Server": "[NA2] NA053"
-	},
-	"1f08528f": {
-		"Id": "152",
-		"Server": "[NA2] NA062"
-	},
-	"6df167cc": {
-		"Id": "151",
-		"Server": "[NA2] NA061"
-	},
-	"895f0f14": {
-		"Id": "150",
-		"Server": "[NA2] NA071"
-	},
-	"712ba73f": {
-		"Id": "149",
-		"Server": "[NA2] NA072"
-	},
-	"9c9eb045": {
-		"Id": "148",
-		"Server": "[NA2] NA073"
-	},
-	"bd253a0d": {
-		"Id": "147",
-		"Server": "[NA2] NA074"
-	},
-	"c27bf550": {
-		"Id": "146",
-		"Server": "[NA2] NA081"
-	},
-	"5b2adda0": {
-		"Id": "145",
-		"Server": "[NA2] NA082"
-	},
-	"b9ad4ca5-c7c6-49cd-bdd7-bcaaef39388b": {
-		"Id": "144",
-		"Server": "[EU1] EU043"
-	},
-	"5b408a2b-bad8-433d-b34e-ae6a92f469df": {
-		"Id": "143",
-		"Server": "[EU1] EU011"
-	},
-	"d35cefcd-305d-466f-8d51-db923813e672": {
-		"Id": "142",
-		"Server": "[EU1] EU021"
-	},
-	"9eba95cf-fffa-4597-a73c-ea6377a851e4": {
-		"Id": "141",
-		"Server": "[EU1] EU041"
-	},
-	"a7ff01f5-7502-4b4b-a63a-7287abebb965": {
-		"Id": "140",
-		"Server": "[EU1] EU012"
-	},
-	"1f049432-9494-440e-b004-511309a5e6a9": {
-		"Id": "139",
-		"Server": "[EU1] EU013"
-	},
-	"0e3400fb-6a11-468c-b21e-2e8ec262a8cf": {
-		"Id": "138",
-		"Server": "[EU1] EU014"
-	},
-	"1f2dfb0a-9546-468f-b685-187444763cc9": {
-		"Id": "137",
-		"Server": "[EU1] EU022"
-	},
-	"980dfa3f-1cf3-4864-a7d8-8b44cf7b5691": {
-		"Id": "136",
-		"Server": "[EU1] EU023"
-	},
-	"d05726f5-e587-4657-9c44-eaf132d5eb01": {
-		"Id": "135",
-		"Server": "[EU1] EU024"
-	},
-	"756996c8-f937-45f4-a426-57ee86a8caf7": {
-		"Id": "134",
-		"Server": "[EU1] EU031"
-	},
-	"48a36291-0202-4513-8977-02b4a1199be8": {
-		"Id": "133",
-		"Server": "[EU1] EU032"
-	},
-	"6588b429-83d1-4e8e-8a52-d1bdc2fa4bdc": {
-		"Id": "132",
-		"Server": "[EU1] EU033"
-	},
-	"2e8887ce-5d4b-47df-b80a-5046bb228274": {
-		"Id": "131",
-		"Server": "[EU1] EU034"
-	},
-	"fa9ee7b3-4131-43c9-977d-a8ffbc7e471e": {
-		"Id": "130",
-		"Server": "[EU1] EU042"
-	},
-	"63d74fc5-978c-4e59-b162-dabddac2183b": {
-		"Id": "129",
-		"Server": "[BW] BASIA001"
-	},
-	"237e1f42-4bdb-4a03-a6f1-923332f33b45": {
-		"Id": "128",
-		"Server": "[BW] BASIA002"
-	},
-	"b645032e-ef99-4a28-a0dc-a633eec7867d": {
-		"Id": "127",
-		"Server": "[BW] BNA011"
-	},
-	"bd9ddb80-8e31-4bf2-8aaa-5df15efc07ae": {
-		"Id": "126",
-		"Server": "[BW] BEU031"
-	},
-	"4f2cd5fa-47f3-4d9c-847c-1879ce2d8c75": {
-		"Id": "125",
-		"Server": "[BW] BSA021"
-	},
-	"22c22383-d02a-4c81-808f-f9a7c2cc831d": {
-		"Id": "124",
-		"Server": "[BW] BINMENA041"
-	},
-	"b402fcdb": {
-		"Id": "123",
-		"Server": "[ASIA1] ASIA011"
-	},
-	"1ef862e0": {
-		"Id": "122",
-		"Server": "[ASIA1] ASIA012"
-	},
-	"96a294d0": {
-		"Id": "121",
-		"Server": "[ASIA1] ASIA013"
-	},
-	"f54f8429-8fc9-45be-be3d-db3d0bf99475": {
-		"Id": "120",
-		"Server": "[ASIA1] ASIA014"
-	},
-	"71d8a433-4789-4dd5-a6da-2604c958615e": {
-		"Id": "119",
-		"Server": "[ASIA1] ASIA021"
-	},
-	"e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
-		"Id": "118",
-		"Server": "[ASIA1] ASIA022"
-	},
-	"b491a690-521c-4a2e-8a7e-21e979085e67": {
-		"Id": "117",
-		"Server": "[ASIA1] ASIA023"
-	},
-	"edcef95f-c98a-4107-a76b-715908e0e659": {
-		"Id": "116",
-		"Server": "[ASIA1] ASIA024"
-	},
-	"12fdc099-8351-4a20-a046-a74b8adcfa83": {
-		"Id": "115",
-		"Server": "[ASIA1] ASIA031"
-	},
-	"4cd13a96-4b51-4862-b503-5881f339242a": {
-		"Id": "114",
-		"Server": "[ASIA1] ASIA032"
-	},
-	"0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
-		"Id": "113",
-		"Server": "[ASIA1] ASIA033"
-	},
-	"408830f3-7f73-44d1-b33c-c79d18fc4de4": {
-		"Id": "112",
-		"Server": "[ASIA1] ASIA041"
-	},
-	"40e83d09-d549-443d-bfc4-d004bd693d19": {
-		"Id": "111",
-		"Server": "[ASIA1] ASIA042"
-	},
-	"50e7f21d-2508-4cab-97e9-8a676e0986ea": {
-		"Id": "110",
-		"Server": "[ASIA1] ASIA043"
-	},
-	"047a7c32-de99-4bd9-8503-a11050de37b5": {
-		"Id": "109",
-		"Server": "[ASIA2] ASIA051"
-	},
-	"da727009-8386-4aa3-b7ad-b12e069f7eba": {
-		"Id": "108",
-		"Server": "[ASIA2] ASIA052"
-	},
-	"b546783d-1a82-4465-938b-07fe5fa1cda7": {
-		"Id": "107",
-		"Server": "[ASIA2] ASIA053"
-	},
-	"d6e6a347-c8e7-462d-90be-de1e35da5848": {
-		"Id": "106",
-		"Server": "[ASIA2] ASIA054"
-	},
-	"63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
-		"Id": "105",
-		"Server": "[ASIA2] ASIA061"
-	},
-	"3207acb8-545c-460b-8237-30c9aaef161a": {
-		"Id": "104",
-		"Server": "[ASIA2] ASIA062"
-	},
-	"7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
-		"Id": "103",
-		"Server": "[ASIA2] ASIA063"
-	},
-	"36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
-		"Id": "102",
-		"Server": "[ASIA2] ASIA064"
-	},
-	"0f8f4a18-d173-4045-a0f1-f991d681700c": {
-		"Id": "101",
-		"Server": "[ASIA2] ASIA071"
-	},
-	"a4a38793-f81f-4fe6-95cd-e12343fa5768": {
-		"Id": "100",
-		"Server": "[ASIA2] ASIA072"
-	},
-	"b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
-		"Id": "99",
-		"Server": "[ASIA2] ASIA073"
-	},
-	"1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
-		"Id": "98",
-		"Server": "[ASIA2] ASIA081"
-	},
-	"45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
-		"Id": "97",
-		"Server": "[ASIA2] ASIA082"
-	},
-	"970c32eb-b623-4764-8743-b5685e308fb5": {
-		"Id": "96",
-		"Server": "[ASIA2] ASIA083"
-	},
-	"f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
-		"Id": "95",
-		"Server": "[ASIA3] ASIA343"
-	},
-	"47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
-		"Id": "94",
-		"Server": "[ASIA3] ASIA342"
-	},
-	"843e61dd-3243-4196-ad84-347d1d33ceb6": {
-		"Id": "93",
-		"Server": "[ASIA3] ASIA341"
-	},
-	"4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
-		"Id": "92",
-		"Server": "[ASIA3] ASIA333"
-	},
-	"5d75350e-975e-43e6-b8ab-7ff58df796ad": {
-		"Id": "91",
-		"Server": "[ASIA3] ASIA332"
-	},
-	"beb9afa5-1898-499e-93a7-706034a5c0df": {
-		"Id": "90",
-		"Server": "[ASIA3] ASIA331"
-	},
-	"187eb6fb-520b-4cf0-b469-0c34d21b3711": {
-		"Id": "87",
-		"Server": "[ASIA3] ASIA324"
-	},
-	"2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
-		"Id": "89",
-		"Server": "[ASIA3] ASIA323"
-	},
-	"355f4465-1f65-469c-bf6c-81f629bc5b2d": {
-		"Id": "88",
-		"Server": "[ASIA3] ASIA322"
-	},
-	"502ea617-95c7-4345-9c9b-07de90939c3c": {
-		"Id": "86",
-		"Server": "[ASIA3] ASIA321"
-	},
-	"5cf80fc6-b4b2-4034-990a-42900fba3630": {
-		"Id": "85",
-		"Server": "[ASIA3] ASIA314"
-	},
-	"ded8b096-6ff9-4436-9a15-d960e05e683e": {
-		"Id": "84",
-		"Server": "[ASIA3] ASIA313"
-	},
-	"6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
-		"Id": "83",
-		"Server": "[ASIA3] ASIA312"
-	},
-	"d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
-		"Id": "82",
-		"Server": "[ASIA3] ASIA311"
-	},
-	"bd36bbe9-383e-4f09-824f-e60a313746eb": {
-		"Id": "81",
-		"Server": "[ASIA4] ASIA353"
-	},
-	"6e4c7f85-e171-414c-bbd2-f7333b48d605": {
-		"Id": "80",
-		"Server": "[ASIA4] ASIA351"
-	},
-	"b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
-		"Id": "79",
-		"Server": "[ASIA4] ASIA353"
-	},
-	"3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
-		"Id": "78",
-		"Server": "[ASIA4] ASIA354"
-	},
-	"73b351fe-9789-4a7d-b27f-ec431b16677b": {
-		"Id": "77",
-		"Server": "[ASIA4] ASIA361"
-	},
-	"b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
-		"Id": "76",
-		"Server": "[ASIA4] ASIA362"
-	},
-	"7df85b12-105d-438c-a2e7-f487b1ded057": {
-		"Id": "75",
-		"Server": "[ASIA4] ASIA363"
-	},
-	"18055116-dd62-4365-9917-501ec0bf8bd5": {
-		"Id": "74",
-		"Server": "[ASIA4] ASIA364"
-	},
-	"1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
-		"Id": "73",
-		"Server": "[ASIA4] ASIA371"
-	},
-	"d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
-		"Id": "72",
-		"Server": "[ASIA4] ASIA372"
-	},
-	"2b808dbf-8156-4f42-a458-56313648a57a": {
-		"Id": "71",
-		"Server": "[ASIA4] ASIA373"
-	},
-}
 
 //  读取文件
 function readFile() {
@@ -1196,9 +1484,6 @@ function main(){
         //  处理弹窗
         if (wrong(Data)) {return } //  处理异常弹窗
 
-        // 原始别名
-        let Bm = readLastLine().trim()
-
         // 关闭所有的窗口
         if (closeX(Data)) {return } 
 
@@ -1208,9 +1493,10 @@ function main(){
                 //  判断是否是对应的大区
                 if (select(Data,Servers[Bm].Server)) {
                     console.log(" 对上了 ")
-                    // click(600,69)
+                    click(600,69)
                 }else{
-                    back()
+                    // back()
+					notifications()
                     throw new Error(" 大区不对")
                 }
             }
@@ -1227,6 +1513,7 @@ function main(){
                 sleep(5000);
                 return
             }
+			sleep(4000);
             return
         }
     }
@@ -1245,678 +1532,8 @@ function main(){
 
 // console.log("文件内容:",readLastLine().trim())
 
+// let img = captureScreen(); 
+// let grayscaleImage = images.grayscale(img);
+// let Data = imgOcrData(grayscaleImage);
 
-
-
-
-let Servers2 = {
-
-	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
-		"Id": "200",
-		"Server": "[SA1] SA011",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"befb893f": {
-		"Id": "199",
-		"Server": "[SA1] SA012",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"99863ada-8921-4df4-a8d0-a6d5feaa6f35": {
-		"Id": "198",
-		"Server": "[SA1] SA013",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"418527e2-ca21-45fd-be46-c46003f0eadf": {
-		"Id": "197",
-		"Server": "[SA1] SA014",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"54203733-7890-40dc-97d4-c6234826107b": {
-		"Id": "196",
-		"Server": "[SA1] SA021",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"69561c02-bb04-4403-8d3f-e14a125777c8": {
-		"Id": "195",
-		"Server": "[SA1] SA022",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"09759f37-2602-4ed4-acd0-d8b83df325e5": {
-		"Id": "194",
-		"Server": "[SA1] SA023",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"9ac8ecdf-acb2-4a3f-981f-12796fa4df9d": {
-		"Id": "193",
-		"Server": "[SA1] SA031",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"c805c45c-29db-40c2-9a7e-e618d94a5481": {
-		"Id": "192",
-		"Server": "[SA1] SA032",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"3a7e8e3d-1476-47fa-870b-41fe7639666c": {
-		"Id": "191",
-		"Server": "[SA1] SA033",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"3c48acb4-2d07-44d5-8755-131de595f7b8": {
-		"Id": "190",
-		"Server": "[SA1] SA034",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-	"362753d2-9c4e-4f4a-b6ac-40f9845a30bf": {
-		"Id": "189",
-		"Server": "[SA1] SA041",
-		"OCRip":"http://192.168.1.94:8001"
-	},
-    "1ef2dbc4-634c-4721-ac65-ca4106fe6d28": {
-		"Id": "188",
-		"Server": "[SA1] SA043",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"4e8a403b-4887-4248-835b-7967ce71c62d": {
-		"Id": "187",
-		"Server": "[SA1] SA044",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"603dc59b-7e09-4c8a-8284-2b0831ed731e": {
-		"Id": "186",
-		"Server": "[SA2] SA051",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"5e4a803e-8159-41b2-bd72-7db6a306ae14": {
-		"Id": "185",
-		"Server": "[SA2] SA052",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"7618ee50-4199-4ca3-83cc-2d26bc693efd": {
-		"Id": "184",
-		"Server": "[SA2] SA053",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"5c4680fb-6f71-4306-91ea-e9d14a3f9c89": {
-		"Id": "183",
-		"Server": "[SA2] SA054",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"779ff20d-6c04-4b21-94c5-d968d17ade1b": {
-		"Id": "182",
-		"Server": "[SA2] SA061",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"23ab0919-15b3-4377-b58c-b8ade4ef8151": {
-		"Id": "181",
-		"Server": "[SA2] SA071",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"b17895f8-937d-465c-a90c-cd44d3de7721": {
-		"Id": "180",
-		"Server": "[SA2] SA072",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"2f44aae3-2d77-4706-928b-c989cd3a8a56": {
-		"Id": "179",
-		"Server": "[SA2] SA081",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"1e82aa35-b79b-41d9-a8e8-d3d4d712d45e": {
-		"Id": "178",
-		"Server": "[SA2] SA082",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"cd324f29-72bf-4902-b466-bf02c05b29f9": {
-		"Id": "177",
-		"Server": "[SA2] SA083",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-	"6dc4afc3-943c-4df2-a895-8ef1f3244f67": {
-		"Id": "176",
-		"Server": "[SA2] SA062",
-		"OCRip":"http://192.168.1.94:8002"
-	},
-    "79ee6eab-e562-4d62-9880-027296a17564": {
-		"Id": "175",
-		"Server": "[SA2] SA063",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"2259877e-5b94-45d4-a2f2-b085b680b5f3": {
-		"Id": "174",
-		"Server": "[SA2] SA064",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"bf01a49e-449a-4062-a1b3-99d626518403": {
-		"Id": "173",
-		"Server": "[SA2] SA073",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"63b73ee4": {
-		"Id": "172",
-		"Server": "[NA1] NA011",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"9434ba65": {
-		"Id": "171",
-		"Server": "[NA1] NA012",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"99f502fd": {
-		"Id": "170",
-		"Server": "[NA1] NA021",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"b53d9b12": {
-		"Id": "169",
-		"Server": "[NA1] NA022",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"c63ab7dc": {
-		"Id": "168",
-		"Server": "[NA1] NA023",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"d8de1484": {
-		"Id": "167",
-		"Server": "[NA1] NA031",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"10e56bcc": {
-		"Id": "166",
-		"Server": "[NA1] NA032",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"30d5a6a8": {
-		"Id": "165",
-		"Server": "[NA1] NA033",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"dff4a00 ": {
-		"Id": "164",
-		"Server": "[NA1] NA034",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"c61320d3": {
-		"Id": "163",
-		"Server": "[NA1] NA042",
-		"OCRip":"http://192.168.1.94:8003"
-
-	},
-	"c9e6d3ef": {
-		"Id": "162",
-		"Server": "[NA1] NA043",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"84761629": {
-		"Id": "161",
-		"Server": "[NA1] NA044",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"a0673f35": {
-		"Id": "160",
-		"Server": "[NA1] NA013",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"98fadf9d": {
-		"Id": "159",
-		"Server": "[NA1] NA014",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"c2df4216": {
-		"Id": "158",
-		"Server": "[NA2] NA051",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"e363abda": {
-		"Id": "157",
-		"Server": "[NA2] NA054",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"8da15129": {
-		"Id": "156",
-		"Server": "[NA2] NA064",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"244e67d6": {
-		"Id": "155",
-		"Server": "[NA2] NA083",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"8f1383bc": {
-		"Id": "154",
-		"Server": "[NA2] NA052",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"12238381": {
-		"Id": "153",
-		"Server": "[NA2] NA053",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"1f08528f": {
-		"Id": "152",
-		"Server": "[NA2] NA062",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"6df167cc": {
-		"Id": "151",
-		"Server": "[NA2] NA061",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-	"895f0f14": {
-		"Id": "150",
-		"Server": "[NA2] NA071",
-		"OCRip":"http://192.168.1.94:8004"
-	},
-    "712ba73f": {
-		"Id": "149",
-		"Server": "[NA2] NA072",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"9c9eb045": {
-		"Id": "148",
-		"Server": "[NA2] NA073",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"bd253a0d": {
-		"Id": "147",
-		"Server": "[NA2] NA074",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"c27bf550": {
-		"Id": "146",
-		"Server": "[NA2] NA081",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"5b2adda0": {
-		"Id": "145",
-		"Server": "[NA2] NA082",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"b9ad4ca5-c7c6-49cd-bdd7-bcaaef39388b": {
-		"Id": "144",
-		"Server": "[EU1] EU043",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"5b408a2b-bad8-433d-b34e-ae6a92f469df": {
-		"Id": "143",
-		"Server": "[EU1] EU011",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"d35cefcd-305d-466f-8d51-db923813e672": {
-		"Id": "142",
-		"Server": "[EU1] EU021",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"9eba95cf-fffa-4597-a73c-ea6377a851e4": {
-		"Id": "141",
-		"Server": "[EU1] EU041",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"a7ff01f5-7502-4b4b-a63a-7287abebb965": {
-		"Id": "140",
-		"Server": "[EU1] EU012",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"1f049432-9494-440e-b004-511309a5e6a9": {
-		"Id": "139",
-		"Server": "[EU1] EU013",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"0e3400fb-6a11-468c-b21e-2e8ec262a8cf": {
-		"Id": "138",
-		"Server": "[EU1] EU014",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-	"1f2dfb0a-9546-468f-b685-187444763cc9": {
-		"Id": "137",
-		"Server": "[EU1] EU022",
-		"OCRip":"http://192.168.1.94:8005"
-	},
-    	
-	"980dfa3f-1cf3-4864-a7d8-8b44cf7b5691": {
-		"Id": "136",
-		"Server": "[EU1] EU023",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"d05726f5-e587-4657-9c44-eaf132d5eb01": {
-		"Id": "135",
-		"Server": "[EU1] EU024",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"756996c8-f937-45f4-a426-57ee86a8caf7": {
-		"Id": "134",
-		"Server": "[EU1] EU031",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"48a36291-0202-4513-8977-02b4a1199be8": {
-		"Id": "133",
-		"Server": "[EU1] EU032",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"6588b429-83d1-4e8e-8a52-d1bdc2fa4bdc": {
-		"Id": "132",
-		"Server": "[EU1] EU033",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"2e8887ce-5d4b-47df-b80a-5046bb228274": {
-		"Id": "131",
-		"Server": "[EU1] EU034",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"fa9ee7b3-4131-43c9-977d-a8ffbc7e471e": {
-		"Id": "130",
-		"Server": "[EU1] EU042",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"63d74fc5-978c-4e59-b162-dabddac2183b": {
-		"Id": "129",
-		"Server": "[BW] BASIA001",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"237e1f42-4bdb-4a03-a6f1-923332f33b45": {
-		"Id": "128",
-		"Server": "[BW] BASIA002",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"b645032e-ef99-4a28-a0dc-a633eec7867d": {
-		"Id": "127",
-		"Server": "[BW] BNA011",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"bd9ddb80-8e31-4bf2-8aaa-5df15efc07ae": {
-		"Id": "126",
-		"Server": "[BW] BEU031",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"4f2cd5fa-47f3-4d9c-847c-1879ce2d8c75": {
-		"Id": "125",
-		"Server": "[BW] BSA021",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-	"22c22383-d02a-4c81-808f-f9a7c2cc831d": {
-		"Id": "124",
-		"Server": "[BW] BINMENA041",
-		"OCRip":"http://192.168.1.128:8001"
-	},
-
-
-    "b402fcdb": {
-        "Id": "123",
-        "Server": "[ASIA1] ASIA011",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "1ef862e0": {
-        "Id": "122",
-        "Server": "[ASIA1] ASIA012",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "96a294d0": {
-        "Id": "121",
-        "Server": "[ASIA1] ASIA013",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "f54f8429-8fc9-45be-be3d-db3d0bf99475": {
-        "Id": "120",
-        "Server": "[ASIA1] ASIA014",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "71d8a433-4789-4dd5-a6da-2604c958615e": {
-        "Id": "119",
-        "Server": "[ASIA1] ASIA021",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
-        "Id": "118",
-        "Server": "[ASIA1] ASIA022",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "b491a690-521c-4a2e-8a7e-21e979085e67": {
-        "Id": "117",
-        "Server": "[ASIA1] ASIA023",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "edcef95f-c98a-4107-a76b-715908e0e659": {
-        "Id": "116",
-        "Server": "[ASIA1] ASIA024",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "12fdc099-8351-4a20-a046-a74b8adcfa83": {
-        "Id": "115",
-        "Server": "[ASIA1] ASIA031",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "4cd13a96-4b51-4862-b503-5881f339242a": {
-        "Id": "114",
-        "Server": "[ASIA1] ASIA032",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
-        "Id": "113",
-        "Server": "[ASIA1] ASIA033",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "408830f3-7f73-44d1-b33c-c79d18fc4de4": {
-        "Id": "112",
-        "Server": "[ASIA1] ASIA041",
-        "OCRip":"http://192.168.1.128:8002"
-    },
-    "40e83d09-d549-443d-bfc4-d004bd693d19": {
-        "Id": "111",
-        "Server": "[ASIA1] ASIA042",
-        "OCRip":"http://192.168.1.128:8002"
-    },    
-
-    "50e7f21d-2508-4cab-97e9-8a676e0986ea": {
-        "Id": "110",
-        "Server": "[ASIA1] ASIA043",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "047a7c32-de99-4bd9-8503-a11050de37b5": {
-        "Id": "109",
-        "Server": "[ASIA2] ASIA051",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "da727009-8386-4aa3-b7ad-b12e069f7eba": {
-        "Id": "108",
-        "Server": "[ASIA2] ASIA052",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "b546783d-1a82-4465-938b-07fe5fa1cda7": {
-        "Id": "107",
-        "Server": "[ASIA2] ASIA053",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "d6e6a347-c8e7-462d-90be-de1e35da5848": {
-        "Id": "106",
-        "Server": "[ASIA2] ASIA054",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
-        "Id": "105",
-        "Server": "[ASIA2] ASIA061",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "3207acb8-545c-460b-8237-30c9aaef161a": {
-        "Id": "104",
-        "Server": "[ASIA2] ASIA062",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
-        "Id": "103",
-        "Server": "[ASIA2] ASIA063",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
-        "Id": "102",
-        "Server": "[ASIA2] ASIA064",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "0f8f4a18-d173-4045-a0f1-f991d681700c": {
-        "Id": "101",
-        "Server": "[ASIA2] ASIA071",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "a4a38793-f81f-4fe6-95cd-e12343fa5768": {
-        "Id": "100",
-        "Server": "[ASIA2] ASIA072",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
-        "Id": "99",
-        "Server": "[ASIA2] ASIA073",
-        "OCRip":"http://192.168.1.128:8003"
-    },
-    "1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
-        "Id": "98",
-        "Server": "[ASIA2] ASIA081",
-        "OCRip":"http://192.168.1.128:8003"
-    },    
-    "45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
-        "Id": "97",
-        "Server": "[ASIA2] ASIA082",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "970c32eb-b623-4764-8743-b5685e308fb5": {
-        "Id": "96",
-        "Server": "[ASIA2] ASIA083",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
-        "Id": "95",
-        "Server": "[ASIA3] ASIA343",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
-        "Id": "94",
-        "Server": "[ASIA3] ASIA342",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "843e61dd-3243-4196-ad84-347d1d33ceb6": {
-        "Id": "93",
-        "Server": "[ASIA3] ASIA341",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
-        "Id": "92",
-        "Server": "[ASIA3] ASIA333",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "5d75350e-975e-43e6-b8ab-7ff58df796ad": {
-        "Id": "91",
-        "Server": "[ASIA3] ASIA332",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "beb9afa5-1898-499e-93a7-706034a5c0df": {
-        "Id": "90",
-        "Server": "[ASIA3] ASIA331",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "187eb6fb-520b-4cf0-b469-0c34d21b3711": {
-        "Id": "87",
-        "Server": "[ASIA3] ASIA324",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
-        "Id": "89",
-        "Server": "[ASIA3] ASIA323",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "355f4465-1f65-469c-bf6c-81f629bc5b2d": {
-        "Id": "88",
-        "Server": "[ASIA3] ASIA322",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "502ea617-95c7-4345-9c9b-07de90939c3c": {
-        "Id": "86",
-        "Server": "[ASIA3] ASIA321",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "5cf80fc6-b4b2-4034-990a-42900fba3630": {
-        "Id": "85",
-        "Server": "[ASIA3] ASIA314",
-        "OCRip":"http://192.168.1.128:8004"
-    },
-    "ded8b096-6ff9-4436-9a15-d960e05e683e": {
-        "Id": "84",
-        "Server": "[ASIA3] ASIA313",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
-        "Id": "83",
-        "Server": "[ASIA3] ASIA312",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
-        "Id": "82",
-        "Server": "[ASIA3] ASIA311",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "bd36bbe9-383e-4f09-824f-e60a313746eb": {
-        "Id": "81",
-        "Server": "[ASIA4] ASIA353",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "6e4c7f85-e171-414c-bbd2-f7333b48d605": {
-        "Id": "80",
-        "Server": "[ASIA4] ASIA351",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
-        "Id": "79",
-        "Server": "[ASIA4] ASIA353",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
-        "Id": "78",
-        "Server": "[ASIA4] ASIA354",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "73b351fe-9789-4a7d-b27f-ec431b16677b": {
-        "Id": "77",
-        "Server": "[ASIA4] ASIA361",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
-        "Id": "76",
-        "Server": "[ASIA4] ASIA362",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "7df85b12-105d-438c-a2e7-f487b1ded057": {
-        "Id": "75",
-        "Server": "[ASIA4] ASIA363",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "18055116-dd62-4365-9917-501ec0bf8bd5": {
-        "Id": "74",
-        "Server": "[ASIA4] ASIA364",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
-        "Id": "73",
-        "Server": "[ASIA4] ASIA371",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
-        "Id": "72",
-        "Server": "[ASIA4] ASIA372",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-    "2b808dbf-8156-4f42-a458-56313648a57a": {
-        "Id": "71",
-        "Server": "[ASIA4] ASIA373",
-        "OCRip":"http://192.168.1.128:8005"
-    },
-
-}
+// select(Data,"select")
