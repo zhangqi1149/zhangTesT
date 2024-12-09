@@ -1,12 +1,842 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.1.128:8004";
+// var SERVER_URL = "http://192.168.1.128:8004";
 // var text = "40级了 打不过怪该怎么玩啊" ;
-var text = "全球最低金币 PlayPal保障付款。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+var text = "全球最低金币 PlayPal担保交易。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
+let filePath = "/storage/emulated/0/Documents/config.txt";
+// 原始别名
+let Bm = readLastLine().trim()
+// console.log("Bm :", Bm )
+let Log = false
 
-// let SERVER_URL = "http://192.168.1.94:8002";  // 服务器2  8001 -8005  每个13个
+let Servers = {
+	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
+		"Id": "200",
+		"Server": "SA011",
+		"OCRip":"http://192.168.1.94",
+		"port" : "8001"
+	},
+	"befb893f": {
+		"Id": "199",
+		"Server": "SA012",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"99863ada-8921-4df4-a8d0-a6d5feaa6f35": {
+		"Id": "198",
+		"Server": "SA013",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"418527e2-ca21-45fd-be46-c46003f0eadf": {
+		"Id": "197",
+		"Server": "SA014",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"54203733-7890-40dc-97d4-c6234826107b": {
+		"Id": "196",
+		"Server": "SA021",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"69561c02-bb04-4403-8d3f-e14a125777c8": {
+		"Id": "195",
+		"Server": "SA022",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"09759f37-2602-4ed4-acd0-d8b83df325e5": {
+		"Id": "194",
+		"Server": "SA023",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"9ac8ecdf-acb2-4a3f-981f-12796fa4df9d": {
+		"Id": "193",
+		"Server": "SA031",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"c805c45c-29db-40c2-9a7e-e618d94a5481": {
+		"Id": "192",
+		"Server": "SA032",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"3a7e8e3d-1476-47fa-870b-41fe7639666c": {
+		"Id": "191",
+		"Server": "SA033",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"3c48acb4-2d07-44d5-8755-131de595f7b8": {
+		"Id": "190",
+		"Server": "SA034",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"362753d2-9c4e-4f4a-b6ac-40f9845a30bf": {
+		"Id": "189",
+		"Server": "SA041",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+    "1ef2dbc4-634c-4721-ac65-ca4106fe6d28": {
+		"Id": "188",
+		"Server": "SA043",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"4e8a403b-4887-4248-835b-7967ce71c62d": {
+		"Id": "187",
+		"Server": "SA044",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"603dc59b-7e09-4c8a-8284-2b0831ed731e": {
+		"Id": "186",
+		"Server": "SA051",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"5e4a803e-8159-41b2-bd72-7db6a306ae14": {
+		"Id": "185",
+		"Server": "SA052",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"7618ee50-4199-4ca3-83cc-2d26bc693efd": {
+		"Id": "184",
+		"Server": "SA053",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"5c4680fb-6f71-4306-91ea-e9d14a3f9c89": {
+		"Id": "183",
+		"Server": "SA054",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"779ff20d-6c04-4b21-94c5-d968d17ade1b": {
+		"Id": "182",
+		"Server": "SA061",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"23ab0919-15b3-4377-b58c-b8ade4ef8151": {
+		"Id": "181",
+		"Server": "SA071",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"b17895f8-937d-465c-a90c-cd44d3de7721": {
+		"Id": "180",
+		"Server": "SA072",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"2f44aae3-2d77-4706-928b-c989cd3a8a56": {
+		"Id": "179",
+		"Server": "SA081",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"1e82aa35-b79b-41d9-a8e8-d3d4d712d45e": {
+		"Id": "178",
+		"Server": "SA082",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"cd324f29-72bf-4902-b466-bf02c05b29f9": {
+		"Id": "177",
+		"Server": "SA083",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"6dc4afc3-943c-4df2-a895-8ef1f3244f67": {
+		"Id": "176",
+		"Server": "SA062",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+    "79ee6eab-e562-4d62-9880-027296a17564": {
+		"Id": "175",
+		"Server": "SA063",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"2259877e-5b94-45d4-a2f2-b085b680b5f3": {
+		"Id": "174",
+		"Server": "SA064",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"bf01a49e-449a-4062-a1b3-99d626518403": {
+		"Id": "173",
+		"Server": "SA073",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"63b73ee4": {
+		"Id": "172",
+		"Server": "NA011",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"9434ba65": {
+		"Id": "171",
+		"Server": "NA012",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"99f502fd": {
+		"Id": "170",
+		"Server": "NA021",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"b53d9b12": {
+		"Id": "169",
+		"Server": "NA022",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"c63ab7dc": {
+		"Id": "168",
+		"Server": "NA023",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"d8de1484": {
+		"Id": "167",
+		"Server": "NA031",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"10e56bcc": {
+		"Id": "166",
+		"Server": "NA032",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"30d5a6a8": {
+		"Id": "165",
+		"Server": "NA033",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"dff4a00": {
+		"Id": "164",
+		"Server": "NA034",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"c61320d3": {
+		"Id": "163",
+		"Server": "NA042",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+
+	},
+	"c9e6d3ef": {
+		"Id": "162",
+		"Server": "NA043",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"84761629": {
+		"Id": "161",
+		"Server": "NA044",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"a0673f35": {
+		"Id": "160",
+		"Server": "NA013",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"98fadf9d": {
+		"Id": "159",
+		"Server": "NA014",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"c2df4216": {
+		"Id": "158",
+		"Server": "NA051",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"e363abda": {
+		"Id": "157",
+		"Server": "NA054",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"8da15129": {
+		"Id": "156",
+		"Server": "NA064",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"244e67d6": {
+		"Id": "155",
+		"Server": "NA083",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"8f1383bc": {
+		"Id": "154",
+		"Server": "NA052",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"12238381": {
+		"Id": "153",
+		"Server": "NA053",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"1f08528f": {
+		"Id": "152",
+		"Server": "NA062",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"6df167cc": {
+		"Id": "151",
+		"Server": "NA061",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"895f0f14": {
+		"Id": "150",
+		"Server": "NA071",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+    "712ba73f": {
+		"Id": "149",
+		"Server": "NA072",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"9c9eb045": {
+		"Id": "148",
+		"Server": "NA073",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"bd253a0d": {
+		"Id": "147",
+		"Server": "NA074",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"c27bf550": {
+		"Id": "146",
+		"Server": "NA081",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"5b2adda0": {
+		"Id": "145",
+		"Server": "NA082",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"b9ad4ca5-c7c6-49cd-bdd7-bcaaef39388b": {
+		"Id": "144",
+		"Server": "EU043",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"5b408a2b-bad8-433d-b34e-ae6a92f469df": {
+		"Id": "143",
+		"Server": "EU011",
+		"OCRip":"http://192.168.1.94",
+		"port":"8001",
+	},
+	"d35cefcd-305d-466f-8d51-db923813e672": {
+		"Id": "142",
+		"Server": "EU021",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"9eba95cf-fffa-4597-a73c-ea6377a851e4": {
+		"Id": "141",
+		"Server": "EU041",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"a7ff01f5-7502-4b4b-a63a-7287abebb965": {
+		"Id": "140",
+		"Server": "EU012",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"1f049432-9494-440e-b004-511309a5e6a9": {
+		"Id": "139",
+		"Server": "EU013",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"0e3400fb-6a11-468c-b21e-2e8ec262a8cf": {
+		"Id": "138",
+		"Server": "EU014",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+	"1f2dfb0a-9546-468f-b685-187444763cc9": {
+		"Id": "137",
+		"Server": "EU022",
+		"OCRip":"http://192.168.1.94",
+		"port":"8002",
+	},
+    	
+	"980dfa3f-1cf3-4864-a7d8-8b44cf7b5691": {
+		"Id": "136",
+		"Server": "EU023",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"d05726f5-e587-4657-9c44-eaf132d5eb01": {
+		"Id": "135",
+		"Server": "EU024",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"756996c8-f937-45f4-a426-57ee86a8caf7": {
+		"Id": "134",
+		"Server": "EU031",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"48a36291-0202-4513-8977-02b4a1199be8": {
+		"Id": "133",
+		"Server": "EU032",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"6588b429-83d1-4e8e-8a52-d1bdc2fa4bdc": {
+		"Id": "132",
+		"Server": "EU033",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"2e8887ce-5d4b-47df-b80a-5046bb228274": {
+		"Id": "131",
+		"Server": "EU034",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"fa9ee7b3-4131-43c9-977d-a8ffbc7e471e": {
+		"Id": "130",
+		"Server": "EU042",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"63d74fc5-978c-4e59-b162-dabddac2183b": {
+		"Id": "129",
+		"Server": "BASIA001",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"237e1f42-4bdb-4a03-a6f1-923332f33b45": {
+		"Id": "128",
+		"Server": "BASIA002",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"b645032e-ef99-4a28-a0dc-a633eec7867d": {
+		"Id": "127",
+		"Server": "BNA011",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"bd9ddb80-8e31-4bf2-8aaa-5df15efc07ae": {
+		"Id": "126",
+		"Server": "BEU031",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"4f2cd5fa-47f3-4d9c-847c-1879ce2d8c75": {
+		"Id": "125",
+		"Server": "BSA021",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+	"22c22383-d02a-4c81-808f-f9a7c2cc831d": {
+		"Id": "124",
+		"Server": "BINMENA041",
+		"OCRip":"http://192.168.1.128",
+		"port":"8001",
+	},
+
+
+    "b402fcdb": {
+        "Id": "123",
+        "Server": "ASIA011",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "1ef862e0": {
+        "Id": "122",
+        "Server": "ASIA012",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "96a294d0": {
+        "Id": "121",
+        "Server": "ASIA013",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "f54f8429-8fc9-45be-be3d-db3d0bf99475": {
+        "Id": "120",
+        "Server": "ASIA014",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "71d8a433-4789-4dd5-a6da-2604c958615e": {
+        "Id": "119",
+        "Server": "ASIA021",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
+        "Id": "118",
+        "Server": "ASIA022",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "b491a690-521c-4a2e-8a7e-21e979085e67": {
+        "Id": "117",
+        "Server": "ASIA023",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "edcef95f-c98a-4107-a76b-715908e0e659": {
+        "Id": "116",
+        "Server": "ASIA024",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "12fdc099-8351-4a20-a046-a74b8adcfa83": {
+        "Id": "115",
+        "Server": "ASIA031",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "4cd13a96-4b51-4862-b503-5881f339242a": {
+        "Id": "114",
+        "Server": "ASIA032",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
+        "Id": "113",
+        "Server": "ASIA033",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "408830f3-7f73-44d1-b33c-c79d18fc4de4": {
+        "Id": "112",
+        "Server": "ASIA041",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "40e83d09-d549-443d-bfc4-d004bd693d19": {
+        "Id": "111",
+        "Server": "ASIA042",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },    
+
+    "50e7f21d-2508-4cab-97e9-8a676e0986ea": {
+        "Id": "110",
+        "Server": "ASIA043",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "047a7c32-de99-4bd9-8503-a11050de37b5": {
+        "Id": "109",
+        "Server": "ASIA051",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "da727009-8386-4aa3-b7ad-b12e069f7eba": {
+        "Id": "108",
+        "Server": "ASIA052",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "b546783d-1a82-4465-938b-07fe5fa1cda7": {
+        "Id": "107",
+        "Server": "ASIA053",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "d6e6a347-c8e7-462d-90be-de1e35da5848": {
+        "Id": "106",
+        "Server": "ASIA054",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
+        "Id": "105",
+        "Server": "ASIA061",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "3207acb8-545c-460b-8237-30c9aaef161a": {
+        "Id": "104",
+        "Server": "ASIA062",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
+        "Id": "103",
+        "Server": "ASIA063",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
+        "Id": "102",
+        "Server": "ASIA064",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "0f8f4a18-d173-4045-a0f1-f991d681700c": {
+        "Id": "101",
+        "Server": "ASIA071",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "a4a38793-f81f-4fe6-95cd-e12343fa5768": {
+        "Id": "100",
+        "Server": "ASIA072",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
+        "Id": "99",
+        "Server": "ASIA073",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
+        "Id": "98",
+        "Server": "ASIA081",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },    
+    "45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
+        "Id": "97",
+        "Server": "ASIA082",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "970c32eb-b623-4764-8743-b5685e308fb5": {
+        "Id": "96",
+        "Server": "ASIA083",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
+        "Id": "95",
+        "Server": "ASIA343",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
+        "Id": "94",
+        "Server": "ASIA342",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "843e61dd-3243-4196-ad84-347d1d33ceb6": {
+        "Id": "93",
+        "Server": "ASIA341",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
+        "Id": "92",
+        "Server": "ASIA333",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "5d75350e-975e-43e6-b8ab-7ff58df796ad": {
+        "Id": "91",
+        "Server": "ASIA332",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "beb9afa5-1898-499e-93a7-706034a5c0df": {
+        "Id": "90",
+        "Server": "ASIA331",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+	"2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
+        "Id": "89",
+        "Server": "ASIA324",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+	"355f4465-1f65-469c-bf6c-81f629bc5b2d": {
+        "Id": "88",
+        "Server": "ASIA323",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "187eb6fb-520b-4cf0-b469-0c34d21b3711": {
+        "Id": "87",
+        "Server": "ASIA322",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "502ea617-95c7-4345-9c9b-07de90939c3c": {
+        "Id": "86",
+        "Server": "ASIA321",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "5cf80fc6-b4b2-4034-990a-42900fba3630": {
+        "Id": "85",
+        "Server": "ASIA314",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "ded8b096-6ff9-4436-9a15-d960e05e683e": {
+        "Id": "84",
+        "Server": "ASIA313",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
+        "Id": "83",
+        "Server": "ASIA312",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
+        "Id": "82",
+        "Server": "ASIA311",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "bd36bbe9-383e-4f09-824f-e60a313746eb": {
+        "Id": "81",
+        "Server": "ASIA353",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "6e4c7f85-e171-414c-bbd2-f7333b48d605": {
+        "Id": "80",
+        "Server": "ASIA351",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
+        "Id": "79",
+        "Server": "ASIA353",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
+        "Id": "78",
+        "Server": "ASIA354",
+        "OCRip":"http://192.168.1.128",
+		"port":"8001",
+    },
+    "73b351fe-9789-4a7d-b27f-ec431b16677b": {
+        "Id": "77",
+        "Server": "ASIA361",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
+        "Id": "76",
+        "Server": "ASIA362",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "7df85b12-105d-438c-a2e7-f487b1ded057": {
+        "Id": "75",
+        "Server": "ASIA363",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "18055116-dd62-4365-9917-501ec0bf8bd5": {
+        "Id": "74",
+        "Server": "ASIA364",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
+        "Id": "73",
+        "Server": "ASIA371",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
+        "Id": "72",
+        "Server": "ASIA372",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+    "2b808dbf-8156-4f42-a458-56313648a57a": {
+        "Id": "71",
+        "Server": "ASIA373",
+        "OCRip":"http://192.168.1.128",
+		"port":"8002",
+    },
+}
+
+function log_z(message) {
+    if (Log) {
+        console.log(message);
+    }
+}
+
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
+console.log("SERVER_URL :",SERVER_URL)
+
+
+// 读取文件并返回最后一行
+function readLastLine() {
+    let reader = new java.io.BufferedReader(new java.io.FileReader(filePath));
+    let line;
+    let lastLine = '';
+
+    // 逐行读取文件内容
+    while ((line = reader.readLine()) !== null) {
+        lastLine = line;  // 不断更新最后一行
+    }
+
+    reader.close();
+    return lastLine;  // 返回最后一行内容
+}
+
+// SERVER_URL = "http://192.168.1.94:8002";  // 服务器2  8001 -8005  每个13个
 // let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
 var storage = storages.create("ABC");
@@ -33,13 +863,14 @@ function getOcr(img) {
             headers: {
                 "Content-Type": "application/json"
             },
-            timeout: 10000 // 设置超时时间为10秒
+            timeout: 20000 // 设置超时时间为10秒
         });
-        // let response = http.postJson("http://192.168.1.94:9080/ocr", jsonData, {
+
+        // let response = http.postJson("http://192.168.1.94:8001/ocr/predict-by-base64", jsonData, {
         //     headers: {
         //         "Content-Type": "application/json"
         //     },
-        //     timeout: 10000 // 设置超时时间为10秒
+        //     timeout: 100000 // 设置超时时间为10秒
         // });
 
         // console.timeEnd("httppost");  // 输出执行时间
@@ -80,6 +911,13 @@ function isblue(img) {
             },
             timeout: 10000 // 设置超时时间为10秒
         });
+
+        // let response = http.postJson("http://192.168.1.94:8001/ocr/predict-is-blue", jsonData, {
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     timeout: 10000 // 设置超时时间为10秒
+        // });
         
         if (response.statusCode == 200) {
             return JSON.parse(response.body.string());
@@ -96,10 +934,10 @@ function isblue(img) {
 // 查看控件
 function npackageName() {
     // 查找屏幕上的所有控件
-    var nodes = className("android.widget.FrameLayout").find();
+    let nodes = className("android.widget.FrameLayout").find();
     // 遍历找到满足条件的控件
-    for (var i = 0; i < nodes.size(); i++) {
-        var node = nodes.get(i);
+    for (let i = 0; i < nodes.size(); i++) {
+        let node = nodes.get(i);
         if (node.packageName() === "com.wemade.mir4global") {
             // console.log("找到匹配的控件，包名: " + node.packageName());
             // 可以在这里对控件进行其他操作
@@ -125,6 +963,7 @@ function packageNameEndsWith(suffix) {
     }
     
     // nodes.recycle();  // 如果没有找到匹配的控件，释放资源
+    nodes = null
     return false;  // 没有找到匹配的控件，返回 false
 }
 
@@ -142,7 +981,7 @@ function init() {
     }
     if (!requestScreenCapture(true)) {
         // throw new Error("请求屏幕捕获权限失败");
-        console.log("请求屏幕捕获权限失败")
+        log_z("请求屏幕捕获权限失败")
         sleep(3000);
     }
     if (!packageNameEndsWith("mir4global")) {
@@ -176,7 +1015,7 @@ function wait(str, time) {
         let img = captureScreen();
         let grayscaleImage = images.grayscale(img);
         imgRecycle(img)
-        let reData = getOcr(grayscaleImage,"ch");
+        let reData = getOcr(grayscaleImage);
         imgRecycle(grayscaleImage)
         if (reData) {
             let top = select(reData,str)
@@ -256,7 +1095,7 @@ function ClickSleep(reData, text, waitTime, exactMatch) {
     waitTime = (waitTime !== undefined) ? waitTime : 5000;
     exactMatch = (exactMatch !== undefined) ? exactMatch : false;
     if (selclick(reData, text, exactMatch)) {
-        console.log(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
+        log_z(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
         sleep(waitTime);
         return true;
     }
@@ -323,7 +1162,7 @@ function selclick(reData,src,exactMatch){
         // console.log("code",code)
         // code = click(x_phone,y_phone);
         if (!code) {
-            console.log(`selclick ${src} 点击失败`)
+            log_z(`selclick ${src} 点击失败`)
             return false
         }
         return true
@@ -345,7 +1184,7 @@ function textClick(target,x,y){
     // let x_phone = (centerX / 1285) * device.height;
     // let y_phone = (centerY / 720) * device.width;
     // console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
-    console.log(` textClick 点击 : ${target.text} 偏移: x=${centerX}, y=${centerY}`);
+    log_z(` textClick 点击 : ${target.text} 偏移: x=${centerX}, y=${centerY}`);
     // 点击坐标
     // click(x_phone+x,y_phone+y);
     click(centerX+x,centerY+y);
@@ -442,7 +1281,7 @@ function clickTow(reData,src){
         // let x_phone = (centerX / 1285) * device.height;
         // let y_phone = (centerY / 720) * device.width;
 
-        console.log(` clickTow 点击坐标: x=${centerX}, y=${centerY}`);
+        log_z(` clickTow 点击坐标: x=${centerX}, y=${centerY}`);
 
         // 点击坐标
         click(centerX,centerY);
@@ -459,7 +1298,7 @@ function closeX(reData){
     if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '奇缘', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '闭关修炼', 1241, 29, 2000)) return true;
-    if (checkAndClick(reData, '画面位置重置', 1230, 88, 2000)) return true;
+    if (checkAndClick(reData, '画面位置', 1230, 88, 2000)) return true;
     if (select(reData, '可佩戴')) {
         clickWithDelay(948,200,1000);// 选中
         clickWithDelay(1150,675,2000); // 购买
@@ -519,10 +1358,21 @@ function wrong(reData) {
         sleep(5000);
         return 
     }
+    if (selclick(reData,"重新连接",true)) {
+        return true
+    }
+    // 服务器连接断开 -> 前往登录
+    if (select(reData, "服务器连接断开")) {
+        return ClickSleep(reData, '前往登录');
+    }
      // 网络异常波动
      if (selclick(reData,"前往登录")) {
         sleep(2000);
         return
+    }
+    
+    if (selclick(reData,"确定",true)|| selclick(reData,"确认",true)) {
+        return true
     }
     if (select(reData,"存在最新版本")||select(reData,"无法确认版本")) { 
         selclick(reData,"确定",true);
@@ -539,14 +1389,10 @@ function wrong(reData) {
     }
     // 临时维护
     if (select(reData,"Temporary")|| select(reData,"Maintenance")||select(reData,"更新维护公告")) {
-        console.log("游戏临时维护");
+        log_z("游戏临时维护");
         // 杀掉游戏
         close_app("com.wemade.mir4global")
         throw new Error("游戏临时维护")
-    }
-    if (selclick(reData,"前往登录")) {
-        sleep(2000);
-        return true
     }
     // 更新维护
     if (select(reData,"更新维护公告")) { 
@@ -564,17 +1410,14 @@ function wrong(reData) {
     if (selclick(reData,"重新连接")) {
         return true
     }
-    // 服务器连接断开 -> 前往登录
-    if (select(reData, "服务器连接断开")) {
-        return ClickSleep(reData, '前往登录');
-    }
+
     if (select(reData,"服务器断开连接")) {
         return ClickSleep(reData,"确认")
     }
     // 网络问题 -> 重新尝试 
     if (select(reData, "网络套")) {
         close_app("com.wemade.mir4global")
-        console.log("需要关闭游戏重新登录")
+        log_z("需要关闭游戏重新登录")
         return true;
     }
     // 重新尝试
@@ -583,7 +1426,7 @@ function wrong(reData) {
     }
     // 据点复活
     if (selclick(reData, "据点复活")) {
-        console.log("点击据点复活，等待5秒");
+        log_z("点击据点复活，等待5秒");
         sleep(5000);
         return true;
     }
@@ -900,8 +1743,8 @@ function Console(reData) {
     if (menuItem) {
         let item = menuItem[0][0][0]
         let item2 = menuItem[0][1][1]
-        console.log(`请点击菜单按键: ${item}`)
-        console.log(`请点击菜单按键: ${item2}`)
+        log_z(`请点击菜单按键: ${item}`)
+        log_z(`请点击菜单按键: ${item2}`)
 
         if (item == 820.0 && item2 <= 157) {
             selclick(reData, '跳过')
@@ -958,9 +1801,9 @@ function Console(reData) {
     if (buttonItem) {
         let item = buttonItem[0][0][0]
         let item2 = buttonItem[0][0][1]
-        console.log(`请点击按键: ${item}`)
-        console.log(`请点击按键 item2: ${item2}`)
-        console.log(`请点击按键: ${buttonItem[0]}`)
+        log_z(`请点击按键: ${item}`)
+        log_z(`请点击按键 item2: ${item2}`)
+        log_z(`请点击按键: ${buttonItem[0]}`)
         // [[899.0, 74.0], [991.0, 74.0], [991.0, 97.0], [899.0, 97.0]]  任务提示
         if (item2 <= 74) {
             selclick(reData,"跳过")
@@ -1305,7 +2148,7 @@ function reward(reData) {
         //  重新截图拿到最新的   TODO 多学几个技能  找蓝色的地方
         let img = captureScreen();
         //  拿到最新的数据
-        let reData = getOcr(img,"ch")
+        let reData = getOcr(img)
         if (reData) {
             if (selclick(reData, '学习',true) ) {
                 sleep(1000);
@@ -1551,7 +2394,7 @@ function Shout(reData) {
 function upLevel(){
     let img = captureScreen();      // 截图
     if (!img) {
-        console.log("截图失败");
+        log_z("截图失败");
         return ;
     }
     let grayscaleImage = images.grayscale(img);      // 二级化
@@ -1564,7 +2407,7 @@ function upLevel(){
 
     // 裁剪等级
     let croppedImage = images.clip(img, 11, 0, 60, 32);
-    let lvData = getOcr(croppedImage,"ch");
+    let lvData = getOcr(croppedImage);
     imgRecycle(croppedImage);
     getlv(lvData) // 获取等级
 
@@ -1587,9 +2430,10 @@ function upLevel(){
     // console.log(`color1: ${color1}, color2 : ${color2}`)
 
     // 获取OCR
-    let reData = getOcr(grayscaleImage,"ch");
+    let reData = getOcr(grayscaleImage);
     imgRecycle(img)
     if (reData) {
+        log_z("处理异常弹窗")
         if (wrong(reData)) {return } //  处理异常弹窗
         //  喊话 
         if (lv >= 40) {
@@ -1634,14 +2478,14 @@ function upLevel(){
                 }
             }
         }
-        // console.log("创建角色")
+        log_z("  * 创建角色")
         if (create(reData)) {return } //  创建角色
-        // console.log("处理小青龙")
+        log_z("  * 处理小青龙")
         if (Loong(reData)) {return }  // 处理小青龙
-        // console.log("处理强化")
+        log_z("  * 处理强化")
         if (Console(reData)) {return } //  处理强化 制造 加点
         let lv = storage.get("lv",0)
-        console.log(`人物当前等级: ${lv} `); // 当前等级
+        log_z(`  * 人物当前等级: ${lv} `); // 当前等级
 
         // if (lv > 20) { // 领取邮箱
         //     if (emil == -2133216) {
@@ -1667,12 +2511,12 @@ function upLevel(){
             }
         }
 
-        // console.log("关闭所有的弹窗")
+        log_z("  * 关闭所有的弹窗")
         if (closeX(reData)) {return } // 关闭所有的弹窗
 
 
         if (clors == -13553096 || clors == -13487302) {  // 是否在打怪   
-            console.log("在打怪");
+            log_z("在打怪");
             // 处理取消打怪升级
             if (lv == 13) {
                 if (select(reData,"芊菲的下落")) {
@@ -1721,11 +2565,14 @@ function upLevel(){
                     }
                 }
             }
+            if (selclick(reData,"35.与龙骨")) {
+                return true
+            }
             // clickWithDelay(1197,625,5000);  // 普攻一下
             sleep(21*1000)
             return 
         }
-        // console.log("切换药剂")
+        log_z("  * 切换药剂")
         if (lv > 17 && lv < 40 ) {   //  切换药剂   在城镇的时候 
             //  检查城镇
             let reai = select(reData,"比奇城",true)
@@ -1784,7 +2631,7 @@ function upLevel(){
             }
         }
 
-        // console.log("去挂机打怪")
+        log_z("  * 去挂机打怪")
         if (lv >= 9 && lv < 13 ) {  // 去挂机打怪
             reai = select(reData,"芊菲的下落")
             if (reai) {
@@ -1852,7 +2699,7 @@ function upLevel(){
         }
 
         //  是否在自动做任务
-        console.log(`是否在自动做任务: ${code.blue}`)
+        log_z(`  * 是否在自动做任务: ${code.blue}`)
         if (code.blue) {
             click(945,574); // 奔跑
             //  切换视角
@@ -1878,10 +2725,9 @@ function upLevel(){
             if (!select(reData,"救出可疑的女人")) {
                 // 加入限定的条件 
                 if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true) || select(reData,"安全",true) || select(reData,"普通",true) || select(reData,"绑架的背后")) {
-                    console.log(" . ");
+                    log_z("   * 点击任务 ");
                     clickWithDelay(1122.5,187,2000);    
                 }
-                
             }
         }
         //  ********   剧情任务
@@ -1997,7 +2843,7 @@ function upLevel(){
                 sleep(4000);
                 swipe(273, 100, 273, 700, 1000); 
                 let img = captureScreen();
-                let reData = getOcr(img,"ch");
+                let reData = getOcr(img);
                 imgRecycle(img)
                 if (reData) {
                     if (selclick(reData, '暴血花')) {
@@ -2008,7 +2854,7 @@ function upLevel(){
                     }
                 
                     img = captureScreen();
-                    reData = getOcr(img,"ch");
+                    reData = getOcr(img);
                     imgRecycle(img)
                     if (selclick(reData, '饿鬼')) {
                         sleep(2000);
@@ -2123,7 +2969,7 @@ function upLevel(){
                 selclick(reData, '跳过')
                 sleep(2000)
                 let img = captureScreen();
-                let ocrResults = getOcr(img,"ch");
+                let ocrResults = getOcr(img);
                 imgRecycle(img)
                 if(ocrResults){
                     for (let i = 0; i < 7; i++) {
@@ -2207,7 +3053,7 @@ function upLevel(){
             if (select(reData, '18.完成丹')) {
                 if (!select(reData,"击败双")) {
                     let img = captureScreen(); // 重新获取截图
-                    let reData = getOcr(img,"ch"); // 重新OCR
+                    let reData = getOcr(img); // 重新OCR
                     imgRecycle(img);
                     if (reData) {
                         if (select(reData, '奇缘')) {
@@ -2227,7 +3073,7 @@ function upLevel(){
                     selclick(reData, '20.完成朱千')
                     sleep(4000);
                     let img = captureScreen(); // 重新获取截图
-                    let reData = getOcr(img,"ch"); // 重新OCR
+                    let reData = getOcr(img); // 重新OCR
                     imgRecycle(img);
                     if (reData) {
                         if (select(reData, '奇缘')) {
@@ -2247,10 +3093,10 @@ function upLevel(){
                     selclick(reData, '22.完成击败')
                     sleep(4000);
                     let img = captureScreen(); // 重新获取截图
-                    let reData = getOcr(img,"ch"); // 重新OCR
+                    let reData2 = getOcr(img); // 重新OCR
                     imgRecycle(img);
-                    if (reData) {
-                        if (select(reData, '奇缘') ) {
+                    if (reData2) {
+                        if (select(reData2, '奇缘') ) {
                             // 丹鹰的护卫
                             sleep(3000);
                             clickWithDelay(1158,426,2000);   // 点击领取
@@ -2267,6 +3113,9 @@ function upLevel(){
             if (selclick(reData, '29.前')) {
                 return sleep(5000);
             }
+            if (selclick(reData, '35.与龙')) {
+                return sleep(5000);
+            }
             if (!code) {
                 if (selclick(reData, '传子对话')) {
                     return  sleep(2000);
@@ -2279,7 +3128,7 @@ function upLevel(){
         reai = select(reData,"跳过")
         if (reai) {
             item = reai[0][0][0]
-            console.log("item :",item)
+            // console.log("item :",item)
             if (item > 1100) {
                 selclick(reData,"跳过")
                 return sleep(2000);
@@ -2293,7 +3142,7 @@ function upLevel(){
             clickWithDelay(223,560,50) ; // 点击画面
             clickWithDelay(223,560,50) ; // 点击画面
         }
-    }
+    } 
 }
 
 // 主函数
@@ -2321,8 +3170,8 @@ if (false) {
     // let grayscaleImage = images.grayscale(img);
 
     // console.log("开始请求")
-    // let reData = getOcr(grayscaleImage,"ch");
-    // let reData = getOcr(img,"ch");
+    // let reData = getOcr(grayscaleImage);
+    // let reData = getOcr(img);
 
     // let hp =  images.pixel(img, 522,41);   // -13553096
     // console.log(hp)
