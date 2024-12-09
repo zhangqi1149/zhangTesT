@@ -1,5 +1,5 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.1.128:8002";
+var SERVER_URL = "http://192.168.1.128:8004";
 // var text = "40级了 打不过怪该怎么玩啊" ;
 var text = "全球最低金币 PlayPal保障付款。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
@@ -12,34 +12,54 @@ var  Save = false  // true   false
 var storage = storages.create("ABC");
 
 // OCR请求
-function getOcr(img, lang) {
+function getOcr(img) {
     try {
+        
+        console.time("********&&& getOCR");  // 开始计时
+
+        // console.time("tobase64");  // 开始计时
         // 将截图转换为Base64编码的PNG格式
         let imgData = images.toBase64(img, "png");
+        // console.timeEnd("tobase64");  // 输出执行时间
 
         // 构造请求的 JSON 数据，添加 lang 字段
         let jsonData = {
-            image: imgData,
-            lang: lang,
-            save: Save
+            "base64_str": imgData,
         };
         
+        // console.time("httppost");  // 开始计时
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        let response = http.postJson(SERVER_URL+"/ocr", jsonData, {
+        let response = http.postJson(SERVER_URL+"/ocr/predict-by-base64", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
             timeout: 10000 // 设置超时时间为10秒
         });
-        
+        // let response = http.postJson("http://192.168.1.94:9080/ocr", jsonData, {
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     timeout: 10000 // 设置超时时间为10秒
+        // });
+
+        // console.timeEnd("httppost");  // 输出执行时间
+
         if (response.statusCode == 200) {
-            return JSON.parse(response.body.string());
+            console.time("JSON.parse");  // 开始计时
+            let result = JSON.parse(response.body.string());
+            console.time("JSON.parse");  // 开始计时
+            console.log("****************** OCR  time : ", result.time)
+            return result.data;
+            // return JSON.parse(response.body.string());
         } else {
             console.error("getOcr 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
         console.error("请求失败: ", e);
+    } finally {
+        console.timeEnd("********&&& getOCR");  // 输出执行时间
     }
+    
     return null;
 }
 
@@ -50,12 +70,11 @@ function isblue(img) {
         let imgData = images.toBase64(img, "png");
 
         let jsonData = {
-            image: imgData,
-            save: Save // true   false 
+            "base64_str": imgData,
         };
 
         // 发送 POST 请求
-        let response = http.postJson(SERVER_URL+"/is_blue", jsonData, {
+        let response = http.postJson(SERVER_URL+"/ocr/predict-is-blue", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -63,7 +82,7 @@ function isblue(img) {
         });
         
         if (response.statusCode == 200) {
-            return JSON.parse(response.body.string()).mostly_blue;
+            return JSON.parse(response.body.string());
         } else {
             console.error(" isblue 服务器返回错误：" + response.statusCode);
         }
@@ -72,15 +91,6 @@ function isblue(img) {
         console.error("请求失败: ", e);
     }
     return null;
-}
-
-function SetCom(str) {
-    let res = http.get("http://127.0.0.1:8848/execute?cmd="+str);    // 查看文件
-    if(res.statusCode != 200){
-        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
-    }else{
-        console.log(res.body.string())
-    }
 }
 
 // 查看控件
@@ -102,35 +112,44 @@ function npackageName() {
     return false
 }
 
-// 初始化
-function init(){
-    // 权限检查
-    if (!auto.service) {
-        toastLog("请开启无障碍服务");
-        if (!requestScreenCapture(true)) {
-            throw new Error("请求屏幕捕获权限失败");
+function packageNameEndsWith(suffix) {
+    // 查找所有的控件
+    let nodes = className("android.widget.FrameLayout").find();
+    // 遍历控件列表
+    for (let i = 0; i < nodes.size(); i++) {
+        let node = nodes.get(i);
+        // 使用 endsWith 检查包名是否以指定的后缀结尾
+        if (node.packageName().endsWith(suffix)) {
+            return true;  // 找到匹配的控件，返回 true
         }
-        auto();
-        return false
     }
-    // let currentPkg = currentPackage();
-    // 是否在游戏
-    // if (currentPkg == "com.wemade.mir4global" || currentPkg =="android" || currentPkg =="com.android.xwkeyboard"){
-    //     return true
-    // } else {
-    //     // toastLog("当前界面: ",currentPkg);
-    //     console.log(currentPkg)
-    //     app.launch('com.wemade.mir4global')
-    //     sleep(1000);
-    //     app.launch('com.wemade.mir4global')
-    //     sleep(3000);
-    // }
-    if (npackageName()) {
-        return true
-    }else{
-        app.launch('com.wemade.mir4global')
+    
+    // nodes.recycle();  // 如果没有找到匹配的控件，释放资源
+    return false;  // 没有找到匹配的控件，返回 false
+}
+
+// 初始化
+function init() {
+    // 检查权限 无障碍
+    if (!auto.service) {
+        auto();
+        throw new Error("请求无障碍权限失败");
+    }
+    // 锁屏了就打开
+    if (!device.isScreenOn()) {
+        device.wakeUpIfNeeded() // 唤醒
+        swipe(232, 1000, 232, 200, 800);  // 打开
+    }
+    if (!requestScreenCapture(true)) {
+        // throw new Error("请求屏幕捕获权限失败");
+        console.log("请求屏幕捕获权限失败")
         sleep(3000);
     }
+    if (!packageNameEndsWith("mir4global")) {
+        app.launch('com.wemade.mir4global')
+        sleep(3000);
+        return true
+    } 
     return false
 }
 
@@ -252,7 +271,7 @@ function ClickSleep(reData, text, waitTime, exactMatch) {
  *
  */
 function select(ocrResults, targetText,exactMatch) {
-   exactMatch = (exactMatch !== undefined) ? exactMatch : false;
+    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
     if (!Array.isArray(ocrResults)) {
         console.error(`OCR 结果不是数组: ${targetText}`);
         return null;
@@ -267,7 +286,7 @@ function select(ocrResults, targetText,exactMatch) {
                 return item;
             }
         }else{
-            // console.log("进行模糊查询 :",item[1][0])
+            // console.log("   * 进行模糊查询 :",item[1][0])
             if (item[1][0].includes(targetText)) {
                 // console.log("模糊查找目标文本:", item.text);
                 return item;
@@ -275,24 +294,6 @@ function select(ocrResults, targetText,exactMatch) {
         }
     }
     return null;
-}
-
-/** 发包点击
- * 
- * @param {string} key 属性
- */
-function httpclick(x,y) {
-    // let res = http.get("http://127.0.0.1:8848/execute?cmd=input tap 500 1000");    // 查看文件
-    let res = http.get("http://127.0.0.1:8848/execute?cmd=input tap "+`${x} ${y}`);    // 查看文件
-    if(res.statusCode != 200){
-        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
-        return false
-    }else{
-        // console.log(res.body.string())
-        // let bodyString = res.body.string(); // 立即读取响应体
-        // console.log(`value : ${bodyString}`)
-        return true
-    }
 }
 
 /** 查找文本并点击
@@ -314,7 +315,7 @@ function selclick(reData,src,exactMatch){
         // let y_phone = (centerY / 720) * device.width;
 
         // console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
-        console.log(`selclick-点击 ${src}: x=${centerX}, y=${centerY}`);
+        // console.log(`selclick-点击 ${src}: x=${centerX}, y=${centerY}`);
 
         // 点击坐标
         // code = httpclick(centerX,centerY);
@@ -338,15 +339,16 @@ function selclick(reData,src,exactMatch){
  */
 function textClick(target,x,y){
     // 计算文本区域的中心点
-    let centerX = (target.box[0][0] + target.box[2][0]) / 2;
-    let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+    let centerX = (target[0][0][0] + target[0][2][0]) / 2;
+    let centerY = (target[0][0][1] + target[0][2][1]) / 2;
     // 将坐标从截图转换到设备屏幕坐标
-    let x_phone = (centerX / 1285) * device.height;
-    let y_phone = (centerY / 720) * device.width;
-    console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
-
+    // let x_phone = (centerX / 1285) * device.height;
+    // let y_phone = (centerY / 720) * device.width;
+    // console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
+    console.log(` textClick 点击 : ${target.text} 偏移: x=${centerX}, y=${centerY}`);
     // 点击坐标
-    click(x_phone+x,y_phone+y);
+    // click(x_phone+x,y_phone+y);
+    click(centerX+x,centerY+y);
 }
 
 /** 点击等待
@@ -384,15 +386,13 @@ function getlv(lvData){
     if (!Array.isArray(lvData)) {
         return null;
     }
-    for (let i = 0; i < lvData.length; i++) {
-        let item = lvData[i];
-        if (item && item.text !== undefined) {
-            if (item.text.includes("级")) {
-                let index = item.text.indexOf('级');
-                let numberBeforeLevel = item.text.slice(0, index).trim();
-                storage.put("lv", numberBeforeLevel);
-                return numberBeforeLevel;
-            }
+    for (let i = 0; i < lvData[0].length; i++) {
+        let item = lvData[0][i];
+        if (item[1][0].includes("级")) {
+            let index = item[1][0].indexOf('级');
+            let numberBeforeLevel = item[1][0].slice(0, index).trim();
+            storage.put("lv", numberBeforeLevel);
+            return numberBeforeLevel;
         }
     }
     return null ;
@@ -403,7 +403,7 @@ function closeNote(reData,src) {
     var target = select(reData, src)
     // console.log(target)
     if (target) {
-        let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
         let y_phone = (centerY / 720) * device.width;
         // console.log(`点击${src}: x= 1166, y=${y_phone}`);
         let code = click(1166,y_phone);
@@ -414,22 +414,14 @@ function closeNote(reData,src) {
 
 //  查找第二个指示字符
 function selectTow(ocrResults, targetText) {
-    if (!Array.isArray(ocrResults)) {
-        console.error(`OCR 结果不是数组: ${targetText}`);
-        return null;
-    }
     let num = 0
-    for (let i = 0; i < ocrResults.length; i++) {
-        let item = ocrResults[i];
-        if (item && item.text !== undefined) {
-            if (item.text === targetText) {
-                num += 1;
-                if (num == 2) {
-                    return item;
-                }
+    for (let i = 0; i < ocrResults[0].length; i++) {
+        let item = ocrResults[0][i];
+        if (item[1][0] === targetText) {
+            num += 1;
+            if (num == 2) {
+                return item;
             }
-        } else {
-            console.error(`第 ${i} 项缺少 text 属性`, item);
         }
     }
     return null;
@@ -443,17 +435,17 @@ function clickTow(reData,src){
         // console.log("开始点击",src);
 
         // 计算文本区域的中心点
-        let centerX = (target.box[0][0] + target.box[2][0]) / 2;
-        let centerY = (target.box[0][1] + target.box[2][1]) / 2;
+        let centerX = (target[0][0][0] + target[0][2][0]) / 2;
+        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
 
         // 将坐标从截图转换到设备屏幕坐标
-        let x_phone = (centerX / 1285) * device.height;
-        let y_phone = (centerY / 720) * device.width;
+        // let x_phone = (centerX / 1285) * device.height;
+        // let y_phone = (centerY / 720) * device.width;
 
-        console.log(`点击坐标: x=${x_phone}, y=${y_phone}`);
+        console.log(` clickTow 点击坐标: x=${centerX}, y=${centerY}`);
 
         // 点击坐标
-        click(x_phone,y_phone);
+        click(centerX,centerY);
 
         return true
     }
@@ -463,11 +455,11 @@ function clickTow(reData,src){
 // 关闭窗口
 function closeX(reData){
     if (checkAndClick(reData, '已付款的商品将发放至商店保管箱', 1130, 66, 2000)) return true;
-
     if (checkAndClick(reData, '伪像切换', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '奇缘', 1241, 29, 2000)) return true;
     if (checkAndClick(reData, '闭关修炼', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '画面位置重置', 1230, 88, 2000)) return true;
     if (select(reData, '可佩戴')) {
         clickWithDelay(948,200,1000);// 选中
         clickWithDelay(1150,675,2000); // 购买
@@ -492,7 +484,7 @@ function closeX(reData){
 
     // 活力补充
     if (checkAndClick(reData, '活力补充', 950, 164, 2000)) return true;
-    if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
+    // if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
 
     if (select(reData,"输入数字") &&  selclick(reData,"取消") ) {
         sleep(2000);
@@ -506,38 +498,68 @@ function closeX(reData){
 
     let long = select(reData,"中型生命")
     if (long) {
-        if (long.box[0][0] > 700) {
+        if (long[0][0][0] > 700) {
             click(1219,94); //  X
             sleep(2000);
             return true
         }
     }
 
-    if (!select(reData,"前往狭窄的通道") &&  select(reData,"请拖拽虚拟摇杆进行移动") ) {
+    if (!select(reData,"前往狭窄的通道") && select(reData,"请拖拽虚拟摇杆进行移动") ) {
         swipe(232, 455, 232, 200, 4000);
         return true
     }
     return false
 }
 
+
 // 处理弹窗函数
 function wrong(reData) {
+    if (selclick(reData,"Google登录")) {
+        sleep(5000);
+        return 
+    }
+     // 网络异常波动
+     if (selclick(reData,"前往登录")) {
+        sleep(2000);
+        return
+    }
+    if (select(reData,"存在最新版本")||select(reData,"无法确认版本")) { 
+        selclick(reData,"确定",true);
+        // SetCom("pm clear com.wemade.mir4global")
+        // throw new Error("游戏更新");
+        return true;
+    }
+
+    //  去认证界面
+    if (select(reData,"资格的证明")) {
+        selclick(reData,"登录游戏",true)
+        sleep(2000);
+        return 
+    }
     // 临时维护
-    if (select(reData,"Temporary Maintenance")) {
+    if (select(reData,"Temporary")|| select(reData,"Maintenance")||select(reData,"更新维护公告")) {
         console.log("游戏临时维护");
         // 杀掉游戏
-        SetCom("pm clear com.wemade.mir4global")
+        close_app("com.wemade.mir4global")
         throw new Error("游戏临时维护")
+    }
+    if (selclick(reData,"前往登录")) {
+        sleep(2000);
+        return true
     }
     // 更新维护
     if (select(reData,"更新维护公告")) { 
-        SetCom("pm clear com.wemade.mir4global")
+        // SetCom("pm clear com.wemade.mir4global")
+        close_app("com.wemade.mir4global")
         throw new Error("更新维护公告");
     }
-    if (select(reData,"存在最新版本")) { 
-        selclick(reData,"确定",true);
-        SetCom("pm clear com.wemade.mir4global")
-        throw new Error("游戏更新");
+    
+
+    if (select(reData,"提示") && select(reData,"更新信息")) {
+        selclick(reData,"游戏结束");
+        return true
+        
     }
     if (selclick(reData,"重新连接")) {
         return true
@@ -551,7 +573,8 @@ function wrong(reData) {
     }
     // 网络问题 -> 重新尝试 
     if (select(reData, "网络套")) {
-        SetCom("pm clear com.wemade.mir4global")
+        close_app("com.wemade.mir4global")
+        console.log("需要关闭游戏重新登录")
         return true;
     }
     // 重新尝试
@@ -566,7 +589,7 @@ function wrong(reData) {
     }
     // 说明 -> 确认 或 结束
     if (select(reData, "说明")) {
-        if (ClickSleep(reData, '确认') || ClickSleep(reData, '结束', 2000)) {
+        if (ClickSleep(reData, '确认') || ClickSleep(reData, '结束', 2000) || ClickSleep(reData, '确定')) {
             return true;
         }
     }
@@ -576,7 +599,7 @@ function wrong(reData) {
     }
     // 错误 -> 确认 或 游戏结束
     if (select(reData, "错误")) {
-        if (ClickSleep(reData, '确认', 5000, true) || ClickSleep(reData, '游戏结束', 5000, true)) {
+        if (ClickSleep(reData, '确认', 5000, true) || ClickSleep(reData, '游戏结束', 5000, true) || ClickSleep(reData, '确定', 5000, true)) {
             return true;
         }
     }
@@ -610,7 +633,6 @@ function wrong(reData) {
         sleep(5000);
         return true
     }
-
     return false;
 }
 
@@ -876,8 +898,8 @@ function Console(reData) {
     }
     let menuItem = select(reData, '请点击菜单按键')
     if (menuItem) {
-        let item = menuItem.box[0][0]
-        let item2 = menuItem.box[1][1]
+        let item = menuItem[0][0][0]
+        let item2 = menuItem[0][1][1]
         console.log(`请点击菜单按键: ${item}`)
         console.log(`请点击菜单按键: ${item2}`)
 
@@ -934,25 +956,28 @@ function Console(reData) {
     }
     let buttonItem = select(reData, '请点击按键')
     if (buttonItem) {
-        let item = buttonItem.box[0][0]
-        let item2 = buttonItem.box[0][1]
+        let item = buttonItem[0][0][0]
+        let item2 = buttonItem[0][0][1]
         console.log(`请点击按键: ${item}`)
-        // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
-        // if (item == 754.0 || item == 752.0 || item == 751.0) {
-        //     click(935,310);  // 制造
-        //     sleep(1000);
-        //     return true
-        // }
-
+        console.log(`请点击按键 item2: ${item2}`)
+        console.log(`请点击按键: ${buttonItem[0]}`)
         // [[899.0, 74.0], [991.0, 74.0], [991.0, 97.0], [899.0, 97.0]]  任务提示
         if (item2 <= 74) {
             selclick(reData,"跳过")
             return true;
         }
+        // 947,359, 1041,359, 1041,381,947,381
+        if (select(reData,"制造") && item > 945 ) {
+            selclick(reData,"跳过")
+            return true
+        }
 
+        if (selclick(reData, '制造',true)) {
+            sleep(1000);
+            return true
+        }
 
         // [[936.0, 348.0], [1029.0, 348.0], [1029.0, 371.0], [936.0, 371.0]] 解除封印
-        // // 未匹配的全跳过
         if (item == 936.0 || item == 890.0 ) {
             selclick(reData, '跳过')
             sleep(2000);
@@ -974,61 +999,18 @@ function Console(reData) {
             return true
         }
 
-
-        if (select(reData,"制造工坊")) {
-            if (selclick(reData, '制造',true)) {
-                sleep(1000);
-                return true
-            }
-        }
         // [[205.0, 70.0], [300.0, 70.0], [300.0, 93.0], [205.0, 93.0]] 坐骑
         if (select(reData, '可佩戴') && (item > 203.0 && item < 207.0)) {
             sleep(1000);
             clickWithDelay(444,30,2000); // 坐骑
             return true
         }
-        // [[213.0, 422.0], [306.0, 421.0], [307.0, 441.0], [213.0, 442.0]] 装备的高级选项提示位置
-        // [[167.0, 420.0], [262.0, 420.0], [262.0, 442.0], [167.0, 442.0]]
-        // if (item == 213.0 ||item == 167.0) {
-        // if (item <= 213.0 && item >= 167.0) {
-        //     click(71,367); // 高级
-        //     sleep(1000);
-        //     return true
-        // }
-
-
-        // [[843.0, 236.0], [938.0, 236.0], [938.0, 258.0], [843.0, 258.0]] 辅助装备提示位置
-        // [[842.0, 234.0], [937.0, 234.0], [937.0, 257.0], [842.0, 257.0]
-        // if (item == 843.0 || item == 842.0 || item == 845.0) {
-        // if (item >= 842.0 && item <= 845.0) {
-        //     click(1025,195); // 辅助装备
-        //     sleep(2000);
-        //     return true
-        // }
-
-        // 936  服饰提示位置
-        // [[937.0, 236.0], [1031.0, 236.0], [1031.0, 258.0], [937.0, 258.0]]
-        // if ((item > 935.0 && item <= 938.0) && item2 < 240.0) {
-        //     click(1123,200); // 服饰
-        //     sleep(2000);
-        //     return true
-        // }
-
         if (selclick(reData,"辅助装备") || selclick(reData,"服饰")) {
             click(1025,195); // 辅助装备
             click(1123,200); // 服饰
             sleep(2000);
             return true
         }
-
-        // [[750.0, 234.0], [845.0, 234.0], [845.0, 257.0], [750.0, 257.0]]  精灵提示位置
-        // [[751.0, 236.0], [846.0, 236.0], [846.0, 258.0], [751.0, 258.0]]  精灵提示位置 
-        // if (item == 750.0 || item == 751.0 || item == 752.0) {
-        //     click(940,200); // 精灵
-        //     sleep(1000);
-        //     return true
-        // }
-        // console.log("精灵")
         if (clickTow(reData, '精灵')) {
             // clickWithDelay(940,200,1000);
             sleep(1000);
@@ -1042,7 +1024,7 @@ function Console(reData) {
         }
         let der = select(reData, '请点击。')
         if (der) {
-            let item = der.box[0][0];
+            let item = der[0][0][0];
             // [[754.0, 349.0], [843.0, 349.0], [843.0, 368.0], [754.0, 368.0]] 制造按钮提示位置
             if (item == 754.0 || item == 396.0 ) {
                 clickWithDelay(290,200,1000);  // 制造
@@ -1063,7 +1045,7 @@ function Console(reData) {
     }
     // 完成
     let finishItem = select(reData, '完成', true);
-    if (finishItem && finishItem.box[0][0] < 1037) {
+    if (finishItem && finishItem[0][0][0] < 1037) {
         clickWithDelay(1020, 227, 2000);
         return true;
     }
@@ -1079,7 +1061,7 @@ function Console(reData) {
 
     let long = select(reData,"中型生命值")
     if (long) {
-       if (long.box[0][0] > 700) {
+       if (long[0][0][0] > 700) {
             if (selclick(reData,"中型生命值")) {
                 // 点击 输入框
                 sleep(2000);
@@ -1103,16 +1085,11 @@ function Console(reData) {
                 clickWithDelay(800, 495, 2000); // 购买
             }
             if (selclick(reData,"中型魔力恢复")) {
-                // for (let i = 0; i < 2; i++) {
-                //     if (i == 1) {
-                //         selclick(reData,"中型魔力恢复")
-                //     }
-                    sleep(2000);
-                    clickWithDelay(853, 390, 4000); // 点击 输入框
-                    clickWithDelay(775, 489, 1000); //  上限
-                    clickWithDelay(775, 633, 2000); //  输入完毕
-                    clickWithDelay(800, 495, 2000); //  购买键
-                // }
+                sleep(2000);
+                clickWithDelay(853, 390, 4000); // 点击 输入框
+                clickWithDelay(775, 489, 1000); //  上限
+                clickWithDelay(775, 633, 2000); //  输入完毕
+                clickWithDelay(800, 495, 2000); //  购买键
             }
             clickWithDelay(1219,94,2000); //  X
             return true
@@ -1328,7 +1305,8 @@ function reward(reData) {
         //  重新截图拿到最新的   TODO 多学几个技能  找蓝色的地方
         let img = captureScreen();
         //  拿到最新的数据
-        if (getOcr(img,"ch")) {
+        let reData = getOcr(img,"ch")
+        if (reData) {
             if (selclick(reData, '学习',true) ) {
                 sleep(1000);
                 // clickWithDelay(961,669,1000);
@@ -1478,16 +1456,14 @@ function reward(reData) {
 
 //  创建角色
 function create(reData) {
-    if ((!select(reData,"请输入名称") && select(reData,"创建角色"))) {
-        selclick(reData, '确定',true)
+    if ((!select(reData,"请输入名称") && select(reData,"创建角色") && selclick(reData, '确定',true))) {
         return true
     }
     // 选择角色界面
     if (select(reData, '选择职业')) {
         if (selclick(reData, '黑道士')) {  // 选黑道士
-            sleep(2000);
+            sleep(1000);
             selclick(reData, '选择',true)
-            sleep(500);
         }
         return true
     }
@@ -1496,34 +1472,36 @@ function create(reData) {
         //  禁用语或者低俗
         if (select(reData,"禁用语")) {
             selclick(reData,"确定");
-            sleep(2000);
+            selclick(reData,"确认");
             return true
         }
-        // // TODO 
-        // if (select(reData,"?123")) {
-        //     clickWithDelay(116,671); // 点击缩放的地方
-        //     input(getRandomName());  //  请输入名称
-        //     sleep(500);
-        //     return true
-        // }
 
-        // 打开了小键盘
-        if (select(reData,"换行") || select(reData,"拼音")|| select(reData,"QWERTY")) {
-            input(getRandomName());  //  请输入名称
-            clickWithDelay(1185,343,2000); // 点击缩放的地方
+        //  输入法是打开的情况
+        let ts = className("android.widget.EditText").findOne(1000)
+        if (ts) {
+            console.log("输入法打开了")
+            // 输入文字
+            ts.setText(getRandomName())
             sleep(500);
+            // 点击发送
+            click(1187,683)
+            sleep(500);
+            click(723,438)//确定
             return true
         }
+
         //  请输入名称
         if (select(reData,"请输入名称")) {
             selclick(reData, '请输入名称');
-            sleep(1000);
             return true
         }
-        if (!selclick(reData, '创建角色')) {   
-            selclick(reData,"确定");   // 键盘不一样
+        if (!selclick(reData, '创建角色')) {
+            selclick(reData,"确定");
+            sleep(2000);
+            return true
         }
-        sleep(2000);
+    }
+    if (selclick(reData,"创建角色")) {
         return true
     }
     return false
@@ -1571,42 +1549,18 @@ function Shout(reData) {
 
 //  升级
 function upLevel(){
-    //  输入法是打开的情况
-    let ts = className("android.widget.EditText").findOne(1000)
-    if (ts) {
-        console.log("输入法打开了")
-        // 输入文字
-        ts.setText(text)
-        sleep(500);
-        // 点击发送
-        click(1187,683)
-        sleep(interval);
-        click(244,670);
-        return true
-    }
-
-    if (!requestScreenCapture(true)) {
-        throw new Error("请求屏幕捕获权限失败");
-    }
-    // console.log("开始截图")
     let img = captureScreen();      // 截图
-    // console.log("完成截图")
     if (!img) {
         console.log("截图失败");
-        exit();
+        return ;
     }
     let grayscaleImage = images.grayscale(img);      // 二级化
 
-    // let imgWidth = img.width; // 获取图像宽度
-    // let imgHeight = img.height; // 获取图像宽度
-    // console.log(`imgWidth : ${imgWidth} imgHeight : ${imgHeight}`)
 
     // 是否在自动寻路
     let imgtext = clip(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
-    // let imgtext = clip(img,[[145 ,1180],[145 ,1263],[148 ,1263 ],[148 ,1180]])
     let code = isblue(imgtext)  //  获取颜色
     imgRecycle(imgtext)
-    // console.log(code);
 
     // 裁剪等级
     let croppedImage = images.clip(img, 11, 0, 60, 32);
@@ -1761,13 +1715,14 @@ function upLevel(){
             }
             let reai = select(reData,"【精英】比奇城后巷")
             if (reai) {
-                if (reai.box[0][1] < 114 ) {
+                if (reai[0][0][1] < 114 ) {
                     if (select(reData,"12.救出可疑的")) {
                         sleep(50000);
                     }
                 }
             }
             // clickWithDelay(1197,625,5000);  // 普攻一下
+            sleep(21*1000)
             return 
         }
         // console.log("切换药剂")
@@ -1776,7 +1731,7 @@ function upLevel(){
             let reai = select(reData,"比奇城",true)
             if (reai) {
                 // 判断人在不在比奇城
-                if (reai.box[0][0] > 1058 && reai.box[0][1] < 112 ) {
+                if (reai[0][0][0] > 1058 && reai[0][0][1] < 112 ) {
                     // 判断药剂是否还有
                     // var hp =  images.pixel(img, 459, 666); 
                     // var mp =  images.pixel(img, 532, 667); 
@@ -1856,7 +1811,7 @@ function upLevel(){
                 console.log("练级到40")
                 reai = select(reData,"【精英】比奇城后巷")
                 if (reai) {
-                    if (reai.box[0][1] < 114 ) {
+                    if (reai[0][0][1] < 114 ) {
                         click(395,662);
                         sleep(2000);
                         return
@@ -1879,7 +1834,7 @@ function upLevel(){
             let reai = select(reData,"击败双门帮")
             let reai1 = select(reData,"击败老二")
             if (reai || reai1) {
-                if ((reai && reai.box && reai.box[0][0]) || (reai1 && reai1.box && reai1.box[0][0])) {
+                if ((reai && reai[0] && reai[0][0][0]) || (reai1 && reai1[0] && reai1[0][0][0])) {
                     let img = captureScreen();
                     let imgtext2 = images.clip(img, 1188, 218, 20, 2); //第二个任务
                     let code2 = isblue(imgtext2)
@@ -1897,13 +1852,13 @@ function upLevel(){
         }
 
         //  是否在自动做任务
-        console.log(`是否在自动做任务: ${code}`)
-        if (code) {
+        console.log(`是否在自动做任务: ${code.blue}`)
+        if (code.blue) {
             click(945,574); // 奔跑
             //  切换视角
             let reai = select(reData,"小传")
             if (reai) {
-                if (reai.box[0][0] < 600) {
+                if (reai[0][0][0] < 600) {
                     swipe(721, 360, 10, 0, 1000);
                     return
                 }
@@ -1926,10 +1881,12 @@ function upLevel(){
                     console.log(" . ");
                     clickWithDelay(1122.5,187,2000);    
                 }
+                
             }
         }
         //  ********   剧情任务
         // 漆黑的密道
+        // console.log("漆黑的密道")
         if (select(reData, '漆黑的')) {
             if (select(reData, '开采岩窟花树液')) {
                 sleep(2000);
@@ -1951,6 +1908,7 @@ function upLevel(){
             }
             return
         }      
+        // console.log("危险的救援计划")
         // 危险的救援计划
         if (select(reData, '危险的救')) {
             if (select(reData, '与芊菲对话')) {
@@ -1960,8 +1918,8 @@ function upLevel(){
                 return
             }
             if (select(reData, '开启牢门')||select(reData, '救出芊')) {
-                sleep(1000);
-                return clickWithDelay(644.5,274.5,8000);
+                clickWithDelay(644.5,274.5,8000);
+                return clickWithDelay(1122.5,187,2000); 
             }
             return
         }
@@ -2119,9 +2077,9 @@ function upLevel(){
             if (selclick(reData,"与陈生")){
                 sleep(2000);
             }
-            // if (selclick(reData,"17.前往")){
-            //     sleep(2000);
-            // }
+            if (selclick(reData,"17.前往")){
+                sleep(2000);
+            }
             return
         }
         // 芊菲的下落
@@ -2320,7 +2278,8 @@ function upLevel(){
         //  跳过
         reai = select(reData,"跳过")
         if (reai) {
-            item = reai.box[0][0]
+            item = reai[0][0][0]
+            console.log("item :",item)
             if (item > 1100) {
                 selclick(reData,"跳过")
                 return sleep(2000);
@@ -2340,15 +2299,15 @@ function upLevel(){
 // 主函数
 function main(){
     // 初始化
-    if (init()) {
+    if (!init()) {
         upLevel()
     }
 }
 
-// for (let i = 0; i < 1; i++) {
-    // console.log("$$$$$$$$$$$$$$  执行开始!")
+// for (let i = 0; i < 10; i++) {
+    console.log("$$$$$$$$$$$$$$  执行开始!")
     main()
-    // console.log("##############  执行完成")
+    console.log("##############  执行完成")
     // sleep(1000);
 // }
 
@@ -2371,10 +2330,3 @@ if (false) {
     console.log()
  
 }
-
-// for (let i = 0; i < 10; i++) {
-//     console.time("ocrExecutionTime");  // 开始计时
-//     let img = captureScreen();
-//     let reData = getOcr(img,"ch");
-//     console.timeEnd("ocrExecutionTime");  // 输出执行时间
-// }
