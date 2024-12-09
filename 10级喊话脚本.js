@@ -3,7 +3,7 @@
 // var SERVER_URL = "http://192.168.1.142:5000";   // 本地调试
 // var SERVER_URL = "http://192.168.1.128:5000";  // 服务器1
 // var SERVER_URL = "http://192.168.1.94:5000";  // 服务器2
-var SERVER_URL = "http://192.168.1.94:8000";  // 服务器2
+var SERVER_URL = "http://192.168.1.94:8001";  // 服务器2
 // 喊话内容
 var text1 = "The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 // 截图图片是否保存
@@ -76,7 +76,7 @@ function isblue(img) {
         };
 
         // 发送 POST 请求
-        let response = http.postJson("http://192.168.1.94:8000/ocr/predict-is-blue", jsonData, {
+        let response = http.postJson(SERVER_URL+"/ocr/predict-is-blue", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -137,22 +137,6 @@ function compareTime() {
         // console.log('未来时间小于当前时间');
         return false
     }
-}
-// 查找控件 "com.wemade.mir4global"
-function ypackageName(str) {
-    // 查找所有的控件
-    let nodes = className("android.widget.FrameLayout").find();
-    // 遍历控件列表
-    for (let i = 0; i < nodes.size(); i++) {
-        let node = nodes.get(i);
-        // 使用 endsWith 检查包名是否以指定的后缀结尾
-        if (node.packageName().endsWith(str)) {
-            return true;  // 找到匹配的控件，返回 true
-        }
-    }
-    
-    nodes.recycle();  // 如果没有找到匹配的控件，释放资源
-    return false;  // 没有找到匹配的控件，返回 false
 }
 
 // 查看控件 "com.wemade.mir4global"
@@ -1362,43 +1346,48 @@ function Ranking(reData) {
                     let reData = getOcr(grayscaleImage);
                     // let crop = getOcr(croppedImage,"ch");
                     // let crop2 = getOcr(croppedImage2,"ch");
-                    let crop = getData(reData, 1097, 305, 91, 402);
-                    let crop2 = getData(reData,  200, 645, 48, 38);
+                    if (reData) {
+                        let crop = getData(reData, 1097, 305, 91, 402);
+                        let crop2 = getData(reData,  200, 645, 48, 38);
 
-                    if (select(reData,"其他玩家")) {
-                        break
-                    }
-                    // console.log("Data ",crop2[0][1][0])
-                    // console.log("Data ",crop2.length)
-                    // imgRecycle(croppedImage);
-                    // imgRecycle(croppedImage2);
-                    // console.log("获取排名 :")
-                    if (crop2) {
-                        // console.log(crop2)
-                        if (crop2.length > 0) {
-                            if (crop2[0][1][0].trim() == 100 ) {
-                                console.log("到头了",crop2);
-                                // 点击右上角退出
-                                clickWithDelay(1235,41,2000); // 关闭窗口
+                        if (select(reData,"其他玩家")) {
+                            break
+                        }
+                        // console.log("Data ",crop2[0][1][0])
+                        // console.log("Data ",crop2.length)
+                        // imgRecycle(croppedImage);
+                        // imgRecycle(croppedImage2);
+                        // console.log("获取排名 :")
+                        if (crop2) {
+                            // console.log(crop2)
+                            if (crop2.length > 0) {
+                                if (crop2[0][1][0].trim() == 100 ) {
+                                    console.log("到头了",crop2);
+                                    // 点击右上角退出
+                                    clickWithDelay(1235,41,2000); // 关闭窗口
+                                    return true
+                                }
                             }
                         }
-                    }
-                    // console.log("获取排名结束 :",care.e_war)
-                    //  截图获得战力是否匹配我要的
-                    // console.log("内置数据 ",care)
-                    if (crop) {
-                        let nt = getNextText(crop,care.e_war)
-                        // console.log("获取的nt :",nt)
-                        if (nt != null) {
-                            console.log("  * 点击这个 :")
-                            selclick(reData,nt);
-                            storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
-                            // sleep(1500);
-                            return true;
-                            // break
+                        // console.log("获取排名结束 :",care.e_war)
+                        //  截图获得战力是否匹配我要的
+                        // console.log("内置数据 ",care)
+                        if (crop) {
+                            let nt = getNextText(crop,care.e_war)
+                            // console.log("获取的nt :",nt)
+                            if (nt != null) {
+                                console.log("  * 点击这个 :")
+                                selclick(reData,nt);
+                                storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
+                                // sleep(1500);
+                                return true;
+                                // break
+                            }
+                            console.log("  @ 滑动一下")
+                            swipe(1128, 657, 1128, 375, 200)
                         }
-                        console.log("  @ 滑动一下")
-                        swipe(1128, 657, 1128, 375, 200)
+                    }else{
+                        break
                     }
                 }
             }

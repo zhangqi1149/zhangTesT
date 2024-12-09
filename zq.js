@@ -1,16 +1,14 @@
 // 设置服务器地址
-var SERVER_URL = "http://192.168.1.128:5000";
+var SERVER_URL = "http://192.168.1.128:8002";
 // var text = "40级了 打不过怪该怎么玩啊" ;
-var text = "全球最低金币 使用PlayPal保证付款。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+var text = "全球最低金币 PlayPal保障付款。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 
 var  Save = false  // true   false 
 
-// SetCom('wm size | grep "Override size"')         // 获取当前的屏幕物理尺寸
-// SetCom('wm density | grep "Override density"')   // 获取当前的密度
+// let SERVER_URL = "http://192.168.1.94:8002";  // 服务器2  8001 -8005  每个13个
+// let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
-// var width_screenshot = 1285
-// var height_screenshot = 720
 var storage = storages.create("ABC");
 
 // OCR请求
