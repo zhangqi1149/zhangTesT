@@ -11,6 +11,7 @@ let Bm = readLastLine().trim()
 // console.log("Bm :", Bm )
 let Log = false
 
+
 let Servers = {
 	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
 		"Id": "200",
@@ -844,12 +845,13 @@ var storage = storages.create("ABC");
 // OCR请求
 function getOcr(img) {
     try {
-        
+        console.log("--------------------------------------------")
         console.time("********&&& getOCR");  // 开始计时
 
         console.time("tobase64");  // 开始计时
         // 将截图转换为Base64编码的PNG格式
         let imgData = images.toBase64(img, "png");
+        console.log("base64 size : ", imgData.length);
         console.timeEnd("tobase64");  // 输出执行时间
 
         // 构造请求的 JSON 数据，添加 lang 字段
@@ -887,6 +889,7 @@ function getOcr(img) {
         }
     } catch (e) {
         console.error("请求失败: ", e);
+        sleep(1000*10)
     } finally {
         console.timeEnd("********&&& getOCR");  // 输出执行时间
     }
@@ -3161,23 +3164,20 @@ function main(){
 // }
 
 
-// for (let i = 0; i < 100; i++) {
-    
+// for (let i = 0; i < 2000; i++) {
     if (true) {
         // console.log("开始请求截图")
         if (!requestScreenCapture(true)) {
             throw new Error("请求屏幕捕获权限失败");
         }
-        let img = captureScreen();
-        // let grayscaleImage = images.grayscale(img);
-    
-        // console.log("开始请求")
-        // let reData = getOcr(grayscaleImage);
-        let reData = getOcr(img);
-    
-        // let hp =  images.pixel(img, 522,41);   // -13553096
-        // console.log(hp)
-     
+
+        try {
+            let img = captureScreen();
+            let grayscaleImage = images.grayscale(img);
+            let reData = getOcr(grayscaleImage);
+        } catch (e) {
+            console.error("截图失败 : ", e);
+            sleep(1000*10)
+        }  
     }
-    
 // }

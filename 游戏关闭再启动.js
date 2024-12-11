@@ -27,4 +27,4 @@ function close_app(str,execute) {
     }
 }
 
-close_app("com.wemade.mir4global",true)
+close_app("com.wemade.mir4global")

@@ -888,6 +888,7 @@ function getOcr(img) {
         }
     } catch (e) {
         console.error("请求失败: ", e);
+        sleep(10* 1000)  // 10秒
     } finally {
         // console.timeEnd("********&&& getOCR");  // 输出执行时间
     }
@@ -930,6 +931,31 @@ function isblue(img) {
         console.error("请求失败: ", e);
     }
     return null;
+}
+
+/** 截图函数
+ * 
+ * @param {boolean} grayscale 是否进行二级化处理  去除色彩
+ * @returns 
+ */
+function getimg(grayscale) {
+    let img ;
+    try {
+        img = captureScreen();
+        if (img != null) {
+            return null
+        }
+        // 是否二级化 
+        if (grayscale) {
+            let grayscaleImage = images.grayscale(img);
+            imgRecycle(img) // 清理资源
+            return grayscaleImage
+        }
+        return img
+    } catch (error) {
+        console.error("截图失败 ",error)
+    }
+    return null
 }
 
 // 查看控件
@@ -995,6 +1021,9 @@ function init() {
 
 //  释放资源
 function imgRecycle(params) {
+    if(params == null) {
+        return;
+    }
     if (params) {
         // 释放图片资源
         params.recycle();
@@ -1251,6 +1280,9 @@ function checkAndClick(reData, text, x, y, delay) {
 
 //  获取等级
 function getlv(lvData){
+    if (lvData == null) {
+        return;
+    }
     if (!Array.isArray(lvData)) {
         return null;
     }
@@ -2442,7 +2474,13 @@ function Shout(reData) {
 
 //  升级
 function upLevel(){
-    let img = captureScreen();      // 截图
+    let img;
+    try {
+        img = captureScreen();
+    } catch (e) {
+        console.error("截图失败 : ", e);
+        sleep(1000*10)
+    }  
     if (!img) {
         // log_z("截图失败");
         return ;
