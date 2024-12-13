@@ -3166,18 +3166,42 @@ function main(){
 
 // for (let i = 0; i < 2000; i++) {
     if (true) {
-        // console.log("开始请求截图")
-        if (!requestScreenCapture(true)) {
-            throw new Error("请求屏幕捕获权限失败");
-        }
-
+        console.log("@@@#####")
         try {
+            if(!requestScreenCapture(true)) {
+                throw new Error("请求屏幕捕获权限失败")
+            }
+
             let img = captureScreen();
             let grayscaleImage = images.grayscale(img);
-            let reData = getOcr(grayscaleImage);
+            // imgRecycle(img)
+            let reData = getOcr(grayscaleImage)
+            // imgRecycle(grayscaleImage)
+            
         } catch (e) {
             console.error("截图失败 : ", e);
             sleep(1000*10)
-        }  
+        } 
+
+        // try {
+        //     click(0,1)
+        // } catch (e) {
+        //     console.error("click error : ", e);
+        //     sleep(1000*10)
+        // }
     }
 // }
+
+
+//  释放资源
+function imgRecycle(params) {
+    if(params == null) {
+        return;
+    }
+    if (params) {
+        // 释放图片资源
+        params.recycle();
+        // 将参数设为null，帮助垃圾回收
+        params = null;
+    }
+}
