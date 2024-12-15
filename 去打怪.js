@@ -1,11 +1,10 @@
 
 var text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
+let Log = false
 
 // 原始别名
-// let Bm = readLastLine().trim()
-// let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
-let Log = false
+let Bm = readLastLine().trim()
 
 let Servers = {
     "5e19856c-7435-4426-813d-4c0b3899399b": {
@@ -812,6 +811,8 @@ let Servers = {
     },
 }
 
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
+
 function log_z(message) {
     if (Log) {
         console.log("  * ",message);
@@ -835,7 +836,7 @@ function readLastLine() {
 }
 
 // SERVER_URL = "http://192.168.1.142:5000";  // 服务器2  8001 -8005  每个13个
-SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
+// SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
 // let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
 var storage = storages.create("ABC");
@@ -945,7 +946,7 @@ function isblue(img) {
             console.error(" isblue 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
-        toast("请求失败: ",e)
+        // toast("请求失败: ",e)
         console.error("请求失败: ", e);
     }
     return null;
@@ -1040,7 +1041,7 @@ function imgRecycle(params) {
     }
     if (params) {
         // 释放图片资源
-        params.recycle();
+        // params.recycle();
         // 将参数设为null，帮助垃圾回收
         params = null;
     }
@@ -1963,21 +1964,21 @@ function Console(reData) {
             if (selclick(reData,"中型生命值")) {
                 // 点击 输入框
                 sleep(2000);
-                clickWithDelay(778, 393, 1000);
-                clickWithDelay(778, 393, 1000);
-                clickWithDelay(778, 393, 1000);
-                clickWithDelay(778, 393, 1000);
-                clickWithDelay(778, 393, 1000);
+                clickWithDelay(778, 393, 500);
+                clickWithDelay(778, 393, 500);
+                clickWithDelay(778, 393, 500);
+                clickWithDelay(778, 393, 500);
+                clickWithDelay(778, 393, 500);
                 //  多买一点药
-                clickWithDelay(778, 393, 1000);
-                clickWithDelay(778, 393, 1000);
-                clickWithDelay(778, 393, 1000);
+                clickWithDelay(778, 393, 500);
+                clickWithDelay(778, 393, 500);
+                clickWithDelay(778, 393, 500);
                 let lv = storage.get("lv",0)
                 if (lv < 30 &&  lv > 21 ) {
-                    clickWithDelay(778, 393, 1000);
-                    clickWithDelay(778, 393, 1000);
-                    clickWithDelay(778, 393, 1000);
-                    clickWithDelay(778, 393, 1000);
+                    clickWithDelay(778, 393, 500);
+                    clickWithDelay(778, 393, 500);
+                    clickWithDelay(778, 393, 500);
+                    clickWithDelay(778, 393, 500);
                 }
 
                 clickWithDelay(800, 495, 2000); // 购买
@@ -1989,7 +1990,7 @@ function Console(reData) {
                 clickWithDelay(775, 633, 2000); //  输入完毕
                 clickWithDelay(800, 495, 2000); //  购买键
             }
-            clickWithDelay(1219,94,2000); //  X
+            clickWithDelay(1219,94,1000); //  X
             return true
        }
     }
@@ -2452,12 +2453,19 @@ function upLevel(){
         sleep(5000);
         return
     }
-    let grayscaleImage = images.grayscale(img);      // 二级化
 
-    // 是否在自动寻路
-    let imgtext = clip(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
-    let code = isblue(imgtext)  //  获取颜色
-    imgRecycle(imgtext)
+    // let s_hp = images.pixel(img, 534, 657);   // 判断省电模式下的血
+    // let s_mp = images.pixel(img, 666, 657);   // 判断省电模式下的蓝
+
+    // let SD = images.pixel(img, 602, 588);   // 判断省电模式是否在打怪
+    // if (SD == -4376777 && s_hp !=  -10347235 && s_mp != -10347235) {
+    //     // device.setBrightness(1) // 设置点亮为100
+    //     log_z("在省电模式下升级中 - 休眠 10分钟")
+    //     sleep(10 * 1000 * 60)  // 休息10分钟
+    //     return 
+    // }
+
+    let grayscaleImage = images.grayscale(img);      // 二级化
 
     // 裁剪等级
     let croppedImage = images.clip(img, 11, 0, 60, 32);
@@ -2488,6 +2496,11 @@ function upLevel(){
     let clors =  images.pixel(img, 522,41);   // 判断是否在打怪  
     sleep(5);
     // log_z(`color1: ${color1}, color2 : ${color2}`)
+
+    // 是否在自动寻路
+    let imgtext = clip(img,[[1180 ,145],[1263 ,145],[1263 ,148 ],[1180 ,148]])
+    let code = isblue(imgtext)  //  获取颜色
+    imgRecycle(imgtext)
 
     // 获取OCR
     let reData = getOcr(grayscaleImage);
@@ -2556,15 +2569,15 @@ function upLevel(){
             return  // 喊话间隔
         }
 
-        if (lv > 11 ) {  // 领取奖励
-            // 根据气泡领取
-            if (reward(reData)) {return }
-            //  通知气泡
-            if (color == -1935584) {
-                clickWithDelay(1184,17,1000);
-                return
-            }
-        }
+        // 根据气泡领取
+        // if (lv > 11 ) {  // 领取奖励
+        //     if (reward(reData)) {return }
+        //     //  通知气泡
+        //     if (color == -1935584) {
+        //         clickWithDelay(1184,17,1000);
+        //         return
+        //     }
+        // }
 
         log_z("  * 关闭所有的弹窗")
         if (closeX(reData)) {return } // 关闭所有的弹窗
@@ -2590,7 +2603,6 @@ function upLevel(){
             if (lv > 20 ) {
                 if (hp2 == -12961736 || mp2 == -13355722) {
                     // 回城
-                    sleep(2000);
                     clickWithDelay(1133,95,2000); //点击大地图
                     clickWithDelay(200,25,2000); //点比奇地区
                     clickWithDelay(582,412,2000); //点比奇城
@@ -2605,29 +2617,25 @@ function upLevel(){
                     }else{
                         console.log("前往庆济")
                         // 前往庆济
-                        clickWithDelay(430,574,1000);
-                        clickWithDelay(430,574,100);
-                        clickWithDelay(430,574,40000);
+                        clickWithDelay(424,582,1000);
+                        clickWithDelay(424,582,100);
+                        clickWithDelay(424,582,40000);
                     }
                     return
                 }
             }
-            let reai = select(reData,"【精英】比奇城后巷")
-            if (reai) {
-                if (reai[0][0][1] < 114 ) {
-                    if (select(reData,"12.救出可疑的")) {
-                        sleep(50000);
-                    }
-                }
-            }
+            // let reai = select(reData,"【精英】比奇城后巷")
+            // if (reai) {
+            //     if (reai[0][0][1] < 114 ) {
+            //         if (select(reData,"12.救出可疑的")) {
+            //             sleep(50000);
+            //         }
+            //     }
+            // }
             if (selclick(reData,"35.与龙骨")) {
                 return true
             }
 
-
-
-
-            throw new Error(" 正常工作 ")
             // clickWithDelay(1197,625,5000);  // 普攻一下
             sleep(21*1000)
             return 
@@ -2726,14 +2734,16 @@ function upLevel(){
                     }
                 }else{
                     log_z("升级到40 去 比奇后巷")
-                    clickWithDelay(1133,95,3000); //点击大地图
+                    clickWithDelay(1133,95,2100); //点击大地图
                     clickWithDelay(200,25,1500); //点比奇地区
                     clickWithDelay(582,412,1500); //点比奇城
                     // clickWithDelay(456,84,2000); // 比奇后巷
-                    clickWithDelay(1214,156,2000); // 更改难度
+                    if (lv > 24 ) {
+                        clickWithDelay(1214,156,2000); // 更改难度
+                    }
                     clickWithDelay(313,526,500); // 双击去  476,407
                     clickWithDelay(313,526,73000); // 双击去
-                    // click(395,662);  // 打怪
+                    click(395,662);  // 打怪
                 }
                 return
             }
@@ -3232,23 +3242,29 @@ function main(){
 }
 
 // for (let i = 0; i < 10; i++) {
-    // log_z("$$$$$$$$$$$$$$  执行开始!")
-    // main()
-    // log_z("##############  执行完成")
+    log_z("$$$$$$$$$$$$$$  执行开始!")
+    main()
+    log_z("##############  执行完成")
     // sleep(1000);
 // }
 
 
-if (true) {
+if (false) {
     if (!requestScreenCapture(true)) {
         throw new Error("请求屏幕捕获权限失败");
     }
     let img = captureScreen();
-    let grayscaleImage = images.grayscale(img);
+    let color1 = images.pixel(img, 534, 657);   // 判断省电模式下的血
+    let color2 = images.pixel(img, 666, 657);   // 判断省电模式下的蓝
+    // let grayscaleImage = images.grayscale(img);
+
+    // console.log("开始请求",color1)   // -4376777  红色的     -11629397 蓝色的
+
+    console.log(`color1 ${color1} , color2 ${color2}`)
 
     // console.log("开始请求")
-    let reData = getOcr(grayscaleImage);
-    // let reData = getOcr2(img);
+    // let reData = getOcr(imgtext);
+    let reData = getOcr2(img);
     // if (select(reData,"半兽古墓") && select(reData,"的女人")) {
     //     console.log("开始请求")
     // }
