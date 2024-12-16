@@ -2726,7 +2726,7 @@ function upLevel(){
                 log_z("升级到40 ")
                 reai = select(reData,"【精英】比奇城后巷")
                 if (reai) {
-                    console.log("开始攻击 ")
+                    // console.log("开始攻击 ")
                     if (reai[0][0][1] < 114 ) {
                         click(395,662);
                         sleep(2000);

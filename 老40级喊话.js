@@ -9,7 +9,7 @@ let filePath = "/storage/emulated/0/Documents/config.txt";
 // 原始别名
 // let Bm = readLastLine().trim()
 // console.log("Bm :", Bm )
-let Log = false
+let Log = true
 
 let Servers = {
     "5e19856c-7435-4426-813d-4c0b3899399b": {
@@ -853,17 +853,17 @@ function getOcr(img) {
         
         console.time("********&&& getOCR");  // 开始计时
 
-        console.time("tobase64");  // 开始计时
+        // console.time("tobase64");  // 开始计时
         // 将截图转换为Base64编码的PNG格式
         let imgData = images.toBase64(img, "png");
-        console.timeEnd("tobase64");  // 输出执行时间
+        // console.timeEnd("tobase64");  // 输出执行时间
 
         // 构造请求的 JSON 数据，添加 lang 字段
         let jsonData = {
             "base64_str": imgData,
         };
         
-        console.time("httppost");  // 开始计时
+        // console.time("httppost");  // 开始计时
         // 发送 POST 请求，确保 Content-Type 为 application/json
         let response = http.postJson(SERVER_URL+"/ocr/predict-by-base64", jsonData, {
             headers: {
@@ -879,13 +879,13 @@ function getOcr(img) {
         //     timeout: 100000 // 设置超时时间为10秒
         // });
 
-        console.timeEnd("httppost");  // 输出执行时间
+        // console.timeEnd("httppost");  // 输出执行时间
 
         if (response.statusCode == 200) {
             // console.time("JSON.parse");  // 开始计时
             let result = JSON.parse(response.body.string());
             // console.time("JSON.parse");  // 开始计时
-            console.log("****************** OCR  time : ", result.time)
+            // console.log("****************** OCR  time : ", result.time)
             return result.data;
             // return JSON.parse(response.body.string());
         } else {
@@ -895,7 +895,7 @@ function getOcr(img) {
         console.error("请求失败: ", e);
         sleep(10* 1000)  // 10秒
     } finally {
-        console.timeEnd("********&&& getOCR");  // 输出执行时间
+        // console.timeEnd("********&&& getOCR");  // 输出执行时间
     }
     
     return null;
@@ -1396,7 +1396,6 @@ function wrong(reData) {
         selclick(reData, '确认',true)
         return sleep(25000);
     }
-
     //  游戏需要更新
     if (select(reData,"重启游戏") || select(reData,"开始更新")) {
         selclick(reData,"确认")
@@ -1420,7 +1419,6 @@ function wrong(reData) {
         sleep(2000);
         return
     }
-    
     if (selclick(reData,"确定",true)|| selclick(reData,"确认",true)) {
         return true
     }
@@ -1430,7 +1428,6 @@ function wrong(reData) {
         // throw new Error("游戏更新");
         return true;
     }
-
     //  去认证界面
     if (select(reData,"资格的证明")) {
         selclick(reData,"登录游戏",true)
@@ -1450,7 +1447,7 @@ function wrong(reData) {
         close_app("com.wemade.mir4global")
         throw new Error("更新维护公告");
     }
-    
+  
 
     if (select(reData,"提示") && select(reData,"更新信息")) {
         selclick(reData,"游戏结束");
@@ -1460,7 +1457,6 @@ function wrong(reData) {
     if (selclick(reData,"重新连接")) {
         return true
     }
-
     if (select(reData,"服务器断开连接")) {
         return ClickSleep(reData,"确认")
     }
@@ -1510,12 +1506,7 @@ function wrong(reData) {
         sleep(5000);
         return true;
     }
-    // Loading 界面
-    if (select(reData, "购买",true)) {
-        click(1219,93);
-        return true;
-    }
-
+ 
     if (select(reData,"关闭节电模式")){
         swipe(468, 491, 1000, 0, 500);
         sleep(5000);
@@ -1607,9 +1598,14 @@ function upLevel(){
     let reData = getOcr(grayscaleImage);
     imgRecycle(img)
     if (reData) {
-        // log_z("处理异常弹窗")
+        log_z("处理异常弹窗")
         if (wrong(reData)) {return } //  处理异常弹窗
  
+        log_z("  * 关闭所有的弹窗")
+        if (closeX(reData)) {return } // 关闭所有的弹窗
+
+        Shout(reData);
+
         // 进入游戏界面以前
         if(select(reData, 'REA') ){
             // 进入游戏
@@ -1649,10 +1645,7 @@ function upLevel(){
             }
         }
  
-        // log_z("  * 关闭所有的弹窗")/
-        if (closeX(reData)) {return } // 关闭所有的弹窗
 
-        Shout(reData);
     } 
 }
 
