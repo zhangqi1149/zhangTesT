@@ -11,6 +11,15 @@ let filePath = "/storage/emulated/0/Documents/config.txt";
 // console.log("Bm :", Bm )
 let Log = false
 
+var storage = storages.create("ABC");
+
+// 原始别名
+let Bm = storage.get("Bm",0);
+if ( Bm == 0) {
+    Bm = readLastLine().trim()
+    storage.put("Bm", Bm);
+}
+
 let Servers = {
     "5e19856c-7435-4426-813d-4c0b3899399b": {
 		"Id": "000",
@@ -815,6 +824,8 @@ let Servers = {
 		"port":"8002",
     },
 }
+// console.log("Servers[Bm]-",Servers[Bm])
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 
 
 function log_z(message) {
@@ -845,7 +856,6 @@ function readLastLine() {
 SERVER_URL = "http://192.168.1.139:8002";  // 服务器2  8001 -8005  每个13个
 // let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
-var storage = storages.create("ABC");
 
 // OCR请求
 function getOcr(img) {

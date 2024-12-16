@@ -8,8 +8,15 @@
 let filePath = "/storage/emulated/0/Documents/config.txt";
 // 截图图片是否保存
 
+
 var storage = storages.create("ABC");
 
+// 原始别名
+let Bm = storage.get("Bm",0);
+if ( Bm == 0) {
+    Bm = readLastLine().trim()
+    Bm = storage.put("Bm", Bm);
+}
 
 let Servers = {
     "5e19856c-7435-4426-813d-4c0b3899399b": {
@@ -815,17 +822,7 @@ let Servers = {
 		"port":"8002",
     },
 }
-
- 
-// 原始别名
-let Bm = readLastLine().trim()
-console.log("Bm :", Bm )
-
-
-if (Servers[Bm].OCRip == null) {
-	throw new Error(" 不存在的id ")
-}
-
+// console.log("Servers[Bm]-",Servers[Bm])
 let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 
 // console.log( "sertraline ",SERVER_URL+"/ocr/predict-by-base64")

@@ -3,8 +3,14 @@ var text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com。 
 var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 let Log = false
 
+var storage = storages.create("ABC");
+
 // 原始别名
-let Bm = readLastLine().trim()
+let Bm = storage.get("Bm",0);
+if ( Bm == 0) {
+    Bm = readLastLine().trim()
+    Bm = storage.put("Bm", Bm);
+}
 
 let Servers = {
     "5e19856c-7435-4426-813d-4c0b3899399b": {
@@ -810,7 +816,7 @@ let Servers = {
 		"port":"8002",
     },
 }
-
+// console.log("Servers[Bm]-",Servers[Bm])
 let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 
 function log_z(message) {
@@ -839,7 +845,7 @@ function readLastLine() {
 // SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
 // let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
-var storage = storages.create("ABC");
+
 
 // OCR请求
 function getOcr(img) {
@@ -3242,9 +3248,9 @@ function main(){
 }
 
 // for (let i = 0; i < 10; i++) {
-    log_z("$$$$$$$$$$$$$$  执行开始!")
-    main()
-    log_z("##############  执行完成")
+    // log_z("$$$$$$$$$$$$$$  执行开始!")
+    // main()
+    // log_z("##############  执行完成")
     // sleep(1000);
 // }
 

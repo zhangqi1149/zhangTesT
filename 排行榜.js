@@ -219,7 +219,7 @@ function close_app(str,execute) {
 function init(){
     // 权限检查
     if (!auto.service) {
-        toastLog("请开启无障碍服务");
+        // toastLog("请开启无障碍服务");
         if (!requestScreenCapture(true)) {
             throw new Error("请求屏幕捕获权限失败");
         }

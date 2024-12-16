@@ -90,7 +90,7 @@ function isblue(img) {
             console.error(" isblue 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
-        toast("请求失败: ",e)
+        // toast("请求失败: ",e)
         console.error("请求失败: ", e);
     }
     return null;
@@ -1268,7 +1268,7 @@ function Ranking(reData) {
         // 等待切换界面
         if (!text3("请输入")) {
             console.log("该角色不存在")
-            toast("未等到要点的界面")
+            // toast("未等到要点的界面")
             // clickWithDelay(45,33,1000);
             back();
         } 
@@ -1318,7 +1318,7 @@ function Ranking(reData) {
         if (select(reData,care.e_career.trim())) {
             // 开始挑选
             console.log("  * 开始挑选",care.e_war)
-            toast(care.e_count)
+            // toast(care.e_count)
             // 重新截图
             let img = captureScreen(); 
             let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
