@@ -1527,17 +1527,16 @@ function Shout(reData) {
     //  输入法是打开的情况
     let ts = className("android.widget.EditText").findOne(1000)
     if (ts) {
-        // console.log("输入法打开了")
+        log_z("输入法打开了")
         // 输入文字
         ts.setText(text)
         sleep(500);
         // 点击发送
         click(1187,683)
         sleep(1000);
-        clickWithDelay(1194,629,500); // 攻击一下防止掉线
-        click(1194,629)
-        clickWithDelay(952,656,500); // 攻击一下防止掉线
-        click(952,656)
+        click(952,656)  //攻击键 
+        sleep(1000);
+        click(243.5,670)  // 再点击 请输入对话
         sleep(interval);
         return true
     }
@@ -1566,17 +1565,16 @@ function upLevel(){
     //  输入法是打开的情况
     let ts = className("android.widget.EditText").findOne(1000)
     if (ts) {
-        // console.log("输入法打开了")
+        log_z("输入法打开了")
         // 输入文字
         ts.setText(text)
         sleep(500);
         // 点击发送
         click(1187,683)
         sleep(1000);
-        clickWithDelay(1194,629,500); // 攻击一下防止掉线
-        click(1194,629)
-        clickWithDelay(952,656,500); // 攻击一下防止掉线
-        click(952,656)
+        click(952,656)  //攻击键 
+        sleep(1000);
+        click(243.5,670)  // 再点击 请输入对话
         sleep(interval);
         return true
     }

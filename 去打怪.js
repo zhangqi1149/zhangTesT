@@ -817,7 +817,7 @@ let Servers = {
     },
 }
 // console.log("Servers[Bm]-",Servers[Bm])
-let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
+// let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 
 function log_z(message) {
     if (Log) {
@@ -842,7 +842,7 @@ function readLastLine() {
 }
 
 // SERVER_URL = "http://192.168.1.142:5000";  // 服务器2  8001 -8005  每个13个
-// SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
+SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
 // let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
 
@@ -1223,7 +1223,7 @@ function selclick(reData,src,exactMatch){
         // 计算文本区域的中心点
         let centerX = (target[0][0][0] + target[0][2][0]) / 2;
         let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-
+        // console.log(`点击 ${src} x = ${centerX} y = ${centerY}`)
         code = click(centerX,centerY);  // 点击坐标
         if (!code) {
             // log_z(`selclick ${src} 点击失败`)
@@ -2480,8 +2480,8 @@ function upLevel(){
     getlv(lvData) // 获取等级
 
     // 通知区域 橙色
-    let color = images.pixel(img, 1200, 17);  // 1184, 17
-    sleep(5);
+    // let color = images.pixel(img, 1200, 17);  // 1184, 17
+    // sleep(5);
     // let emil = images.pixel(img, 66, 94);  // 邮箱
     
     let hp =  images.pixel(img, 459, 666);
@@ -3249,7 +3249,7 @@ function main(){
 
 // for (let i = 0; i < 10; i++) {
     // log_z("$$$$$$$$$$$$$$  执行开始!")
-    // main()
+    main()
     // log_z("##############  执行完成")
     // sleep(1000);
 // }
@@ -3260,19 +3260,7 @@ if (false) {
         throw new Error("请求屏幕捕获权限失败");
     }
     let img = captureScreen();
-    let color1 = images.pixel(img, 534, 657);   // 判断省电模式下的血
-    let color2 = images.pixel(img, 666, 657);   // 判断省电模式下的蓝
-    // let grayscaleImage = images.grayscale(img);
-
-    // console.log("开始请求",color1)   // -4376777  红色的     -11629397 蓝色的
-
-    console.log(`color1 ${color1} , color2 ${color2}`)
-
-    // console.log("开始请求")
-    // let reData = getOcr(imgtext);
-    let reData = getOcr2(img);
-    // if (select(reData,"半兽古墓") && select(reData,"的女人")) {
-    //     console.log("开始请求")
-    // }
-    // click(424,582)
+ 
+    let reData = getOcr(img);
+    selclick(reData,"全部")
 }
