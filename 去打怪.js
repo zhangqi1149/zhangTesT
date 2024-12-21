@@ -817,7 +817,7 @@ let Servers = {
     },
 }
 // console.log("Servers[Bm]-",Servers[Bm])
-// let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 
 function log_z(message) {
     if (Log) {
@@ -842,7 +842,7 @@ function readLastLine() {
 }
 
 // SERVER_URL = "http://192.168.1.142:5000";  // 服务器2  8001 -8005  每个13个
-SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
+// SERVER_URL = "http://192.168.1.139:8001";  // 服务器2  8001 -8005  每个13个
 // let SERVER_URL = "http://192.168.1.128:8002";  // 服务器1 8001 -8005
 
 
@@ -1405,7 +1405,6 @@ function wrong(reData) {
     if (select(reData,"正在下载")) {
         throw new Error(" 正在下载")
     }
-    console.log("")
     if (selclick(reData, '开始游戏',true)) {
         log_z("点击界面进入游戏");
         return sleep(15000);
@@ -2704,7 +2703,6 @@ function upLevel(){
                 }
             }
         }
-
         log_z("  * 去挂机打怪")
         if (lv >= 9 && lv < 13 ) {  // 去挂机打怪
             reai = select(reData,"芊菲的下落")

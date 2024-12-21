@@ -970,7 +970,7 @@ function packageNameEndsWith(suffix) {
 function init() {
     // 检查权限 无障碍
     if (!auto.service) {
-        auto();
+        // auto();
         throw new Error("请求无障碍权限失败");
     }
     // 锁屏了就打开
@@ -1230,6 +1230,10 @@ function closeX(reData){
 
 // 处理弹窗函数
 function wrong(reData) {
+    if (selclick(reData, '游戏结束',true)) {
+        log_z("点击界面进入游戏");
+        return sleep(5000);
+    }
     if (select(reData,"正在下载")) {
         throw new Error(" 正在下载")
     }
@@ -1377,21 +1381,28 @@ function wrong(reData) {
 //  喊话   喊话内容 test  喊话间隔 interval
 function Shout(reData) {
     //  输入法是打开的情况
-    let ts = className("android.widget.EditText").findOne(1000)
-    if (ts) {
-        log_z("输入法打开了")
-        // 输入文字
-        ts.setText(text)
-        sleep(500);
-        // 点击发送
-        click(1187,683)
-        sleep(1000);
-        click(952,656)  //攻击键 
-        sleep(1000);
-        click(114.5 , 116.5) //  点击全部按钮
-        click(243.5,670)  // 再点击 请输入对话
-        sleep(interval);
-        return true
+    try {
+        let ts = className("android.widget.EditText").findOne(1000)
+        if (ts) {
+            log_z("输入法打开了")
+            // 输入文字
+            // ts.setText(text)
+            sleep(1000);
+            input(text);  // autox 的方法
+            sleep(500);
+            // 点击发送
+            click(1187,683)
+            sleep(1000);
+            // click(952,656)  //攻击键 
+            // sleep(1000);
+            click(114.5 , 116.5) //  点击全部按钮
+            sleep(1000);
+            click(243.5,670)  // 再点击 请输入对话
+            sleep(interval);
+            return true
+        }
+    } catch (error) {
+        console.error("Error during database operation:", error);
     }
 
     // 打开输入法
@@ -1415,23 +1426,31 @@ function Shout(reData) {
 
 //  升级
 function upLevel(){
-    let ts = className("android.widget.EditText").findOne(1000)
-    if (ts) {
-        log_z("输入法打开了")
-        // 输入文字
-        ts.setText(text)
-        sleep(500);
-        // 点击发送
-        click(1187,683)
-        sleep(1000);
-        click(952,656)  //攻击键 
-        sleep(1000);
-        click(114.5 , 116.5) //  点击全部按钮
-        sleep(1000);
-        click(243.5,670)  // 再点击 请输入对话
-        sleep(interval);
-        return true
+    try {
+        let ts = className("android.widget.EditText").findOne(1000)
+        if (ts) {
+            log_z("输入法打开了")
+            // 输入文字
+            // ts.setText(text)
+            sleep(1000);
+            input(text);
+            sleep(500);
+            // 点击发送
+            click(1187,683)
+            sleep(1000);
+            // click(952,656)  //攻击键 
+            // sleep(1000);
+            click(114.5 , 116.5) //  点击全部按钮
+            sleep(1000);
+            click(243.5,670)  // 再点击 请输入对话
+            sleep(interval);
+            return
+        }
+    } catch (error) {
+        console.error("upLevel  Error during database operation:", error);
+        return 
     }
+   
 
     let img = getimg(false)
     if (img == null) {
