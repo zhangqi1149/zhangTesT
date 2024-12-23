@@ -1,5 +1,5 @@
 
-var text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+var text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 var interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 let Log = false
 
@@ -974,10 +974,10 @@ function init() {
         throw new Error("请求无障碍权限失败");
     }
     // 锁屏了就打开
-    if (!device.isScreenOn()) {
-        device.wakeUpIfNeeded() // 唤醒
-        swipe(232, 1000, 232, 200, 800);  // 打开
-    }
+    // if (!device.isScreenOn()) {
+    //     device.wakeUpIfNeeded() // 唤醒
+    //     swipe(232, 1000, 232, 200, 800);  // 打开
+    // }
     if (!requestScreenCapture(true)) {
         // throw new Error("请求屏幕捕获权限失败");
         log_z("请求屏幕捕获权限失败")
@@ -1165,6 +1165,9 @@ function checkAndClick(reData, text, x, y, delay) {
 
 // 关闭窗口
 function closeX(reData){
+    if (checkAndClick(reData, '排位奖励', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '好友请求', 48,33,1000)) return true;  // 被屏蔽了
+
     if (select(reData, "是否结束游戏") || select(reData, '龙再炼')||select(reData, '只攻击玩家')) {
         back()
         return true
@@ -1246,6 +1249,10 @@ function wrong(reData) {
         return sleep(25000);
     }
 
+    if (select(reData,"网络状态不佳")) {
+        selclick(reData,"前往登录",true)
+        return true
+    }
     //  游戏需要更新
     if (select(reData,"重启游戏") || select(reData,"开始更新")) {
         selclick(reData,"确认")
@@ -1264,8 +1271,8 @@ function wrong(reData) {
     if (select(reData, "服务器连接断开")) {
         return ClickSleep(reData, '前往登录');
     }
-     // 网络异常波动
-     if (selclick(reData,"前往登录")) {
+    // 网络异常波动   -- 提示
+    if (selclick(reData,"前往登录")) {
         sleep(2000);
         return
     }
@@ -1525,7 +1532,7 @@ function upLevel(){
 
         log_z("  * 关闭所有的弹窗")
         if (closeX(reData)) {return } // 关闭所有的弹窗
-    } 
+    }
 }
 
 // 主函数
