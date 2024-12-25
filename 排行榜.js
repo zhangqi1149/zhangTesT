@@ -957,22 +957,28 @@ function close_app(str,execute) {
     if (execute == null) {
         execute = false
     }
-    // 打开详情  
-    app.openAppSetting(str)
-    let btn = text("强行停止").findOne(4000);
-    if (btn) {
-        btn.click();
-        log_z("点击强行停止按钮成功");
-    }
-    let qd = text("确定").findOne(3000)
-    if (qd) {
-        qd.click();
-        log_z("点击确定按钮成功");
-    }
-    // 再一次执行App
-    if (execute) {
-        app.launch(str)
-    }
+
+    try {
+        // 打开详情  
+        app.openAppSetting(str)
+        let btn = text("强行停止").findOne(4000);
+        if (btn) {
+            btn.click();
+            log_z("点击强行停止按钮成功");
+        }
+        let qd = text("确定").findOne(3000)
+        if (qd) {
+            qd.click();
+            log_z("点击确定按钮成功");
+        }
+        // 再一次执行App
+        if (execute) {
+            app.launch(str)
+        }
+    } catch (e) {
+        console.error("操作失败: ", e);
+        sleep(10* 1000)  // 10秒
+    }  
 }
 
 // OCR请求

@@ -1,42 +1,855 @@
 
 // 设置服务器地址
 // var SERVER_URL = "http://192.168.1.142:5000";   // 本地调试
-// var SERVER_URL = "http://192.168.1.128:5000";  // 服务器1
-// var SERVER_URL = "http://192.168.1.94:5000";  // 服务器2
-var SERVER_URL = "http://192.168.1.94:8001";  // 服务器2
 // 喊话内容
-var text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
-// 截图图片是否保存
-var  Save =  false // true   false 
+let text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 
-let careers = ["法师","弩手","武士","黑道士","战士","道士"];
-var storage = storages.create("ABC");
-var today = new Date().toISOString().split('T')[0];  // 获取今日日期，格式为 YYYY-MM-DD
-
+let storage = storages.create("ABC");
+let Log = false   // 是否显示打印内容
 // ---------------------------------------------- 网络请求
+
+let Bm = storage.get("Bm",0);
+if ( Bm == 0) {
+    Bm = readLastLine().trim()
+    storage.put("Bm", Bm);
+}
+
+
+let Servers = {
+    "73940854": {
+		"Id": "2",
+		"Server": "ASIA073",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+    "5e19856c-7435-4426-813d-4c0b3899399b": {
+		"Id": "000",
+		"Server": "SA011",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
+		"Id": "200",
+		"Server": "SA011",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+	"befb893f": {
+		"Id": "199",
+		"Server": "SA012",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"99863ada-8921-4df4-a8d0-a6d5feaa6f35": {
+		"Id": "198",
+		"Server": "SA013",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"418527e2-ca21-45fd-be46-c46003f0eadf": {
+		"Id": "197",
+		"Server": "SA014",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"54203733-7890-40dc-97d4-c6234826107b": {
+		"Id": "196",
+		"Server": "SA021",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"69561c02-bb04-4403-8d3f-e14a125777c8": {
+		"Id": "195",
+		"Server": "SA022",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"09759f37-2602-4ed4-acd0-d8b83df325e5": {
+		"Id": "194",
+		"Server": "SA023",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"9ac8ecdf-acb2-4a3f-981f-12796fa4df9d": {
+		"Id": "193",
+		"Server": "SA031",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"c805c45c-29db-40c2-9a7e-e618d94a5481": {
+		"Id": "192",
+		"Server": "SA032",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"3a7e8e3d-1476-47fa-870b-41fe7639666c": {
+		"Id": "191",
+		"Server": "SA033",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"3c48acb4-2d07-44d5-8755-131de595f7b8": {
+		"Id": "190",
+		"Server": "SA034",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"362753d2-9c4e-4f4a-b6ac-40f9845a30bf": {
+		"Id": "189",
+		"Server": "SA041",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+    "1ef2dbc4-634c-4721-ac65-ca4106fe6d28": {
+		"Id": "188",
+		"Server": "SA043",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"4e8a403b-4887-4248-835b-7967ce71c62d": {
+		"Id": "187",
+		"Server": "SA044",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"603dc59b-7e09-4c8a-8284-2b0831ed731e": {
+		"Id": "186",
+		"Server": "SA051",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"5e4a803e-8159-41b2-bd72-7db6a306ae14": {
+		"Id": "185",
+		"Server": "SA052",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"7618ee50-4199-4ca3-83cc-2d26bc693efd": {
+		"Id": "184",
+		"Server": "SA053",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"5c4680fb-6f71-4306-91ea-e9d14a3f9c89": {
+		"Id": "183",
+		"Server": "SA054",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"779ff20d-6c04-4b21-94c5-d968d17ade1b": {
+		"Id": "182",
+		"Server": "SA061",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"23ab0919-15b3-4377-b58c-b8ade4ef8151": {
+		"Id": "181",
+		"Server": "SA071",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"b17895f8-937d-465c-a90c-cd44d3de7721": {
+		"Id": "180",
+		"Server": "SA072",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"2f44aae3-2d77-4706-928b-c989cd3a8a56": {
+		"Id": "179",
+		"Server": "SA081",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"1e82aa35-b79b-41d9-a8e8-d3d4d712d45e": {
+		"Id": "178",
+		"Server": "SA082",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"cd324f29-72bf-4902-b466-bf02c05b29f9": {
+		"Id": "177",
+		"Server": "SA083",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"6dc4afc3-943c-4df2-a895-8ef1f3244f67": {
+		"Id": "176",
+		"Server": "SA062",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+    "79ee6eab-e562-4d62-9880-027296a17564": {
+		"Id": "175",
+		"Server": "SA063",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"2259877e-5b94-45d4-a2f2-b085b680b5f3": {
+		"Id": "174",
+		"Server": "SA064",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"bf01a49e-449a-4062-a1b3-99d626518403": {
+		"Id": "173",
+		"Server": "SA073",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"63b73ee4": {
+		"Id": "172",
+		"Server": "NA011",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"9434ba65": {
+		"Id": "171",
+		"Server": "NA012",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"99f502fd": {
+		"Id": "170",
+		"Server": "NA021",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"b53d9b12": {
+		"Id": "169",
+		"Server": "NA022",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"c63ab7dc": {
+		"Id": "168",
+		"Server": "NA023",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"d8de1484": {
+		"Id": "167",
+		"Server": "NA031",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"10e56bcc": {
+		"Id": "166",
+		"Server": "NA032",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"30d5a6a8": {
+		"Id": "165",
+		"Server": "NA033",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"dff4a00": {
+		"Id": "164",
+		"Server": "NA034",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+
+	},
+	"c61320d3": {
+		"Id": "163",
+		"Server": "NA042",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"c9e6d3ef": {
+		"Id": "162",
+		"Server": "NA043",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"84761629": {
+		"Id": "161",
+		"Server": "NA044",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"a0673f35": {
+		"Id": "160",
+		"Server": "NA013",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"98fadf9d": {
+		"Id": "159",
+		"Server": "NA014",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"c2df4216": {
+		"Id": "158",
+		"Server": "NA051",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"e363abda": {
+		"Id": "157",
+		"Server": "NA054",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"8da15129": {
+		"Id": "156",
+		"Server": "NA064",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"244e67d6": {
+		"Id": "155",
+		"Server": "NA083",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"8f1383bc": {
+		"Id": "154",
+		"Server": "NA052",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"12238381": {
+		"Id": "153",
+		"Server": "NA053",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"1f08528f": {
+		"Id": "152",
+		"Server": "NA062",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"6df167cc": {
+		"Id": "151",
+		"Server": "NA061",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"895f0f14": {
+		"Id": "150",
+		"Server": "NA071",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+    "712ba73f": {
+		"Id": "149",
+		"Server": "NA072",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"9c9eb045": {
+		"Id": "148",
+		"Server": "NA073",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"bd253a0d": {
+		"Id": "147",
+		"Server": "NA074",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"c27bf550": {
+		"Id": "146",
+		"Server": "NA081",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"5b2adda0": {
+		"Id": "145",
+		"Server": "NA082",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"b9ad4ca5-c7c6-49cd-bdd7-bcaaef39388b": {
+		"Id": "144",
+		"Server": "EU043",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"5b408a2b-bad8-433d-b34e-ae6a92f469df": {
+		"Id": "143",
+		"Server": "EU011",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"d35cefcd-305d-466f-8d51-db923813e672": {
+		"Id": "142",
+		"Server": "EU021",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"9eba95cf-fffa-4597-a73c-ea6377a851e4": {
+		"Id": "141",
+		"Server": "EU041",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"a7ff01f5-7502-4b4b-a63a-7287abebb965": {
+		"Id": "140",
+		"Server": "EU012",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"1f049432-9494-440e-b004-511309a5e6a9": {
+		"Id": "139",
+		"Server": "EU013",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"0e3400fb-6a11-468c-b21e-2e8ec262a8cf": {
+		"Id": "138",
+		"Server": "EU014",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+	"1f2dfb0a-9546-468f-b685-187444763cc9": {
+		"Id": "137",
+		"Server": "EU022",
+		"OCRip":"http://192.168.1.139",
+		"port":"8002",
+	},
+    	
+	"980dfa3f-1cf3-4864-a7d8-8b44cf7b5691": {
+		"Id": "136",
+		"Server": "EU023",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"d05726f5-e587-4657-9c44-eaf132d5eb01": {
+		"Id": "135",
+		"Server": "EU024",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"756996c8-f937-45f4-a426-57ee86a8caf7": {
+		"Id": "134",
+		"Server": "EU031",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"48a36291-0202-4513-8977-02b4a1199be8": {
+		"Id": "133",
+		"Server": "EU032",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"6588b429-83d1-4e8e-8a52-d1bdc2fa4bdc": {
+		"Id": "132",
+		"Server": "EU033",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"2e8887ce-5d4b-47df-b80a-5046bb228274": {
+		"Id": "131",
+		"Server": "EU034",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"fa9ee7b3-4131-43c9-977d-a8ffbc7e471e": {
+		"Id": "130",
+		"Server": "EU042",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"63d74fc5-978c-4e59-b162-dabddac2183b": {
+		"Id": "129",
+		"Server": "BASIA001",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"237e1f42-4bdb-4a03-a6f1-923332f33b45": {
+		"Id": "128",
+		"Server": "BASIA002",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"b645032e-ef99-4a28-a0dc-a633eec7867d": {
+		"Id": "127",
+		"Server": "BNA011",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"bd9ddb80-8e31-4bf2-8aaa-5df15efc07ae": {
+		"Id": "126",
+		"Server": "BEU031",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"4f2cd5fa-47f3-4d9c-847c-1879ce2d8c75": {
+		"Id": "125",
+		"Server": "BSA021",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+	"22c22383-d02a-4c81-808f-f9a7c2cc831d": {
+		"Id": "124",
+		"Server": "BINMENA041",
+		"OCRip":"http://192.168.1.139",
+		"port":"8001",
+	},
+    
+    "b402fcdb": {
+        "Id": "123",
+        "Server": "ASIA011",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "1ef862e0": {
+        "Id": "122",
+        "Server": "ASIA012",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "96a294d0": {
+        "Id": "121",
+        "Server": "ASIA013",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "f54f8429-8fc9-45be-be3d-db3d0bf99475": {
+        "Id": "120",
+        "Server": "ASIA014",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "71d8a433-4789-4dd5-a6da-2604c958615e": {
+        "Id": "119",
+        "Server": "ASIA021",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
+        "Id": "118",
+        "Server": "ASIA022",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "b491a690-521c-4a2e-8a7e-21e979085e67": {
+        "Id": "117",
+        "Server": "ASIA023",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "edcef95f-c98a-4107-a76b-715908e0e659": {
+        "Id": "116",
+        "Server": "ASIA024",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "12fdc099-8351-4a20-a046-a74b8adcfa83": {
+        "Id": "115",
+        "Server": "ASIA031",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "4cd13a96-4b51-4862-b503-5881f339242a": {
+        "Id": "114",
+        "Server": "ASIA032",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
+        "Id": "113",
+        "Server": "ASIA033",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "408830f3-7f73-44d1-b33c-c79d18fc4de4": {
+        "Id": "112",
+        "Server": "ASIA041",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "40e83d09-d549-443d-bfc4-d004bd693d19": {
+        "Id": "111",
+        "Server": "ASIA042",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },    
+
+    "50e7f21d-2508-4cab-97e9-8a676e0986ea": {
+        "Id": "110",
+        "Server": "ASIA043",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "047a7c32-de99-4bd9-8503-a11050de37b5": {
+        "Id": "109",
+        "Server": "ASIA051",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "da727009-8386-4aa3-b7ad-b12e069f7eba": {
+        "Id": "108",
+        "Server": "ASIA052",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "b546783d-1a82-4465-938b-07fe5fa1cda7": {
+        "Id": "107",
+        "Server": "ASIA053",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "d6e6a347-c8e7-462d-90be-de1e35da5848": {
+        "Id": "106",
+        "Server": "ASIA054",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
+        "Id": "105",
+        "Server": "ASIA061",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "3207acb8-545c-460b-8237-30c9aaef161a": {
+        "Id": "104",
+        "Server": "ASIA062",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
+        "Id": "103",
+        "Server": "ASIA063",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
+        "Id": "102",
+        "Server": "ASIA064",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "0f8f4a18-d173-4045-a0f1-f991d681700c": {
+        "Id": "101",
+        "Server": "ASIA071",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "a4a38793-f81f-4fe6-95cd-e12343fa5768": {
+        "Id": "100",
+        "Server": "ASIA072",
+        // "OCRip":"http://192.168.1.140",  // todo
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
+        "Id": "99",
+        "Server": "ASIA073",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
+        "Id": "98",
+        "Server": "ASIA081",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },    
+    "45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
+        "Id": "97",
+        "Server": "ASIA082",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "970c32eb-b623-4764-8743-b5685e308fb5": {
+        "Id": "96",
+        "Server": "ASIA083",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
+        "Id": "95",
+        "Server": "ASIA343",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
+        "Id": "94",
+        "Server": "ASIA342",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "843e61dd-3243-4196-ad84-347d1d33ceb6": {
+        "Id": "93",
+        "Server": "ASIA341",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
+        "Id": "92",
+        "Server": "ASIA333",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "5d75350e-975e-43e6-b8ab-7ff58df796ad": {
+        "Id": "91",
+        "Server": "ASIA332",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "beb9afa5-1898-499e-93a7-706034a5c0df": {
+        "Id": "90",
+        "Server": "ASIA331",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+	"2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
+        "Id": "89",
+        "Server": "ASIA324",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+	"355f4465-1f65-469c-bf6c-81f629bc5b2d": {
+        "Id": "88",
+        "Server": "ASIA323",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "187eb6fb-520b-4cf0-b469-0c34d21b3711": {
+        "Id": "87",
+        "Server": "ASIA322",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "502ea617-95c7-4345-9c9b-07de90939c3c": {
+        "Id": "86",
+        "Server": "ASIA321",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "5cf80fc6-b4b2-4034-990a-42900fba3630": {
+        "Id": "85",
+        "Server": "ASIA314",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "ded8b096-6ff9-4436-9a15-d960e05e683e": {
+        "Id": "84",
+        "Server": "ASIA313",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
+        "Id": "83",
+        "Server": "ASIA312",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
+        "Id": "82",
+        "Server": "ASIA311",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "bd36bbe9-383e-4f09-824f-e60a313746eb": {
+        "Id": "81",
+        "Server": "ASIA353",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "6e4c7f85-e171-414c-bbd2-f7333b48d605": {
+        "Id": "80",
+        "Server": "ASIA351",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
+        "Id": "79",
+        "Server": "ASIA353",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
+        "Id": "78",
+        "Server": "ASIA354",
+        "OCRip":"http://192.168.1.140",
+		"port":"8001",
+    },
+    "73b351fe-9789-4a7d-b27f-ec431b16677b": {
+        "Id": "77",
+        "Server": "ASIA361",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
+        "Id": "76",
+        "Server": "ASIA362",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "7df85b12-105d-438c-a2e7-f487b1ded057": {
+        "Id": "75",
+        "Server": "ASIA363",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "18055116-dd62-4365-9917-501ec0bf8bd5": {
+        "Id": "74",
+        "Server": "ASIA364",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
+        "Id": "73",
+        "Server": "ASIA371",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
+        "Id": "72",
+        "Server": "ASIA372",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+    "2b808dbf-8156-4f42-a458-56313648a57a": {
+        "Id": "71",
+        "Server": "ASIA373",
+        "OCRip":"http://192.168.1.140",
+		"port":"8002",
+    },
+}
+
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port  // 拿到服务器地址
+
 
 function getOcr(img) {
     try {
         
-        console.time("********&&& getOCR");  // 开始计时
+        // console.time("********&&& getOCR");  // 开始计时
 
-        console.time("tobase64");  // 开始计时
+        // console.time("tobase64");  // 开始计时
         // 将截图转换为Base64编码的PNG格式
         let imgData = images.toBase64(img, "png");
-        console.timeEnd("tobase64");  // 输出执行时间
+        // console.timeEnd("tobase64");  // 输出执行时间
 
         // 构造请求的 JSON 数据，添加 lang 字段
         let jsonData = {
             "base64_str": imgData,
         };
         
-        console.time("httppost");  // 开始计时
+        // console.time("httppost");  // 开始计时
         // 发送 POST 请求，确保 Content-Type 为 application/json
         let response = http.postJson(SERVER_URL+"/ocr/predict-by-base64", jsonData, {
             headers: {
                 "Content-Type": "application/json"
             },
-            timeout: 10000 // 设置超时时间为10秒
         });
         // let response = http.postJson("http://192.168.1.94:9080/ocr", jsonData, {
         //     headers: {
@@ -45,13 +858,13 @@ function getOcr(img) {
         //     timeout: 10000 // 设置超时时间为10秒
         // });
 
-        console.timeEnd("httppost");  // 输出执行时间
+        // console.timeEnd("httppost");  // 输出执行时间
 
         if (response.statusCode == 200) {
-            console.time("JSON.parse");  // 开始计时
+            // console.time("JSON.parse");  // 开始计时
             let result = JSON.parse(response.body.string());
-            console.time("JSON.parse");  // 开始计时
-            console.log("****************** OCR  time : ", result.time)
+            // console.time("JSON.parse");  // 开始计时
+            // console.log("****************** OCR  time : ", result.time)
             return result.data;
             // return JSON.parse(response.body.string());
         } else {
@@ -60,7 +873,7 @@ function getOcr(img) {
     } catch (e) {
         console.error("请求失败: ", e);
     } finally {
-        console.timeEnd("********&&& getOCR");  // 输出执行时间
+        // console.timeEnd("********&&& getOCR");  // 输出执行时间
     }
     
     return null;
@@ -96,67 +909,15 @@ function isblue(img) {
     return null;
 }
 
+function log_z(message) {
+    if (Log) {
+        console.log("  * ",message);
+    }
+}
+
+
 // ---------------------------------------------- 基础函数
-//  管理存储值
-function manage_value() {
-    // 获取保存的所有键列表，如果没有保存过键列表，则默认为空数组
-    let keys = storage.get("keysList", []);
-    // 如果键不存在，将今天的日期添加到 keysList 中
-    if (!keys.includes(today)) {
-        keys.push(today);                 // 当前职业 : e_career  喊了话的战斗力 : e_war  当前职业喊的数量 : e_count  停止时间 : e_time
-        storage.put(today,{e_career:'法师', e_war:0, e_count:0 ,e_time:0})  // 职业  战力值  喊话的数量  休息时间
-        storage.put("keysList", keys);  // 更新键列表
-    }
-    
-    // 遍历之前保存的所有键，并删除不符合条件的键
-    keys.forEach(function(key) {
-        // console.log(key)
-        if (key !== today) {
-            storage.remove(key);  // 删除不是今天的数据
-        }
-    });
-}
-manage_value()
-//  生成未来时间 
-function addRandomMinutes(min, max) {
-    let now = new Date();  // 获取当前时间
-    let randomMinutes = Math.floor(Math.random() * (max - min + 1)) + min; // 生成 min 到 max 之间的随机分钟数
-    now.setMinutes(now.getMinutes() + randomMinutes); // 当前时间加上随机分钟数，自动处理进位
-    return now;
-}
-
-//  对比时间
-function compareTime() {
-    let now = new Date();  // 获取当前时间
-    let a = storage.get(today)
-    let futureTime = new Date(a.e_time)
-    // 比较时间戳
-    if (futureTime > now) {
-        // console.log('未来时间大于当前时间');
-        return true
-    } else {
-        // console.log('未来时间小于当前时间');
-        return false
-    }
-}
-
-// 查看控件 "com.wemade.mir4global"
-function opackageName(str) {
-    // 查找屏幕上的所有控件
-    let nodes = className("android.widget.FrameLayout").find();
-    // 遍历找到满足条件的控件
-    for (let i = 0; i < nodes.size(); i++) {
-        let node = nodes.get(i);
-        if (node.packageName() === str) {
-            nodes.recycle();  // 释放控件资源
-            sleep(100);
-            return true
-        }
-    }
-    nodes.recycle();
-    return false
-}
-
+ 
 /**强行关闭游戏 控件本版
  * 
  * let currentPkg = currentPackage();  可以获取 com.wemade.mir4global  这个表示传奇4 
@@ -167,23 +928,28 @@ function close_app(str,execute) {
     if (execute == null) {
         execute = false
     }
-    // 打开详情  
-    app.openAppSetting(str)
-    let btn = text("强行停止").findOne(4000);
-    if (btn) {
-        btn.click();
-        console.log("点击强行停止按钮成功");
-    }
-    let qd = text("确定").findOne(3000)
-    if (qd) {
-        console.log("首都迁往")
-        qd.click();
-        console.log("点击确定按钮成功");
-    }
-    // 再一次执行App
-    if (execute) {
-        app.launch(str)
-    }
+
+    try {
+        // 打开详情  
+        app.openAppSetting(str)
+        let btn = text("强行停止").findOne(4000);
+        if (btn) {
+            btn.click();
+            log_z("点击强行停止按钮成功");
+        }
+        let qd = text("确定").findOne(3000)
+        if (qd) {
+            qd.click();
+            log_z("点击确定按钮成功");
+        }
+        // 再一次执行App
+        if (execute) {
+            app.launch(str)
+        }
+    } catch (e) {
+        console.error("操作失败: ", e);
+        sleep(10* 1000)  // 10秒
+    }  
 }
 
 /** 生成随机英文名  名字要求6-12 
@@ -225,9 +991,9 @@ function clip(img, box) {
 function imgRecycle(params) {
     if (params) {
         // 释放图片资源
-        params.recycle();
+        // params.recycle();
         // 将参数设为null，帮助垃圾回收
-        params = null;
+        // params = null;
     }
 }
 
@@ -238,13 +1004,6 @@ function getNextText(ocrResult,targetText) {
         return null;
     }
     for (let i = 0; i < ocrResult.length; i++) {
-        // console.log("----------------")
-        // console.log("D1 :",ocrResult[i][1][0])
-        // console.log("D2 :",ocrResult[i][1])
-        // console.log(ocrResult[0][0][i][1][0])
-        // console.log(targetText)
-
-
       if (ocrResult[i][1][0].replace(/[.,]/g, '') === targetText.replace(/[.,]/g, '')) {
         // 如果目标文本不是最后一个，返回下一个文本
         if (i + 1 < ocrResult.length) {
@@ -273,17 +1032,13 @@ function select(ocrResults, targetText,exactMatch) {
     }
     for (let i = 0; i < ocrResults[0].length; i++) {
         let item = ocrResults[0][i];
-        // console.log(item)
+        // console.log("item :",item[1][0])
         if (exactMatch) {
-            // console.log("进行精准查询 :",item[1][0])
             if (item[1][0] === targetText) {
-                // console.log("找到目标文本:", item);
                 return item;
             }
         }else{
-            // console.log("   * 进行模糊查询 :",item[1][0])
             if (item[1][0].includes(targetText)) {
-                // console.log("模糊查找目标文本:", item.text);
                 return item;
             }
         }
@@ -309,14 +1064,10 @@ function selclick(reData,src,exactMatch){
         // let x_phone = (centerX / 1285) * device.height;
         // let y_phone = (centerY / 720) * device.width;
 
-        // console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
         // console.log(`selclick-点击 ${src}: x=${centerX}, y=${centerY}`);
 
         // 点击坐标
-        // code = httpclick(centerX,centerY);
         code = click(centerX,centerY);
-        // console.log("code",code)
-        // code = click(x_phone,y_phone);
         if (!code) {
             console.log(`selclick ${src} 点击失败`)
             return false
@@ -337,12 +1088,8 @@ function textClick(target,x,y){
     let centerX = (target[0][0][0] + target[0][2][0]) / 2;
     let centerY = (target[0][0][1] + target[0][2][1]) / 2;
     // 将坐标从截图转换到设备屏幕坐标
-    // let x_phone = (centerX / 1285) * device.height;
-    // let y_phone = (centerY / 720) * device.width;
-    // console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
     console.log(` textClick 点击 : ${target.text} 偏移: x=${centerX}, y=${centerY}`);
     // 点击坐标
-    // click(x_phone+x,y_phone+y);
     click(centerX+x,centerY+y);
 }
 
@@ -380,7 +1127,7 @@ function checkAndClick(reData, text, x, y, delay) {
 function selectTow(ocrResults, targetText) {
     let num = 0
     for (let i = 0; i < ocrResults[0].length; i++) {
-        let item = ocrResults[i];
+        let item = ocrResults[0][i];
         if (item[1][0] === targetText) {
             num += 1;
             if (num == 2) {
@@ -395,16 +1142,9 @@ function selectTow(ocrResults, targetText) {
 function clickTow(reData,src){
     var target = selectTow(reData, src)
     if(target != null){
-        // 存在 点击
-        // console.log("开始点击",src);
-
         // 计算文本区域的中心点
         let centerX = (target[0][0][0] + target[0][2][0]) / 2;
         let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-
-        // 将坐标从截图转换到设备屏幕坐标
-        // let x_phone = (centerX / 1285) * device.height;
-        // let y_phone = (centerY / 720) * device.width;
 
         console.log(` clickTow 点击坐标: x=${centerX}, y=${centerY}`);
 
@@ -428,51 +1168,12 @@ function ClickSleep(reData, text, waitTime, exactMatch) {
     waitTime = (waitTime !== undefined) ? waitTime : 4000;
     exactMatch = (exactMatch !== undefined) ? exactMatch : false;
     if (selclick(reData, text, exactMatch)) {
-        console.log(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
+        // console.log(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
         sleep(waitTime);
         return true;
     }
     return false;
 }
-
-/** OCR识别 非数组检查
- * 
- * @returns OCR识别后的数据
- */
-function imgOcrData(img) {
-    //  拿到图片想发送给服务器进行OCR处理
-    let Data = getOcr(img,"ch");
-    if (Data) {
-        if (!Array.isArray(Data)) {
-            return null;
-        }
-        return Data;
-    }
-    return null    
-}
-
-//  识别5次
-function text3(str) {
-    for (let i = 0; i < 3 ; i++) {
-        // 截取图片
-        let img = captureScreen(); 
-        let grayscaleImage = images.grayscale(img);
-        // OCR识别一下 
-        imgRecycle(img)
-        // 找对应的内容
-        let reData4 = getOcr(grayscaleImage,"ch");
-        imgRecycle(grayscaleImage)
-        if (reData4) {
-            // 开始查找内容
-            if (select(reData4,str)) {
-                return true
-            }
-        }
-        sleep(1000);
-    }
-    return false
-}
- 
 
 // -------------------------------- 游戏处理
 //  获取等级
@@ -586,7 +1287,7 @@ function wrong(reData) {
     let reai = select(reData, '今日不')
     if (reai) {
         selclick(reData, '今日不')
-        console.log("点击关闭广告")
+        // console.log("点击关闭广告")
         textClick(reai,920,0)
         sleep(2000);
         return true
@@ -640,9 +1341,9 @@ function create(reData) {
         //  输入法是打开的情况
         let ts = className("android.widget.EditText").findOne(1000)
         if (ts) {
-            console.log("输入法打开了")
+            // console.log("输入法打开了")
             // 输入文字
-            ts.setText(getRandomName())
+            input(getRandomName());
             sleep(500);
             // 点击发送
             click(1187,683)
@@ -703,8 +1404,8 @@ function Console(reData) {
     if (menuItem) {
         let item = menuItem[0][0][0]
         let item2 = menuItem[0][1][1]
-        console.log(`请点击菜单按键: ${item}`)
-        console.log(`请点击菜单按键: ${item2}`)
+        // console.log(`请点击菜单按键: ${item}`)
+        // console.log(`请点击菜单按键: ${item2}`)
 
         if (item == 820.0 && item2 <= 157) {
             selclick(reData, '跳过')
@@ -931,7 +1632,7 @@ function Loong(reData){
         sleep(1000);
         return true
     }
-    //  ----- 滑动
+    //  ----- 滑动  storage.get("lv",0)
     if (select(reData,"请拖拽虚拟摇杆进行移动") && select(reData, '前往狭窄的')){
         //  滑动
         swipe(232, 455, 0, 455, 7000);    
@@ -965,10 +1666,10 @@ function Loong(reData){
         clickWithDelay(1195,595,700);  // 技能释放频率
         // click(1195,441);  // 战斗自动锁定
         // click(1195,367);  // 复活时自动返回
-        clickWithDelay(1195,297,700);  // 队伍共享目标
-        clickWithDelay(642,443,50);  // 结束 说明弹窗
-        clickWithDelay(1195,224,1500);  // 围绕队长战斗
-        clickWithDelay(642,443,70);  // 结束 说明弹窗
+        // clickWithDelay(1195,297,700);  // 队伍共享目标
+        // clickWithDelay(642,443,50);  // 结束 说明弹窗
+        // clickWithDelay(1195,224,1500);  // 围绕队长战斗
+        // clickWithDelay(642,443,70);  // 结束 说明弹窗
         clickWithDelay(1235,41,2000); // 关闭窗口
         return true
     }
@@ -981,10 +1682,10 @@ function Loong(reData){
         clickWithDelay(1195,595,700);  // 技能释放频率
         // click(1195,441);  // 战斗自动锁定
         // click(1195,367);  // 复活时自动返回
-        clickWithDelay(1195,297,700);  // 队伍共享目标
-        clickWithDelay(642,443,50);  // 结束 说明弹窗
-        clickWithDelay(1195,224,1500);  // 围绕队长战斗
-        clickWithDelay(642,443,70);  // 结束 说明弹窗
+        // clickWithDelay(1195,297,700);  // 队伍共享目标
+        // clickWithDelay(642,443,50);  // 结束 说明弹窗
+        // clickWithDelay(1195,224,1500);  // 围绕队长战斗
+        // clickWithDelay(642,443,70);  // 结束 说明弹窗
         clickWithDelay(1235,41,2000); // 关闭窗口
         return true
     }
@@ -1158,7 +1859,7 @@ function closeX(reData){
 
     // 活力补充
     if (checkAndClick(reData, '活力补充', 950, 164, 2000)) return true;
-    // if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
+    if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
 
     if (select(reData,"输入数字") &&  selclick(reData,"取消") ) {
         sleep(2000);
@@ -1215,202 +1916,6 @@ function getData(v, x, y, width, height) {
     return result;
 }
 
-
-// 排行榜喊话
-function Ranking(reData) {
-/**
- * 打开排行榜界面
- * 1.获取当前排行榜角色的战斗力
- * 2.记录战斗力点击进入个人界面
- * 3.点击对话
- * 4.开始输入广告文本
- * 5.输入完毕就对话列表
- *          需要存的值为  喊了话的战斗力 e_war  当前职业  e_career     当前职业喊的数量  e_count
- *                     storage.put(today,{e_career:'战斗力 (战士)', e_war:"", e_count:0 ,e_time:0})
- */
-    console.log("- 排行榜喊话")
-
-    //  输入法是打开的情况
-    let ts = className("android.widget.EditText").findOne(1000)
-    if (ts) {
-        console.log("输入法打开了")
-        // 输入文字
-        ts.setText(text1)
-        sleep(500);
-        // 点击发送
-        click(1187,683)
-        sleep(500);
-        clickWithDelay(633,105,2000); // 关闭对话
-        clickWithDelay(633,40,1000);  // 关闭对话框
-        return true
-    }
-    let care = storage.get(today)
-    console.log("  * 记录的数据 :", care)
-    if (select(reData,"聊天") && select(reData,"门派")) {
-        // 请输入内容
-        selclick(reData,"请输入内容")
-        return true
-    }
-
-    console.log("  * 其他玩家信息")
-    //  进入对话界面前
-    if (select(reData,"其他玩家信息")) {
-        if (selclick(reData,"确认",true)) {
-            sleep(500);
-            clickWithDelay(48,33,1000); // 屏蔽了退出去
-            return true
-        }
-        let dh = select(reData,"对话")
-        if (dh) {
-            textClick(dh,0,-30)
-            return true
-        }
-        // 等待切换界面
-        if (!text3("请输入")) {
-            console.log("该角色不存在")
-            // toast("未等到要点的界面")
-            // clickWithDelay(45,33,1000);
-            back();
-        } 
-        return true
-    }
-
-    console.log("  * 更换职业")
-    // 检查当前喊话进度  更换职业
-    if (care.e_count == 100) {
-        let index = careers.indexOf(care.e_career); // 当前职业的index
-        if (index == careers.length -1) {
-            // 一轮喊完了  休息一小时
-            console.log("一轮喊完了")
-            storage.put(today,{e_career:"战士", e_war:"", e_count:0 ,e_time:addRandomMinutes(1,2)})
-        }else{
-            console.log("更换职业")
-            storage.put(today,{e_career:careers[index+1], e_war:"", e_count:0 ,e_time:0})
-        }
-        return false
-    }
-
-    // 在排行榜界面
-    console.log(`  * 是否在这个界面 :${care.e_career},`,)
-    if (select(reData,"每日服务器")) {
-        // 点击战斗力按钮
-        console.log("  * 选择职业 下拉框")
-        // 选择职业 下拉框
-        if (select(reData,"战士") && select(reData,"法师")) {
-            return selclick(reData, care.e_career.trim());
-        }
-        
-        // 没有选择分组
-        console.log("  * 全部",care.e_career.trim())
-        if (select(reData,"全部")) { // 才打开不是当前分组
-            if (selclick(reData,"全部")) {
-                return 
-            }
-        }
-        if (select(reData, care.e_career.trim()) == null){
-            console.log("select(reData, care.e_career.trim())",select(reData, care.e_career.trim()))
-            if (selclick(reData,"战斗力（".trim()) || selclick(reData,"战斗力 (".trim())) {
-                return
-            } 
-        }
-        console.log("  * 记录战斗力")
-        // 记录战斗力
-        if (select(reData,care.e_career.trim())) {
-            // 开始挑选
-            console.log("  * 开始挑选",care.e_war)
-            // toast(care.e_count)
-            // 重新截图
-            let img = captureScreen(); 
-            let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
-            imgRecycle(img);
-            let crop = getOcr(croppedImage);
-            imgRecycle(croppedImage);
-            if (care.e_war == 0) {
-                //  未点击过
-                if (crop) {
-                    // console.log(crop[0][1])
-                    storage.put(today,{e_career:care.e_career, e_war:crop[0][0][1][0], e_count:1 ,e_time:0})
-                    if (selclick(reData,crop[0][1][0])) {
-                        return true;
-                    }
-                }
-            }else{
-                let startTime = Date.now();  // 获取当前时间（毫秒）
-                while (Date.now() - startTime < 5*1000*60) {  // 等待5分钟
-                    let img = captureScreen();
-                    let grayscaleImage = images.grayscale(img); 
-                    // let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
-                    // let croppedImage2 = images.clip(img, 200, 645, 48, 38); // 100 排名
-                    let care = storage.get(today)  
-                    imgRecycle(img);
-
-                    let reData = getOcr(grayscaleImage);
-                    // let crop = getOcr(croppedImage,"ch");
-                    // let crop2 = getOcr(croppedImage2,"ch");
-                    if (reData) {
-                        let crop = getData(reData, 1097, 305, 91, 402);
-                        let crop2 = getData(reData,  200, 645, 48, 38);
-
-                        if (select(reData,"其他玩家")) {
-                            break
-                        }
-                        // console.log("Data ",crop2[0][1][0])
-                        // console.log("Data ",crop2.length)
-                        // imgRecycle(croppedImage);
-                        // imgRecycle(croppedImage2);
-                        // console.log("获取排名 :")
-                        if (crop2) {
-                            // console.log(crop2)
-                            if (crop2.length > 0) {
-                                if (crop2[0][1][0].trim() == 100 ) {
-                                    console.log("到头了",crop2);
-                                    // 点击右上角退出
-                                    clickWithDelay(1235,41,2000); // 关闭窗口
-                                    return true
-                                }
-                            }
-                        }
-                        // console.log("获取排名结束 :",care.e_war)
-                        //  截图获得战力是否匹配我要的
-                        // console.log("内置数据 ",care)
-                        if (crop) {
-                            let nt = getNextText(crop,care.e_war)
-                            // console.log("获取的nt :",nt)
-                            if (nt != null) {
-                                console.log("  * 点击这个 :")
-                                selclick(reData,nt);
-                                storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
-                                // sleep(1500);
-                                return true;
-                                // break
-                            }
-                            console.log("  @ 滑动一下")
-                            swipe(1128, 657, 1128, 375, 200)
-                        }
-                    }else{
-                        break
-                    }
-                }
-            }
-            return
-        }
-    }
- 
-    // 打开了 设置
-    if (select(reData,"快速设置")) {
-        if (selclick(reData,"排位",true)) {
-            return true
-        }
-    }
-
-    // 在游戏界面
-    if (select(reData,"近距",true) || select(reData,"卡组变更",true)||select(reData,"安全",true) ) {
-        console.log("在游戏界面")
-        clickWithDelay(1230,29,1200);
-        return 
-    }
-}
-
 function packageNameEndsWith(suffix) {
     // 查找所有的控件
     let nodes = className("android.widget.FrameLayout").find();
@@ -1427,20 +1932,16 @@ function packageNameEndsWith(suffix) {
     return false;  // 没有找到匹配的控件，返回 false
 }
 
+// 初始化
 function init() {
     // 检查权限 无障碍
     if (!auto.service) {
-        auto();
         throw new Error("请求无障碍权限失败");
-    }
-    // 锁屏了就打开
-    if (!device.isScreenOn()) {
-        device.wakeUpIfNeeded() // 唤醒
-        swipe(232, 1000, 232, 200, 800);  // 打开
     }
     if (!requestScreenCapture(true)) {
         // throw new Error("请求屏幕捕获权限失败");
-        console.log("请求屏幕捕获权限失败")
+        log_z("请求屏幕捕获权限失败")
+        sleep(5000);
     }
     if (!packageNameEndsWith("mir4global")) {
         app.launch('com.wemade.mir4global')
@@ -1448,6 +1949,30 @@ function init() {
         return true
     } 
     return false
+}
+
+/** 截图函数
+ * 
+ * @param {boolean} grayscale 是否进行二级化处理  去除色彩
+ * @returns 
+ */
+function getimg(grayscale) {
+    let img ;
+    try {
+        img = captureScreen();
+        if (img == null) {
+            return null
+        }
+        // 是否二级化 
+        if (grayscale) {
+            let grayscaleImage = images.grayscale(img);
+            return grayscaleImage
+        }
+        return img
+    } catch (error) {
+        console.error("截图失败 ",error)
+    }
+    return null
 }
 
 /**
@@ -1461,10 +1986,10 @@ function main(){
     }
     // 进行截图
     // 裁剪等级
-    let img = captureScreen(); 
-    if (!img) {
-        console.log("截图失败");
-        return ;
+    let img = getimg(false)
+    if (img == null) {
+        sleep(5000);
+        return
     }
     // 对图片二级化处理 
     let grayscaleImage = images.grayscale(img);
@@ -1481,7 +2006,7 @@ function main(){
     imgRecycle(imgtext)
 
 
-    let Data = imgOcrData(grayscaleImage);
+    let Data = getOcr(grayscaleImage);
     imgRecycle(grayscaleImage);
     if (Data) {
         //  处理弹窗
@@ -1526,9 +2051,9 @@ function main(){
 
         if (select(Data,"和平",true) || select(Data,"近距",true) || select(Data,"卡组变更",true)) {
             let lvData = getOcr(croppedImage);
-            imgRecycle(croppedImage);
             getlv(lvData) // 获取等级
         }
+        imgRecycle(croppedImage);
 
         //  创建角色
         if (create(Data)) {return } 
@@ -1538,33 +2063,35 @@ function main(){
         if (Console(Data)) {return } 
 
         let lv = storage.get("lv",0)
-        console.log(`人物当前等级: ${lv} `); // 当前等级
+        log_z(`人物当前等级: ${lv} `); // 当前等级
 
         // 关闭所有的窗口
         if (closeX(Data)) {return } 
+ 
 
-        // TODO 排行榜 是否是第一个账号
-        if (lv >= 10 ) {
-            return Ranking(Data)
-        }
-        if (lv < 10) {
-            if (checkAndClick(Data, '指南', 1226, 38, 2000)) return true;
-        }
+        if (lv > 10) {
+            throw new Error("到达十级");
+        } 
 
         //  是否在自动做任务
-        console.log(`是否在自动做任务: ${blue.blue}`)
+        log_z(`是否在自动做任务: ${blue.blue}`)
+        // console.log(`是否在自动做任务: ${blue.blue}`)
         if (blue.blue) {
             click(945,574); // 奔跑
             sleep(2000);
         }else{
+            if (select(Data,"芊菲的下落") && select(Data,"突击队长")) {
+                console.log(" 等级达到了");
+                return 
+            }
             // 加入限定的条件 
-            if (select(Data,"和平",true) || select(Data,"近距",true) || select(Data,"卡组变更",true) || select(Data,"安全",true) || select(Data,"普通",true)) {
+            if (select(Data,"和平",true) || select(Data,'安全',true) || select(Data,"近距",true) || select(Data,"卡组变更",true)  || select(Data,"普通",true)) {
                 console.log(" . ");
-                clickWithDelay(1122.5,187,2000);    
+                clickWithDelay(1122,187,2000); 
             }
         }
 
-        // console.log(`剧情任务1`)
+        // log_z(`剧情任务1`)
         //  ********   剧情任务
         // 漆黑的密道
         if (select(Data, '漆黑的')) {
@@ -1590,7 +2117,7 @@ function main(){
             return
         }    
 
-        // console.log(`剧情任务2`)
+        // log_z(`剧情任务2`)
         // 危险的救援计划
         if (select(Data, '危险的救')) {
             if (select(Data, '与芊菲对话')) {
@@ -1605,7 +2132,7 @@ function main(){
             }
             return
         }
-        // console.log(`剧情任务3`)
+        // log_z(`剧情任务3`)
         // 武功修炼
         if (select(Data, '武功修炼')) {
             if (select(Data, '摧毁木') && selclick(Data, '跳过')) {
@@ -1615,7 +2142,7 @@ function main(){
             }
             return
         }
-        // console.log(`剧情任务4`)
+        // log_z(`剧情任务4`)
         // 岁月静好
         if (select(Data, '岁月静好')) {
             if (select(Data, '跳过')) {
@@ -1645,7 +2172,7 @@ function main(){
             }
             return
         }
-        // console.log(`剧情任务5`)
+        // log_z(`剧情任务5`)
         // 追踪痕迹
         if (select(Data, '追踪痕迹')) {
             if (select(Data, '寻找芊')) {  // 精灵
@@ -1707,7 +2234,7 @@ function main(){
             }
             return
         }
-        // console.log(`剧情任务6`)
+        // log_z(`剧情任务6`)
         // 黑暗之影      委托
         if (select(Data, '黑暗之影')) {
             if (select(Data, '请点击活')) {
@@ -1851,7 +2378,6 @@ function main(){
             return sleep(3000);
         }
         if (lv < 10 ) {
-            console.log("点击画面")
             clickWithDelay(223,560,50) ; // 点击画面
             clickWithDelay(223,560,50) ; // 点击画面
             clickWithDelay(223,560,50) ; // 点击画面
@@ -1859,32 +2385,9 @@ function main(){
     }
 }
 
-// storage.put(today,{e_career:'弩手', e_war:0, e_count:0 ,e_time:0}) 
-// for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 1000; i++) {
     main()
-// }
-
-// console.log(storage.get(today))
+}
 
 
-
-
-// let img = captureScreen();
-// let grayscaleImage = images.grayscale(img); 
-
-// let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
-// let croppedImage2 = images.clip(img, 200, 645, 48, 38); // 100 排名
-
-// let reData = getOcr(croppedImage2);
-// console.log("data",reData)
-// selclick(reData,"排位")
-
-
-
-// console.log(storage.get(today))
-
-// swipe(1128, 657, 1128, 475, 333)
-
-// shell("adb shell am force-stop org.mutou.mutou.v6");
-// powerDialog()
-
+// 10:55:23   11:34      练级数据 37分钟到达10级多
