@@ -6,9 +6,15 @@ let filePath = "/storage/emulated/0/Documents/config.txt";
 // 原始别名
 let Bm = readLastLine().trim()
 // console.log("Bm :", Bm )
-let Log = true
+let Log = false
 
 let Servers = {
+    "73940854": {
+		"Id": "2",
+		"Server": "ASIA073",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
     "5e19856c-7435-4426-813d-4c0b3899399b": {
 		"Id": "000",
 		"Server": "SA011",
@@ -821,10 +827,10 @@ function log_z(message) {
     }
 }
 
-// let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
+let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 // console.log("SERVER_URL :",SERVER_URL)
 
-let SERVER_URL = "http://192.168.1.140:8001"
+// let SERVER_URL = "http://192.168.1.140:8001"
 
 // 读取文件并返回最后一行
 function readLastLine() {
@@ -1300,6 +1306,12 @@ function wrong(reData) {
         // console.log("点击界面进入游戏");
         selclick(reData, '确认',true)
         throw new Error(" 正在更新")
+    }
+    if (select(reData,"更新后")) { 
+        selclick(reData,"确认",true);
+        // SetCom("pm clear com.wemade.mir4global")
+        // throw new Error("游戏更新");
+        return true;
     }
     log_z("1")
     // 关闭广告 -> 今日不

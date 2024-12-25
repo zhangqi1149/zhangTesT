@@ -1260,6 +1260,10 @@ function wrong(reData) {
         return true
     }
 
+    // 重新尝试
+    if (select(reData, "重新尝试")) {
+        return ClickSleep(reData, '重新尝试');
+    }
     if (selclick(reData,"Google登录")) {
         sleep(5000);
         return 
@@ -1326,10 +1330,7 @@ function wrong(reData) {
         // log_z("需要关闭游戏重新登录")
         return true;
     }
-    // 重新尝试
-    if (select(reData, "重新尝试")) {
-        return ClickSleep(reData, '重新尝试');
-    }
+
     // 据点复活
     if (selclick(reData, "据点复活")) {
         // log_z("点击据点复活，等待5秒");

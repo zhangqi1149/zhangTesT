@@ -14,7 +14,7 @@
  *  检查是否可以喊话
  *  选择排行榜的人进行密语
  */
-let Log = true   // 是否显示打印内容
+let Log = false   // 是否显示打印内容
 let storage = storages.create("ABC");
 let text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
 let today = new Date().toISOString().split('T')[0];         // 获取今日日期，格式为 YYYY-MM-DD
@@ -842,6 +842,28 @@ let Servers = {
 
 let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port  // 拿到服务器地址
 
+manage_value()
+//  管理存储值
+function manage_value() {
+    // 获取保存的所有键列表，如果没有保存过键列表，则默认为空数组
+    var keys = storage.get("keysList", []);
+    // 如果键不存在，将今天的日期添加到 keysList 中
+    if (!keys.includes(today)) {
+        keys.push(today);                 // 当前职业 : e_career  喊了话的战斗力 : e_war  当前职业喊的数量 : e_count  停止时间 : e_time
+        storage.put(today,{e_career:'法师', e_war:0, e_count:0 ,e_time:0})  // 职业  战力值  喊话的数量  休息时间
+        storage.put("keysList", keys);  // 更新键列表
+    }
+    
+    // 遍历之前保存的所有键，并删除不符合条件的键
+    keys.forEach(function(key) {
+        // console.log(key)
+        if (key !== today) {
+            storage.remove(key);  // 删除不是今天的数据
+        }
+    });
+}
+
+
 function log_z(message) {
     if (Log) {
         console.log("  * ",message);
@@ -1246,7 +1268,15 @@ function wrong(reData) {
         sleep(2000);
         return
     }
-    
+
+    if (select(reData,"屏蔽")) {
+        if (selclick(reData,"确认",true)) {  // 被屏蔽了 
+            sleep(1000);
+            clickWithDelay(48,33,1000);
+            return true
+        }
+    }
+
     if (selclick(reData,"确定",true)|| selclick(reData,"确认",true)) {
         return true
     }
@@ -1360,102 +1390,110 @@ function Ranking(reData) {
      *          需要存的值为  喊了话的战斗力 e_war  当前职业  e_career     当前职业喊的数量  e_count
      *                     storage.put(today,{e_career:'战斗力 (战士)', e_war:"", e_count:0 ,e_time:0})
      */
-        let care = storage.get(today)
-        // log_z("排行榜喊话")
-        log_z(`排行榜进度 :${care.e_career}`)
-        //  输入法是打开的情况
-        try {
-            let ts = className("android.widget.EditText").findOne(1000)
-            if (ts) {
-                input(text);  // 输入文字
-                sleep(500);
-                clickWithDelay(1187,683,1000); // 点击发送
-                clickWithDelay(633,105,1000); // 关闭对话
-                clickWithDelay(633,40,1000);  // 关闭对话框
-                return true
-            }
-        } catch (error) {
-            console.error("Ranking  Error during database operation:", error);
-            return 
-        }
-    
-        //  对话框
-        if (select(reData,"聊天") && select(reData,"门派")) {
-            // 请输入内容
-            if (selclick(reData,"请输入内容")) {
-                return true;
-            }
+    let care = storage.get(today)
+    // log_z("排行榜喊话")
+    log_z(`排行榜进度 :${care.e_career}`)
+    //  输入法是打开的情况
+    try {
+        let ts = className("android.widget.EditText").findOne(1000)
+        if (ts) {
+            input(text);  // 输入文字
+            sleep(500);
+            clickWithDelay(1187,683,1000); // 点击发送
+            clickWithDelay(633,105,1000); // 关闭对话
+            clickWithDelay(633,40,1000);  // 关闭对话框
             return true
         }
-    
-        //  进入对话界面
-        if (select(reData,"其他玩家信息")) {
-            if (selclick(reData,"确认",true)) {  // 被屏蔽了 
-                sleep(1000);
-                clickWithDelay(48,33,1000);
-                return true
-            }
-            let dh = select(reData,"对话")
-            if (dh) {
-                textClick(dh,0,-30)
-                sleep(2000);
-                // 等待切换显示
-                return true
-            }
-            // 等待切换界面
-            if (!text3("请输入")) {
-                console.log("该角色不存在")
-                toast("未等到要点的界面")
-                clickWithDelay(48,33,1000);
-                // back();
-            } 
+    } catch (error) {
+        console.error("Ranking  Error during database operation:", error);
+        return 
+    }
+
+    //  对话框
+    if (select(reData,"聊天") && select(reData,"门派")) {
+        // 请输入内容
+        if (selclick(reData,"请输入内容")) {
+            return true;
+        }
+        return true
+    }
+
+    //  进入对话界面
+    if (select(reData,"其他玩家信息")) {
+        if (selclick(reData,"确认",true)) {  // 被屏蔽了 
+            sleep(1000);
+            clickWithDelay(48,33,1000);
             return true
         }
-        
-        // 检查当前喊话进度  更换职业
-        if (care.e_count == 100) {
-            let index = careers.indexOf(care.e_career); // 当前职业的index
-            if (index == careers.length -1) {
-                // 一轮喊完了  休息一小时
-                console.log("一轮喊完了")
-                storage.put(today,{e_career:"法师", e_war:"", e_count:0 ,e_time:addRandomMinutes(1,2)})
-            }else{
-                console.log("更换职业")
-                storage.put(today,{e_career:careers[index+1], e_war:"", e_count:0 ,e_time:0})
-            }
-            return false
+        let dh = select(reData,"对话")
+        if (dh) {
+            textClick(dh,0,-30)
+            sleep(2000);
+            // 等待切换显示
+            return true
         }
+        // 等待切换界面
+        if (!text3("请输入")) {
+            console.log("该角色不存在")
+            toast("未等到要点的界面")
+            clickWithDelay(48,33,1000);
+            // back();
+        } 
+        return true
+    }
     
-        // 在排行榜界面
-        if (select(reData,"每日服务器")) {
-            // 选择职业 下拉框
-            if (select(reData,"战士") && select(reData,"法师")) {
-                return selclick(reData, care.e_career.trim());
-            }
-            // 没有选择分组
-            if (select(reData,"全部") || select(reData, care.e_career.trim()) == null) { // 才打开不是当前分组
-                if (selclick(reData,"全部") || selclick(reData,"战斗力（")) {
-                    return 
-                }
+    // 检查当前喊话进度  更换职业
+    if (care.e_count == 100) {
+        let index = careers.indexOf(care.e_career); // 当前职业的index
+        if (index == careers.length -1) {
+            // 一轮喊完了  休息一小时
+            console.log("一轮喊完了")
+            storage.put(today,{e_career:"法师", e_war:"", e_count:0 ,e_time:addRandomMinutes(1,2)})
+        }else{
+            console.log("更换职业")
+            storage.put(today,{e_career:careers[index+1], e_war:"", e_count:0 ,e_time:0})
+        }
+        return false
+    }
+
+    // 在排行榜界面
+    if (select(reData,"每日服务器")) {
+        // 选择职业 下拉框
+        if (select(reData,"战士") && select(reData,"法师")) {
+            return selclick(reData, care.e_career.trim());
+        }
+        // 没有选择分组
+        if (select(reData,"全部") || select(reData, care.e_career.trim()) == null) { // 才打开不是当前分组
+            if (selclick(reData,"全部") || selclick(reData,"战斗力（")) {
+                return 
             }
         }
-    
-        // 记录战斗力
-        if (select(reData,care.e_career)) {
-            // 开始挑选
-            log_z(`开始挑选 ${care.e_war}`)
+    }
+
+    // 记录战斗力
+    if (select(reData,care.e_career)) {
+        // 开始挑选
+        log_z(`开始挑选 ${care.e_war}`)
+        let startTime = Date.now();  // 获取当前时间（毫秒）
+        let img
+        let croppedImage
+        let croppedImage2
+        let crop
+        let crop2
+        while (Date.now() - startTime < 2*60*1000) {   // 找3分钟找不到返回
             // 重新截图
-            let img = captureScreen(); 
-            let croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
-            let croppedImage2 = images.clip(img, 200, 645, 48, 38); // 100 排名    
-            let crop = getOcr(croppedImage);
-    
-            let crop2 = getOcr(croppedImage2);
+            img = captureScreen(); 
+            croppedImage = images.clip(img, 1097, 305, 91, 402); // 战斗力
+            croppedImage2 = images.clip(img, 200, 645, 48, 38); // 100 排名  
+
+            crop = getOcr(croppedImage);
+            crop2 = getOcr(croppedImage2);
+
             if (care.e_war == 0) {
                 // console.log(storage.get(today))
                 //  未点击过
                 if (crop) {
-                    console.log(crop[0][0][1][0])
+                    // console.log(crop[0][0][1][0])
                     storage.put(today,{e_career:care.e_career, e_war:crop[0][0][1][0], e_count:1 ,e_time:0})
                     if (selclick(reData,crop[0][0][1][0])) {
                         return true;
@@ -1463,45 +1501,52 @@ function Ranking(reData) {
                 }
             }else{
                 let nt = getNextText(crop,care.e_war)
-                console.log("nt 下一个 : " ,nt)
                 if ( nt == null) {
-                    console.log("向上滑动")
-                    swipe(600, 400, 600, 345, 500); 
-                    sleep(2000);
+                    log_z("向上滑动")
+                    // swipe(600, 400, 600, 345, 500); 
+                    // sleep(2000);
+                    swipe(1128, 660, 1128, 457, 3000);
                     if (crop2[0].length > 0) {
+                        log_z(`到头了 : ${crop2[0][0][1][0]}`);
                         if (crop2[0][0][1][0] == 100 ) {
-                            console.log("到头了",crop2);
                             // 点击右上角退出
                             clickWithDelay(1235,41,2000); // 关闭窗口
+                            return true;
                         }
                     }
-                    return true;
+                    // return true;
                 }else{
+                    log_z("我要点击了 ")
+                    // console.log("nt 下一个 : " ,nt)
+                    img = captureScreen();
+                    let grayscaleImage = images.grayscale(img);
+                    reData = getOcr(grayscaleImage);
                     selclick(reData,nt);
                     storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
-                    sleep(1500);
+                    sleep(500);
                     return true;
                 }
             }
-            return
         }
-    
-        // 在游戏界面
-        if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true)||select(reData,"安全",true) ) {
-            log_z("在游戏界面")
-            clickWithDelay(1230,29,2000);
-            clickWithDelay(1038.5,630.5,1000);
-            return
-        }
+        return
+    }
 
-        // 打开了 设置
-        if (select(reData,"快速设置")) {
-            log_z("快速设置")
-            if (selclick(reData,"排位",true)) {
-                return true
-            }
+    // 在游戏界面
+    if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true)||select(reData,"安全",true) ) {
+        log_z("在游戏界面")
+        clickWithDelay(1230,29,2000);
+        clickWithDelay(1038.5,630.5,1000);
+        return
+    }
+
+    // 打开了 设置
+    if (select(reData,"快速设置")) {
+        log_z("快速设置")
+        if (selclick(reData,"排位",true)) {
+            return true
         }
     }
+}
 
 // 主函数
 function main(){
@@ -1590,5 +1635,16 @@ function main(){
 main()
  
 
-console.log(storage.get(today))
+// console.log(storage.get(today))
 // storage.put(today,{e_career:'法师', e_war:0, e_count:0 ,e_time:0})
+
+
+// console.time("tobase64");  // 开始计时
+// for (let i = 0; i < 10; i++) {
+//     // swipe(600, 400, 600, 335, 500); //原始滑动
+
+//     // gesture(700, [600, 700], [600, 450])
+//     swipe(1128, 660, 1128, 457, 1600);
+//     console.log(`当前输出次数 ${i}`)
+// }
+// console.timeEnd("tobase64");  // 输出执行时间
