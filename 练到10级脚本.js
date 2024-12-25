@@ -1881,6 +1881,7 @@ function closeX(reData){
     }
 
     if (!select(reData,"前往狭窄的通道") && select(reData,"请拖拽虚拟摇杆进行移动") ) {
+        storage.put("lv", 0);
         swipe(232, 455, 232, 200, 4000);
         return true
     }
@@ -2081,12 +2082,11 @@ function main(){
             sleep(2000);
         }else{
             if (select(Data,"芊菲的下落") && select(Data,"突击队长")) {
-                console.log(" 等级达到了");
-                return 
+                throw new Error("等级达到了")
             }
             // 加入限定的条件 
             if (select(Data,"和平",true) || select(Data,'安全',true) || select(Data,"近距",true) || select(Data,"卡组变更",true)  || select(Data,"普通",true)) {
-                console.log(" . ");
+                // console.log(" . ");
                 clickWithDelay(1122,187,2000); 
             }
         }
@@ -2385,9 +2385,9 @@ function main(){
     }
 }
 
-for (let i = 0; i < 1000; i++) {
+// for (let i = 0; i < 1; i++) {
     main()
-}
+// }
 
 
 // 10:55:23   11:34      练级数据 37分钟到达10级多
