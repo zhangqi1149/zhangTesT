@@ -25,9 +25,7 @@ let Bm = storage.get("Bm",0);
 if ( Bm == 0) {
     Bm = readLastLine().trim()
     storage.put("Bm", Bm);
-    // console.log("storage.",storage.get(Bm))
 }
-// console.log("Bm",Bm)
 
 let Servers = {
     "73940854": {
@@ -856,13 +854,12 @@ function manage_value() {
     
     // 遍历之前保存的所有键，并删除不符合条件的键
     keys.forEach(function(key) {
-        // console.log(key)
+        // console.log("Removing key:", key);
         if (key !== today) {
             storage.remove(key);  // 删除不是今天的数据
         }
     });
 }
-
 
 function log_z(message) {
     if (Log) {
@@ -917,6 +914,7 @@ function init() {
     }
     if (!packageNameEndsWith("mir4global")) {
         app.launch('com.wemade.mir4global')
+        log_z("启动游戏")
         sleep(3000);
         return true
     } 
@@ -1051,6 +1049,25 @@ function selclick(reData,src,exactMatch){
     return false
 }
 
+/** 查找后执行点击操作并等待指定时间。
+ *
+ * @param {Array} reData - OCR 结果的数组，每个元素通常包含识别出的文本和其他信息。
+ * @param {string} text - 要查找的文本。
+ * @param {number} waitTime - 点击后等待的时间，单位为毫秒。
+ * @param {boolean} [exactMatch=false] - 是否进行精确匹配。如果为 `true`，则只匹配完全相同的文本；如果为 `false`（默认值），则进行模糊匹配。
+ *
+ */
+function ClickSleep(reData, text, waitTime, exactMatch) {
+    waitTime = (waitTime !== undefined) ? waitTime : 5000;
+    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
+    if (selclick(reData, text, exactMatch)) {
+        // log_z(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
+        sleep(waitTime);
+        return true;
+    }
+    return false;
+}
+
 /** 查找内容并返回。
  *  
  * @param {Array} reData - OCR 结果的数组，每个元素通常包含识别出的文本和其他信息。
@@ -1125,13 +1142,12 @@ function checkAndClick(reData, text, x, y, delay) {
     return false;
 }
 
-//  识别5次
+//  识别3次
 function text3(str) {
     for (let i = 0; i < 3 ; i++) {
         // 截取图片
         let img = captureScreen(); 
         let grayscaleImage = images.grayscale(img);
-        // OCR识别一下
         // 找对应的内容
         let reData4 = getOcr(grayscaleImage);
         if (reData4) {
@@ -1155,8 +1171,12 @@ function getNextText(ocrResult,targetText) {
       if (ocrResult[0][i][1][0].trim().replace(/[.,]/g, '') === targetText.replace(/[.,]/g, '')) {
         // 如果目标文本不是最后一个，返回下一个文本
         if (i + 1 < ocrResult[0].length) {
-            // console.log("找到了 : ",ocrResult[0][i + 1][1][0])
-          return ocrResult[0][i + 1][1][0];
+            // console.log("parseInt(ocrResult[0][i][1][0].trim().replace(/[.,]/g, ''))",parseInt(ocrResult[0][i][1][0].trim().replace(/[.,]/g, '')) )
+            // console.log("parseInt(targetText.replace(/[.,]/g, ''))",parseInt(targetText.replace(/[.,]/g, '')))
+            if (parseInt(ocrResult[0][i + 1][1][0].trim().replace(/[.,]/g, '')) < parseInt(targetText.replace(/[.,]/g, ''))){
+                // console.log("找到了 : ",ocrResult[0][i + 1][1][0])
+                return ocrResult[0][i + 1][1][0];
+            }
         } else {
           return null; // 如果目标文本是最后一个，返回 null
         }
@@ -1164,7 +1184,6 @@ function getNextText(ocrResult,targetText) {
     }
     return null; // 如果没有找到目标文本，返回 null
 }
-
 // 关闭窗口
 function closeX(reData){
     if (select(reData, "是否结束游戏") || select(reData, '龙再炼')||select(reData, '只攻击玩家')) {
@@ -1201,7 +1220,7 @@ function closeX(reData){
 
     // 活力补充
     if (checkAndClick(reData, '活力补充', 950, 164, 2000)) return true;
-    if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
+    // if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
 
     if (select(reData,"输入数字") &&  selclick(reData,"取消") ) {
         sleep(2000);
@@ -1394,7 +1413,6 @@ function Ranking(reData) {
      * 4.开始输入广告文本
      * 5.输入完毕就对话列表
      *          需要存的值为  喊了话的战斗力 e_war  当前职业  e_career     当前职业喊的数量  e_count
-     *                     storage.put(today,{e_career:'战斗力 (战士)', e_war:"", e_count:0 ,e_time:0})
      */
     let care = storage.get(today)
     // log_z("排行榜喊话")
@@ -1403,11 +1421,14 @@ function Ranking(reData) {
     try {
         let ts = className("android.widget.EditText").findOne(1000)
         if (ts) {
+            sleep(200);
             input(text);  // 输入文字
             sleep(500);
             clickWithDelay(1187,683,1000); // 点击发送
             clickWithDelay(633,105,1000); // 关闭对话
-            clickWithDelay(633,40,1000);  // 关闭对话框
+            // clickWithDelay(633,40,1000);  // 关闭对话框
+            clickWithDelay(1230,29,1000);
+            clickWithDelay(1038.5,630.5,1000);
             return true
         }
     } catch (error) {
@@ -1427,24 +1448,23 @@ function Ranking(reData) {
     //  进入对话界面
     if (select(reData,"其他玩家信息")) {
         if (selclick(reData,"确认",true)) {  // 被屏蔽了 
-            sleep(1000);
             clickWithDelay(48,33,1000);
             return true
         }
         let dh = select(reData,"对话")
         if (dh) {
             textClick(dh,0,-30)
-            sleep(2000);
+            textClick(dh,0,-30)
+            sleep(1500);
             // 等待切换显示
+            // 等待切换界面
+            if (!text3("请输入")) {
+                console.log("该角色不存在")
+                toast("未等到要点的界面")
+                clickWithDelay(48,33,1000);
+            } 
             return true
         }
-        // 等待切换界面
-        if (!text3("请输入")) {
-            console.log("该角色不存在")
-            toast("未等到要点的界面")
-            clickWithDelay(48,33,1000);
-            // back();
-        } 
         return true
     }
     
@@ -1454,10 +1474,13 @@ function Ranking(reData) {
         if (index == careers.length -1) {
             // 一轮喊完了  休息一小时
             console.log("一轮喊完了")
-            storage.put(today,{e_career:"法师", e_war:"", e_count:0 ,e_time:addRandomMinutes(1,2)})
+            // storage.put(today,{e_career:"法师", e_war:0, e_count:0 ,e_time:addRandomMinutes(1,2)})
+            throw new Error("一轮喊完了")
         }else{
             console.log("更换职业")
-            storage.put(today,{e_career:careers[index+1], e_war:"", e_count:0 ,e_time:0})
+            console.log(storage.get(today))
+            storage.put(today,{e_career:careers[index+1], e_war:0, e_count:0 ,e_time:0})
+            // throw new Error("更换职业")
         }
         return false
     }
@@ -1509,11 +1532,13 @@ function Ranking(reData) {
                 let nt = getNextText(crop,care.e_war)
                 if ( nt == null) {
                     log_z("向上滑动")
-                    // swipe(600, 400, 600, 345, 500); 
+                    // swipe(600, 400, 600, 345, 500);  // 原始快短的上滑
                     // sleep(2000);
-                    swipe(1128, 660, 1128, 457, 3000);
+                    // swipe(1128, 660, 1128, 457, 3000);  // 缓速向上
+
+                    swipe(1128, 660, 1128, 510, 1800);
                     if (crop2[0].length > 0) {
-                        log_z(`到头了 : ${crop2[0][0][1][0]}`);
+                        log_z(`排名 : ${crop2[0][0][1][0]}`);
                         if (crop2[0][0][1][0] == 100 ) {
                             // 点击右上角退出
                             clickWithDelay(1235,41,2000); // 关闭窗口
@@ -1529,7 +1554,6 @@ function Ranking(reData) {
                     reData = getOcr(grayscaleImage);
                     selclick(reData,nt);
                     storage.put(today,{e_career:care.e_career, e_war:nt, e_count:care.e_count + 1 , e_time:0})
-                    sleep(500);
                     return true;
                 }
             }
@@ -1540,7 +1564,7 @@ function Ranking(reData) {
     // 在游戏界面
     if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true)||select(reData,"安全",true) ) {
         log_z("在游戏界面")
-        clickWithDelay(1230,29,2000);
+        clickWithDelay(1230,29,1300);
         clickWithDelay(1038.5,630.5,1000);
         return
     }
@@ -1558,6 +1582,7 @@ function Ranking(reData) {
 function main(){
     // 初始化
     if (!init()) {
+        log_z("初始化完成")
         try {
             let ts = className("android.widget.EditText").findOne(1000)
             if (ts) {
@@ -1565,7 +1590,9 @@ function main(){
                 sleep(500);
                 clickWithDelay(1187,683,1000); // 点击发送
                 clickWithDelay(633,105,1000); // 关闭对话
-                clickWithDelay(633,40,1000);  // 关闭对话框
+                // clickWithDelay(633,40,1000);  // 关闭对话框
+                clickWithDelay(1230,29,1000);
+                clickWithDelay(1038.5,630.5,1000);
                 return true
             }
         } catch (error) {
@@ -1575,6 +1602,7 @@ function main(){
     
         let img = getimg(false)
         if (img == null) {
+            console.log("截图失败 停止5秒")
             sleep(5000);
             return
         }
@@ -1633,24 +1661,38 @@ function main(){
     
             log_z("关闭所有的弹窗")
             if (closeX(reData)) {return } // 关闭所有的弹窗
+            if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
         }
     }
 }
 
-
-main()
+// for (let i = 0; i < 1000; i++) {
+    log_z("main 执行")
+    main()
+    log_z("main 结束")
+//     // console.log(storage.get(today))
+// }
  
 
 // console.log(storage.get(today))
-// storage.put(today,{e_career:'法师', e_war:0, e_count:0 ,e_time:0})
+// storage.put(today,{e_career:'道士', e_war:0, e_count:0 ,e_time:0})
+// throw new Error("啊啊")
 
-
-// console.time("tobase64");  // 开始计时
-// for (let i = 0; i < 10; i++) {
-//     // swipe(600, 400, 600, 335, 500); //原始滑动
-
-//     // gesture(700, [600, 700], [600, 450])
-//     swipe(1128, 660, 1128, 457, 1600);
-//     console.log(`当前输出次数 ${i}`)
+// for (let i = 0; i < 20; i++) {
+//     swipe(1128, 660, 1128, 510, 1800);
 // }
-// console.timeEnd("tobase64");  // 输出执行时间
+
+/** 各个大区更新排行榜时间
+ *   SA 是 13:00 
+ *   EU  是 18:00
+ *   ASIA 是 00:00
+ *   NA  是 12:00
+ */
+
+
+
+// console.log(storage.get(today))
+
+// console.log("当前电量百分比 ",device.getBattery())
+
+ 
