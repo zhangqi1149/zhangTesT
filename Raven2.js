@@ -21,7 +21,9 @@ function packageNameEndsWith(suffix) {
     nodes = null
     return false;  // 没有找到匹配的控件，返回 false
 }
-
+if (storage.get("e_time",0) == 0){
+    storage.put("e_time",today)
+}
 let Bm = storage.get("Bm",0);
 if ( Bm == 0) {
     Bm = readLastLine().trim()
@@ -29,17 +31,29 @@ if ( Bm == 0) {
     // console.log("storage.",storage.get(Bm))
 }
 
+/** 服务器 
+ *  
+ * Eden   伊甸  
+ * Noah   挪亞
+ * Ark	  方舟
+ * Luna   露娜
+ * 
+ * 	小区   菲狄斯:Fides ,  莫爾斯 : Mors,  薩虞斯 : Salus ,  霍諾爾 : Honor ,  梅杜莎 : Metus ,  多洛爾 : Dolor,
+ *  
+*/
 let Servers = {
     // 
     "3c7a0b0c-f3d1-44bc-9613-0015f038b5f9": {
 		"Id": "3",
-		"Server": "*",
+		"Server": "Luna",
+		"Area": "Fides",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8002"
 	},
     "d597973b-b1df-4815-bc6c-a9a6350e83eb": {
 		"Id": "70",
-		"Server": "*",
+		"Server": "Luna",
+		"Area": "Fides",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8001"
 	},
@@ -56,802 +70,6 @@ let Servers = {
 		"OCRip":"http://192.168.1.139",
 		"port" : "8001"
 	},
-	"145f0de7-ea15-4757-a0b6-28c4080cadee": {
-		"Id": "200",
-		"Server": "SA011",
-		"OCRip":"http://192.168.1.139",
-		"port" : "8001"
-	},
-	"befb893f": {
-		"Id": "199",
-		"Server": "SA012",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"99863ada-8921-4df4-a8d0-a6d5feaa6f35": {
-		"Id": "198",
-		"Server": "SA013",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"418527e2-ca21-45fd-be46-c46003f0eadf": {
-		"Id": "197",
-		"Server": "SA014",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"54203733-7890-40dc-97d4-c6234826107b": {
-		"Id": "196",
-		"Server": "SA021",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"69561c02-bb04-4403-8d3f-e14a125777c8": {
-		"Id": "195",
-		"Server": "SA022",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"09759f37-2602-4ed4-acd0-d8b83df325e5": {
-		"Id": "194",
-		"Server": "SA023",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"9ac8ecdf-acb2-4a3f-981f-12796fa4df9d": {
-		"Id": "193",
-		"Server": "SA031",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"c805c45c-29db-40c2-9a7e-e618d94a5481": {
-		"Id": "192",
-		"Server": "SA032",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"3a7e8e3d-1476-47fa-870b-41fe7639666c": {
-		"Id": "191",
-		"Server": "SA033",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"3c48acb4-2d07-44d5-8755-131de595f7b8": {
-		"Id": "190",
-		"Server": "SA034",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"362753d2-9c4e-4f4a-b6ac-40f9845a30bf": {
-		"Id": "189",
-		"Server": "SA041",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-    "1ef2dbc4-634c-4721-ac65-ca4106fe6d28": {
-		"Id": "188",
-		"Server": "SA043",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"4e8a403b-4887-4248-835b-7967ce71c62d": {
-		"Id": "187",
-		"Server": "SA044",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"603dc59b-7e09-4c8a-8284-2b0831ed731e": {
-		"Id": "186",
-		"Server": "SA051",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"5e4a803e-8159-41b2-bd72-7db6a306ae14": {
-		"Id": "185",
-		"Server": "SA052",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"7618ee50-4199-4ca3-83cc-2d26bc693efd": {
-		"Id": "184",
-		"Server": "SA053",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"5c4680fb-6f71-4306-91ea-e9d14a3f9c89": {
-		"Id": "183",
-		"Server": "SA054",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"779ff20d-6c04-4b21-94c5-d968d17ade1b": {
-		"Id": "182",
-		"Server": "SA061",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"23ab0919-15b3-4377-b58c-b8ade4ef8151": {
-		"Id": "181",
-		"Server": "SA071",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"b17895f8-937d-465c-a90c-cd44d3de7721": {
-		"Id": "180",
-		"Server": "SA072",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"2f44aae3-2d77-4706-928b-c989cd3a8a56": {
-		"Id": "179",
-		"Server": "SA081",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"1e82aa35-b79b-41d9-a8e8-d3d4d712d45e": {
-		"Id": "178",
-		"Server": "SA082",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"cd324f29-72bf-4902-b466-bf02c05b29f9": {
-		"Id": "177",
-		"Server": "SA083",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"6dc4afc3-943c-4df2-a895-8ef1f3244f67": {
-		"Id": "176",
-		"Server": "SA062",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-    "79ee6eab-e562-4d62-9880-027296a17564": {
-		"Id": "175",
-		"Server": "SA063",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"2259877e-5b94-45d4-a2f2-b085b680b5f3": {
-		"Id": "174",
-		"Server": "SA064",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"bf01a49e-449a-4062-a1b3-99d626518403": {
-		"Id": "173",
-		"Server": "SA073",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"63b73ee4": {
-		"Id": "172",
-		"Server": "NA011",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"9434ba65": {
-		"Id": "171",
-		"Server": "NA012",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"99f502fd": {
-		"Id": "170",
-		"Server": "NA021",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"b53d9b12": {
-		"Id": "169",
-		"Server": "NA022",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"c63ab7dc": {
-		"Id": "168",
-		"Server": "NA023",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"d8de1484": {
-		"Id": "167",
-		"Server": "NA031",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"10e56bcc": {
-		"Id": "166",
-		"Server": "NA032",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"30d5a6a8": {
-		"Id": "165",
-		"Server": "NA033",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"dff4a00": {
-		"Id": "164",
-		"Server": "NA034",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-
-	},
-	"c61320d3": {
-		"Id": "163",
-		"Server": "NA042",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"c9e6d3ef": {
-		"Id": "162",
-		"Server": "NA043",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"84761629": {
-		"Id": "161",
-		"Server": "NA044",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"a0673f35": {
-		"Id": "160",
-		"Server": "NA013",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"98fadf9d": {
-		"Id": "159",
-		"Server": "NA014",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"c2df4216": {
-		"Id": "158",
-		"Server": "NA051",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"e363abda": {
-		"Id": "157",
-		"Server": "NA054",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"8da15129": {
-		"Id": "156",
-		"Server": "NA064",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"244e67d6": {
-		"Id": "155",
-		"Server": "NA083",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"8f1383bc": {
-		"Id": "154",
-		"Server": "NA052",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"12238381": {
-		"Id": "153",
-		"Server": "NA053",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"1f08528f": {
-		"Id": "152",
-		"Server": "NA062",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"6df167cc": {
-		"Id": "151",
-		"Server": "NA061",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"895f0f14": {
-		"Id": "150",
-		"Server": "NA071",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-    "712ba73f": {
-		"Id": "149",
-		"Server": "NA072",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"9c9eb045": {
-		"Id": "148",
-		"Server": "NA073",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"bd253a0d": {
-		"Id": "147",
-		"Server": "NA074",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"c27bf550": {
-		"Id": "146",
-		"Server": "NA081",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"5b2adda0": {
-		"Id": "145",
-		"Server": "NA082",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"b9ad4ca5-c7c6-49cd-bdd7-bcaaef39388b": {
-		"Id": "144",
-		"Server": "EU043",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"5b408a2b-bad8-433d-b34e-ae6a92f469df": {
-		"Id": "143",
-		"Server": "EU011",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"d35cefcd-305d-466f-8d51-db923813e672": {
-		"Id": "142",
-		"Server": "EU021",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"9eba95cf-fffa-4597-a73c-ea6377a851e4": {
-		"Id": "141",
-		"Server": "EU041",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"a7ff01f5-7502-4b4b-a63a-7287abebb965": {
-		"Id": "140",
-		"Server": "EU012",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"1f049432-9494-440e-b004-511309a5e6a9": {
-		"Id": "139",
-		"Server": "EU013",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"0e3400fb-6a11-468c-b21e-2e8ec262a8cf": {
-		"Id": "138",
-		"Server": "EU014",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-	"1f2dfb0a-9546-468f-b685-187444763cc9": {
-		"Id": "137",
-		"Server": "EU022",
-		"OCRip":"http://192.168.1.139",
-		"port":"8002",
-	},
-    	
-	"980dfa3f-1cf3-4864-a7d8-8b44cf7b5691": {
-		"Id": "136",
-		"Server": "EU023",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"d05726f5-e587-4657-9c44-eaf132d5eb01": {
-		"Id": "135",
-		"Server": "EU024",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"756996c8-f937-45f4-a426-57ee86a8caf7": {
-		"Id": "134",
-		"Server": "EU031",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"48a36291-0202-4513-8977-02b4a1199be8": {
-		"Id": "133",
-		"Server": "EU032",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"6588b429-83d1-4e8e-8a52-d1bdc2fa4bdc": {
-		"Id": "132",
-		"Server": "EU033",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"2e8887ce-5d4b-47df-b80a-5046bb228274": {
-		"Id": "131",
-		"Server": "EU034",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"fa9ee7b3-4131-43c9-977d-a8ffbc7e471e": {
-		"Id": "130",
-		"Server": "EU042",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"63d74fc5-978c-4e59-b162-dabddac2183b": {
-		"Id": "129",
-		"Server": "BASIA001",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"237e1f42-4bdb-4a03-a6f1-923332f33b45": {
-		"Id": "128",
-		"Server": "BASIA002",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"b645032e-ef99-4a28-a0dc-a633eec7867d": {
-		"Id": "127",
-		"Server": "BNA011",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"bd9ddb80-8e31-4bf2-8aaa-5df15efc07ae": {
-		"Id": "126",
-		"Server": "BEU031",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"4f2cd5fa-47f3-4d9c-847c-1879ce2d8c75": {
-		"Id": "125",
-		"Server": "BSA021",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-	"22c22383-d02a-4c81-808f-f9a7c2cc831d": {
-		"Id": "124",
-		"Server": "BINMENA041",
-		"OCRip":"http://192.168.1.139",
-		"port":"8001",
-	},
-    
-    "b402fcdb": {
-        "Id": "123",
-        "Server": "ASIA011",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "1ef862e0": {
-        "Id": "122",
-        "Server": "ASIA012",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "96a294d0": {
-        "Id": "121",
-        "Server": "ASIA013",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "f54f8429-8fc9-45be-be3d-db3d0bf99475": {
-        "Id": "120",
-        "Server": "ASIA014",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "71d8a433-4789-4dd5-a6da-2604c958615e": {
-        "Id": "119",
-        "Server": "ASIA021",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
-        "Id": "118",
-        "Server": "ASIA022",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "b491a690-521c-4a2e-8a7e-21e979085e67": {
-        "Id": "117",
-        "Server": "ASIA023",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "edcef95f-c98a-4107-a76b-715908e0e659": {
-        "Id": "116",
-        "Server": "ASIA024",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "12fdc099-8351-4a20-a046-a74b8adcfa83": {
-        "Id": "115",
-        "Server": "ASIA031",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "4cd13a96-4b51-4862-b503-5881f339242a": {
-        "Id": "114",
-        "Server": "ASIA032",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
-        "Id": "113",
-        "Server": "ASIA033",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "408830f3-7f73-44d1-b33c-c79d18fc4de4": {
-        "Id": "112",
-        "Server": "ASIA041",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "40e83d09-d549-443d-bfc4-d004bd693d19": {
-        "Id": "111",
-        "Server": "ASIA042",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },    
-
-    "50e7f21d-2508-4cab-97e9-8a676e0986ea": {
-        "Id": "110",
-        "Server": "ASIA043",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "047a7c32-de99-4bd9-8503-a11050de37b5": {
-        "Id": "109",
-        "Server": "ASIA051",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "da727009-8386-4aa3-b7ad-b12e069f7eba": {
-        "Id": "108",
-        "Server": "ASIA052",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "b546783d-1a82-4465-938b-07fe5fa1cda7": {
-        "Id": "107",
-        "Server": "ASIA053",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "d6e6a347-c8e7-462d-90be-de1e35da5848": {
-        "Id": "106",
-        "Server": "ASIA054",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
-        "Id": "105",
-        "Server": "ASIA061",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "3207acb8-545c-460b-8237-30c9aaef161a": {
-        "Id": "104",
-        "Server": "ASIA062",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
-        "Id": "103",
-        "Server": "ASIA063",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
-        "Id": "102",
-        "Server": "ASIA064",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "0f8f4a18-d173-4045-a0f1-f991d681700c": {
-        "Id": "101",
-        "Server": "ASIA071",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "a4a38793-f81f-4fe6-95cd-e12343fa5768": {
-        "Id": "100",
-        "Server": "ASIA072",
-        // "OCRip":"http://192.168.1.140",  // todo
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
-        "Id": "99",
-        "Server": "ASIA073",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
-        "Id": "98",
-        "Server": "ASIA081",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },    
-    "45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
-        "Id": "97",
-        "Server": "ASIA082",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "970c32eb-b623-4764-8743-b5685e308fb5": {
-        "Id": "96",
-        "Server": "ASIA083",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
-        "Id": "95",
-        "Server": "ASIA343",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
-        "Id": "94",
-        "Server": "ASIA342",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "843e61dd-3243-4196-ad84-347d1d33ceb6": {
-        "Id": "93",
-        "Server": "ASIA341",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
-        "Id": "92",
-        "Server": "ASIA333",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "5d75350e-975e-43e6-b8ab-7ff58df796ad": {
-        "Id": "91",
-        "Server": "ASIA332",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "beb9afa5-1898-499e-93a7-706034a5c0df": {
-        "Id": "90",
-        "Server": "ASIA331",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-	"2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
-        "Id": "89",
-        "Server": "ASIA324",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-	"355f4465-1f65-469c-bf6c-81f629bc5b2d": {
-        "Id": "88",
-        "Server": "ASIA323",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "187eb6fb-520b-4cf0-b469-0c34d21b3711": {
-        "Id": "87",
-        "Server": "ASIA322",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "502ea617-95c7-4345-9c9b-07de90939c3c": {
-        "Id": "86",
-        "Server": "ASIA321",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "5cf80fc6-b4b2-4034-990a-42900fba3630": {
-        "Id": "85",
-        "Server": "ASIA314",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "ded8b096-6ff9-4436-9a15-d960e05e683e": {
-        "Id": "84",
-        "Server": "ASIA313",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
-        "Id": "83",
-        "Server": "ASIA312",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
-        "Id": "82",
-        "Server": "ASIA311",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "bd36bbe9-383e-4f09-824f-e60a313746eb": {
-        "Id": "81",
-        "Server": "ASIA353",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "6e4c7f85-e171-414c-bbd2-f7333b48d605": {
-        "Id": "80",
-        "Server": "ASIA351",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
-        "Id": "79",
-        "Server": "ASIA353",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
-        "Id": "78",
-        "Server": "ASIA354",
-        "OCRip":"http://192.168.1.140",
-		"port":"8001",
-    },
-    "73b351fe-9789-4a7d-b27f-ec431b16677b": {
-        "Id": "77",
-        "Server": "ASIA361",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
-        "Id": "76",
-        "Server": "ASIA362",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "7df85b12-105d-438c-a2e7-f487b1ded057": {
-        "Id": "75",
-        "Server": "ASIA363",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "18055116-dd62-4365-9917-501ec0bf8bd5": {
-        "Id": "74",
-        "Server": "ASIA364",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
-        "Id": "73",
-        "Server": "ASIA371",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
-        "Id": "72",
-        "Server": "ASIA372",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
-    "2b808dbf-8156-4f42-a458-56313648a57a": {
-        "Id": "71",
-        "Server": "ASIA373",
-        "OCRip":"http://192.168.1.140",
-		"port":"8002",
-    },
 }
 
 let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
@@ -947,13 +165,13 @@ function select(ocrResults, targetText,exactMatch) {
         console.error(`OCR 结果不是数组: ${targetText}`);
         return null;
     }
-    // console.log("ocrResults[0].length",ocrResults[0].length)
+	// log_z(`要找: ${targetText} ocrResults长度 ${ocrResults[0].length}`)
     for (let i = 0; i < ocrResults[0].length; i++) {
         let item = ocrResults[0][i];
         // log_z(item[1][0])
         if (exactMatch) {
             if (item[1][0] === targetText) {
-                log_z(`text: ${item[1][0]} 坐标 ${item[0]}`)
+                // log_z(`text: ${item[1][0]} 坐标 ${item[0]}`)
                 return item;
             }
         }else{
@@ -965,55 +183,72 @@ function select(ocrResults, targetText,exactMatch) {
     return null;
 }
 
-/** 查找文本并点击
- * 
- * @param {Array} reData 
- * @param {string} src   要查找的字
- * @param {boolean} exactMatch  是否精准查询
- * @returns 
- */
-function selclick(reData,src,exactMatch){
-    var target = select(reData, src,exactMatch)
-    if(target != null){
-        // 计算文本区域的中心点
-        let centerX = (target[0][0][0] + target[0][2][0]) / 2;
-        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-
-        // console.log(`点击 ${src} x = ${centerX}  y = ${centerY}`)
-        code = click(centerX,centerY);  // 点击坐标
-        if (!code) {
-            // log_z(`selclick ${src} 点击失败`)
+// 等待
+function waitTimes(str,x,y,width,height) {
+	let startTime = Date.now();  // 获取当前时间（毫秒）
+	let img;
+	let reData;
+	let grayscaleImage;
+	let croppedImage;
+	while (Date.now() - startTime < 2*60*1000) {
+		// 截图
+		img = getimg(false)
+        if (img == null) {
+            sleep(2000);
             return false
         }
-        return true
-    }
-    return false
+		grayscaleImage = images.grayscale(img);
+		croppedImage = images.clip(grayscaleImage, x,y,width,height);
+		reData = getOcr(croppedImage)
+		if (select(reData ,str)) {
+			return false
+		}
+		sleep(5000);
+	}
+	return true
 }
 
-/** 点击偏移文本
- * 
- * @param {Array} target  数据
- * @param {number} x 偏移量
- * @param {number} y 偏移量
- */
-function textClick(target,x,y){
-    // 计算文本区域的中心点
-    let centerX = (target[0][0][0] + target[0][2][0]) / 2;
-    let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-    click(centerX+x,centerY+y);
+//  生成未来时间 
+function addRandomMinutes(min, max) {
+    let now = new Date();  // 获取当前时间
+    let randomMinutes = Math.floor(Math.random() * (max - min + 1)) + min; // 生成 min 到 max 之间的随机分钟数
+    now.setMinutes(now.getMinutes() + randomMinutes); // 当前时间加上随机分钟数，自动处理进位
+    return now;
+}
+
+//  对比时间
+function compareTime() {
+    let now = new Date();  // 获取当前时间
+    let futureTime = new Date(storage.get("e_time"))
+    // 比较时间戳
+    if (futureTime > now) {
+        // log_z('未来时间大于当前时间');
+        return false
+    } else {
+        // log_z('未来时间小于当前时间');
+        return true
+    }
 }
 
 // 初始化
 function init() {
     // 检查权限 无障碍
-    log_z("检查权限 无障碍")
+    // log_z("检查权限 无障碍")
     if (!auto.service) {
         // log_z("请求无障碍权限失败")
         console.log("请求无障碍权限失败")
         auto();
         throw new Error("请求无障碍权限失败");
     }
-    log_z("检查权限 无障碍 完成")
+    // log_z("检查权限 无障碍 完成")
+
+	//  补丁 5分钟关闭一次游戏
+	if (compareTime()) {
+		Recent()
+		sleep(5000);
+		storage.put("e_time",addRandomMinutes(5,5))
+		return 
+	}
 
     if (!packageNameEndsWith("raven2")) {
         app.launch('com.netmarble.raven2')
@@ -1021,7 +256,7 @@ function init() {
         sleep(3000);
         return false
     } 
-    log_z("游戏正常")
+    log_z("初始化完成")
     return true
 }
 
@@ -1049,9 +284,49 @@ function getRandomName() {
     return fullName;
 }
 
+/** 关闭所有运行的任务
+ *  打开最近任务界面
+ *  点击清理按钮
+ */
+function Recent() {
+	recents()    // 打开最近任务
+	sleep(2000);
+	let targetControl = id("net.oneplus.launcher:id/snapshot").findOne(5000);  // 是否打开了最近活动任务
+	if (targetControl) {
+		log_z("打开了最近活动任务")
+		gesture(100, [[359, 1073]]);   // 最近任务的关闭位置
+	}
+}
+
+/** 检查服务器-区服
+ *  
+ * Eden   伊甸  
+ * Noah   挪亞
+ * Ark	  方舟
+ * Luna   露娜
+ * 
+ * 	小区   菲狄斯:Fides ,  莫爾斯 : Mors,  薩虞斯 : Salus ,  
+ *       霍諾爾 : Honor ,  梅杜莎 : Metus ,  多洛爾 : Dolor,
+ *  
+*/
+function select_create(reData) {
+	// console.log("Server ",Servers[Bm].Server)
+	// console.log("Area   ",Servers[Bm].Area)
+	// 判断服务器
+	if ((select(reData,Servers[Bm].Server) && select(reData,Servers[Bm].Area))) { // 判断服务器和区服
+		log_z("点击进入服务器列表")
+		click(640,422);
+		sleep(1000);
+		click(640,422);
+		return true
+	}
+	return false
+}
+
 // 执行
 function main(){
     if (init()) {
+		//  检查到输入界面就输入名字
 		try {
 			let ts = className("android.widget.EditText").findOne(1000)
 			if (ts) {
@@ -1063,6 +338,8 @@ function main(){
 				// 点击发送
 				click(1187,683)
 				sleep(2500);
+				click(723,438)//确定
+				sleep(1000);
 				click(723,438)//确定
 				return
 			}
@@ -1085,77 +362,230 @@ function main(){
             return false
         }
         log_z("截图完成")
-        // 图片二级化
-        let grayscaleImage = images.grayscale(img);
+        let grayscaleImage = images.grayscale(img);  // 图片二级化
         let reData;
         let croppedImage;
 
-		//  是否在选择界面 
+		// * 角色列表 创建完成
 		croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
-        reData = getOcr(croppedImage) 
-        if (select(reData,"nt") ) {  // 在主游戏界面
-            log_z("创建完成")
+		reData = getOcr(croppedImage) 
+		if (select(reData,"ntr") ) {  // Entry
+			log_z("创建完成")
 			throw new Error(" 创建完成")
-        }
+		}
 
-
-		log_z("登录进入服务器界面")
-		// *  text: Find My Character 坐标 1115,627,1240,627,1240,646,1115,646
-        croppedImage = images.clip(grayscaleImage, 1115, 0, 160, 100);
-        reData = getOcr(croppedImage) 
-        if (select(reData,"ption") || select(reData,"hang")) {  // 在主游戏界面
-            log_z("寻找我的角色")
-            click(640,422);
-            sleep(5000);
-            click(640,422);
-            return 
-        }
-
-		log_z("选择角色界面")
-        //  *  text: SelectClass 坐标 79,18,215,21,214,45,78,42
-		//  *  text: Class Details 坐标 79,19,224,19,224,45,79,45
-        croppedImage = images.clip(grayscaleImage, 79, 19, 145, 26);
+		// * 创建提示框 - 确定
+		croppedImage = images.clip(grayscaleImage, 663, 415, 108, 28);
         reData = getOcr(croppedImage);
         if (reData) {
-			log_z("选择职业完成");
-            if (select(reData,"elect")) {
-                click(640,422);
-                return 
-            }
-			log_z("点击进入捏脸");
-            if (select(reData,"ass")) {
-                click(1143,676);
-                return 
-            }
-        }
-
-		log_z("点击创建")
-        //  *  text: Reset 坐标 125,662,176,662,176,680,125,680
-        croppedImage = images.clip(grayscaleImage, 125, 662, 163, 18);
-        reData = getOcr(croppedImage);
-        if (reData) {
-			log_z("点击创建 ")
-            if (select(reData,"eset")){ // Reset
-                click(1143,676);
-            }
-        }
-        
-		log_z("点击输入名字 ")
-        croppedImage = images.clip(grayscaleImage, 587, 338, 44, 21);
-        reData = getOcr(croppedImage);
-        if (reData) {
-            if (select(reData,"nte")){ // Enter
+			if (select(reData,"onfi")){ // Confirm
+				log_z("确定名字 ")
                 click(587, 338);
 				return
             }
         }
+
+		//  弹出对话框  输入名字
+		croppedImage = images.clip(grayscaleImage, 587, 338, 44, 21);
+        reData = getOcr(croppedImage);
+        if (reData) {
+			if (select(reData,"nte")){ // Enter
+				log_z("点击输入名字 ")
+                click(587, 338);
+				return
+            }
+        }
+
+		// *  Reset 在捏脸界面
+		croppedImage = images.clip(grayscaleImage, 125, 662, 163, 18);
+        reData = getOcr(croppedImage);
+        if (reData) {
+			if (select(reData,"eset")){ // Reset
+				log_z("点击创建")
+                click(1143,676);
+				return
+            }
+        }
+
+		// * 点击创建  选择职业 进入捏脸
+		croppedImage = images.clip(grayscaleImage, 79, 19, 145, 26);
+        reData = getOcr(croppedImage);
+        if (reData) {
+			//  *  class Detaile 选中职业
+			if (select(reData,"elect")) {
+				log_z("选择职业完成");
+                click(640,422);
+                return 
+            }
+			//  *  select clsaa  选职业
+            if (select(reData,"ass")) {
+				log_z("点击进入捏脸");
+                click(1143,676);
+                return 
+            }
+        }
+
+		croppedImage = images.clip(grayscaleImage, 570, 8, 130, 31); 
+        reData = getOcr(croppedImage) 
+		if (reData) {
+			if (select(reData,"rver")) { // AllServers
+				log_z("在选择服务器界面")
+				// 找点击的服务器
+				let serbm = Servers[Bm].Server
+				if (serbm == "Luna") {
+					// 向下拉
+					swipe(600,600,200,200,250)
+					sleep(2000);
+					// 点击区服
+					if (Servers[Bm].Area == "Fides") {
+						log_z(`选择大区 ${serbm} - Fides `)
+						click(535,563)
+					}
+					if (Servers[Bm].Area == "Mors") {
+						log_z(`选择大区 ${serbm} - Mors `)
+						click(749,563)
+					}
+					if (Servers[Bm].Area == "Salus") {
+						log_z(`选择大区 ${serbm} - Salus `)
+						click(975,563)
+					}
+					// 下三区
+					if (Servers[Bm].Area == "Honor") {
+						log_z(`选择大区 ${serbm} - Honor `)
+						click(535,644)
+					}
+					if (Servers[Bm].Area == "Metus") {
+						log_z(`选择大区 ${serbm} - Metus `)
+						click(749,644)
+					}
+					if (Servers[Bm].Area == "Dolor") {
+						log_z(`选择大区 ${serbm} - Dolor `)
+						click(975,644)
+					}
+				}
+				if (serbm == "Ark") {
+					// 向下拉
+					swipe(600,600,200,200,250)
+					sleep(2000);
+					// 点击区服
+					if (Servers[Bm].Area == "Fides") {
+						log_z(`选择大区 ${serbm} - Fides `)
+						click(535,370)
+					}
+					if (Servers[Bm].Area == "Mors") {
+						log_z(`选择大区 ${serbm} - Mors `)
+						click(749,370)
+					}
+					if (Servers[Bm].Area == "Salus") {
+						log_z(`选择大区 ${serbm} - Salus `)
+						click(975,370)
+					}
+					// 下三区
+					if (Servers[Bm].Area == "Honor") {
+						log_z(`选择大区 ${serbm} - Honor `)
+						click(535,442)
+					}
+					if (Servers[Bm].Area == "Metus") {
+						log_z(`选择大区 ${serbm} - Metus `)
+						click(749,442)
+					}
+					if (Servers[Bm].Area == "Dolor") {
+						log_z(`选择大区 ${serbm} - Dolor `)
+						click(975,442)
+					}
+				}
+				if (serbm == "Noah") {
+					// 向下拉
+					swipe(600,600,200,200,250)
+					sleep(2000);
+					// 点击区服
+					if (Servers[Bm].Area == "Fides") {
+						log_z(`选择大区 ${serbm} - Fides `)
+						click(535,172)
+					}
+					if (Servers[Bm].Area == "Mors") {
+						log_z(`选择大区 ${serbm} - Mors `)
+						click(749,172)
+					}
+					if (Servers[Bm].Area == "Salus") {
+						log_z(`选择大区 ${serbm} - Salus `)
+						click(975,172)
+					}
+					// 下三区
+					if (Servers[Bm].Area == "Honor") {
+						log_z(`选择大区 ${serbm} - Honor `)
+						click(535,249)
+					}
+					if (Servers[Bm].Area == "Metus") {
+						log_z(`选择大区 ${serbm} - Metus `)
+						click(749,249)
+					}
+					if (Servers[Bm].Area == "Dolor") {
+						log_z(`选择大区 ${serbm} - Dolor `)
+						click(975,249)
+					}
+				}
+				if (serbm == "Eden") {
+					// 向上拉
+					swipe(200,200,600,600,250)
+					sleep(2000);
+					// 点击区服
+					if (Servers[Bm].Area == "Fides") {
+						log_z(`选择大区 ${serbm} - Fides `)
+						click(535,126)
+					}
+					if (Servers[Bm].Area == "Mors") {
+						log_z(`选择大区 ${serbm} - Mors `)
+						click(749,126)
+					}
+					if (Servers[Bm].Area == "Salus") {
+						log_z(`选择大区 ${serbm} - Salus `)
+						click(975,126)
+					}
+					// 下三区
+					if (Servers[Bm].Area == "Honor") {
+						log_z(`选择大区 ${serbm} - Honor `)
+						click(535,210)
+					}
+					if (Servers[Bm].Area == "Metus") {
+						log_z(`选择大区 ${serbm} - Metus `)
+						click(749,210)
+					}
+					if (Servers[Bm].Area == "Dolor") {
+						log_z(`选择大区 ${serbm} - Dolor `)
+						click(975,210)
+					}
+				}
+				return
+			}
+		}
+
+		//  ** 在游戏主界面
+		croppedImage = images.clip(grayscaleImage, 1115, 0, 160, 100);
+        reData = getOcr(croppedImage) 
+        if (select(reData,"ption") || select(reData,"hang")) {  // 在主游戏界面
+			//  *  检查大区 要是不对就点击大区
+			croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30);
+			reData = getOcr(croppedImage)
+			if (reData) {
+				if (select_create(reData)) {
+					log_z("检查服务器区服")
+					return
+				}
+			}
+
+			//  *  选择大区
+			log_z("点击进入选择服务器界面")
+			click(566, 640);  //  点击进入服务器选择界面 
+			sleep(1000);
+        }
     }
 }
 
-// for (let i = 0; i < 20; i++) {
+// for (let i = 0; i < 10; i++) {
 	main()
-// 	console.log("执行完成 ")
-// 	// sleep(1000);
+	// console.log("执行完成 ")
+	// sleep(1000);
 // }
 
 
@@ -1200,31 +630,12 @@ function select3(ocrResults, targetText,exactMatch) {
 // if (reData) {
 // 	select3(reData,"Class")
 // }
+
 // console.log("?-------------------------------")
 
-// 08:10:29.780/D:   *  text: Ark-Mors 坐标 547,621 679,621 547 654, 679,654
-// let croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30);
+// let croppedImage = images.clip(grayscaleImage, 663, 415, 108, 28);
+// croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
 // reData = getOcr(croppedImage)
-
 // if (reData) {
 // 	select3(reData,"Class")
 // }
-
-
-/** 服务器 
- *  
- * Eden   伊甸  
- * Noah   挪亞
- * Ark	  方舟
- * Luna   露娜
- * 
- * 	小区   菲狄斯:Fides ,  莫爾斯 : Mors,  薩虞斯 : Salus ,  霍諾爾 : Honor ,  梅杜莎 : Metus ,  多洛爾 : Dolor,
- * 
- *  先拿到服务器 判断是否是自己想要进入的
- *  截取固定位置 点击进入选择界面
- *  
- */
-
-
-
-		
