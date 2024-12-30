@@ -43,32 +43,138 @@ if ( Bm == 0) {
 */
 let Servers = {
     // 
-    "3c7a0b0c-f3d1-44bc-9613-0015f038b5f9": {
-		"Id": "3",
+    "492f9be6": {
+		"Id": "1",
 		"Server": "Eden",
 		"Area": "Fides",
 		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+	"73940854": {
+		"Id": "2",
+		"Server": "Eden",
+		"Area": "Mors",
+		"OCRip":"http://192.168.1.139",
 		"port" : "8002"
 	},
-    "d597973b-b1df-4815-bc6c-a9a6350e83eb": {
-		"Id": "70",
-		"Server": "Luna",
+    "3c7a0b0c-f3d1-44bc-9613-0015f038b5f9": {
+		"Id": "3",
+		"Server": "Eden",
+		"Area": "Salus",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+    "f035e510-885d-48e8-9ca7-1be7d4bb7244": {
+		"Id": "4",
+		"Server": "Eden",
+		"Area": "Honor",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+    "db0a9c6e-4861-44ca-b100-df2e3fa10aa9": {
+		"Id": "5",
+		"Server": "Eden",
+		"Area": "Metus",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+    "2c032b18-6c37-4553-bb40-b272f2c1ffa0": {
+		"Id": "6",
+		"Server": "Eden",
+		"Area": "Dolor",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+    "6ddd515c-f0f4-4337-ae78-d69e4592eb68": {
+		"Id": "7",
+		"Server": "Noah",
 		"Area": "Fides",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8001"
 	},
-    // MIR4 
-    "73940854": {
-		"Id": "2",
-		"Server": "ASIA073",
+    "c7459aa8-7b24-4dd2-96e0-4003b56a74b2": {
+		"Id": "8",
+		"Server": "Noah",
+		"Area": "Mors",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8002"
 	},
-    "5e19856c-7435-4426-813d-4c0b3899399b": {
-		"Id": "000",
-		"Server": "SA011",
+    "d213ae0d-baa4-467b-9e10-94906403a326": {
+		"Id": "9",
+		"Server": "Noah",
+		"Area": "Salus",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8001"
+	},
+    "e9568c72-b6cc-4b82-8d57-90398ad81f83": {
+		"Id": "10",
+		"Server": "Noah",
+		"Area": "Honor",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+    "19cf0d1b-8a79-4518-aecd-1323cf72c856": {
+		"Id": "11",
+		"Server": "Noah",
+		"Area": "Metus",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+    "8306d9c7-2353-4941-b729-1c4112ef96fd": {
+		"Id": "12",
+		"Server": "Noah",
+		"Area": "Dolor",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+    "84cd9728-e572-4033-8517-9c43cf053dbf": {
+		"Id": "13",
+		"Server": "Ark",
+		"Area": "Fides",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+    "abc03056-838a-4780-b603-a114d45c7608": {
+		"Id": "14",
+		"Server": "Ark",
+		"Area": "Mors",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+    "4aee80d3-0e50-4cd7-b0da-0c87cee6f782": {
+		"Id": "15",
+		"Server": "Ark",
+		"Area": "Salus",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+    "ede8024d-fe43-4ccc-b321-4acd86afe04b": {
+		"Id": "16",
+		"Server": "Ark",
+		"Area": "Honor",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
+	},
+
+
+
+
+
+	
+    "d597973b-b1df-4815-bc6c-a9a6350e83eb": {
+		"Id": "70",
+		"Server": "Ark",
+		"Area": "Metus",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8001"
+	},
+    // ZQ 测试手机 
+    "5e19856c-7435-4426-813d-4c0b3899399b": {
+		"Id": "000",
+		"Server": "Ark",
+		"Area": "Dolor",
+		"OCRip":"http://192.168.1.139",
+		"port" : "8002"
 	},
 }
 
