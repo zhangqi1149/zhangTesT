@@ -369,9 +369,11 @@ function main(){
 		// * 角色列表 创建完成
 		croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
 		reData = getOcr(croppedImage) 
-		if (select(reData,"ntr") ) {  // Entry
-			log_z("创建完成")
-			throw new Error(" 创建完成")
+		if (reData) {
+			if (select(reData,"ntr") ) {  // Entry
+				log_z("创建完成")
+				throw new Error(" 创建完成")
+			}
 		}
 
 		// * 创建提示框 - 确定
@@ -385,7 +387,7 @@ function main(){
             }
         }
 
-		//  弹出对话框  输入名字
+		// * 弹出对话框  输入名字
 		croppedImage = images.clip(grayscaleImage, 587, 338, 44, 21);
         reData = getOcr(croppedImage);
         if (reData) {
@@ -411,13 +413,13 @@ function main(){
 		croppedImage = images.clip(grayscaleImage, 79, 19, 145, 26);
         reData = getOcr(croppedImage);
         if (reData) {
-			//  *  class Detaile 选中职业
+			//  *  select clsaa  选职业
 			if (select(reData,"elect")) {
 				log_z("选择职业完成");
                 click(640,422);
                 return 
             }
-			//  *  select clsaa  选职业
+			//  *  class Detaile 选中职业
             if (select(reData,"ass")) {
 				log_z("点击进入捏脸");
                 click(1143,676);
@@ -425,6 +427,7 @@ function main(){
             }
         }
 
+		// * 在服务器列表界面
 		croppedImage = images.clip(grayscaleImage, 570, 8, 130, 31); 
         reData = getOcr(croppedImage) 
 		if (reData) {
@@ -563,22 +566,24 @@ function main(){
 		//  ** 在游戏主界面
 		croppedImage = images.clip(grayscaleImage, 1115, 0, 160, 100);
         reData = getOcr(croppedImage) 
-        if (select(reData,"ption") || select(reData,"hang")) {  // 在主游戏界面
-			//  *  检查大区 要是不对就点击大区
-			croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30);
-			reData = getOcr(croppedImage)
-			if (reData) {
-				if (select_create(reData)) {
-					log_z("检查服务器区服")
-					return
+		if (reData) {
+			if (select(reData,"ption") || select(reData,"hang")) {  // 在主游戏界面
+				//  *  检查大区 要是不对就点击大区
+				croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30);
+				reData = getOcr(croppedImage)
+				if (reData) {
+					if (select_create(reData)) {
+						log_z("检查服务器区服")
+						return
+					}
 				}
+	
+				//  *  选择大区
+				log_z("点击进入选择服务器界面")
+				click(566, 640);  //  点击进入服务器选择界面 
+				sleep(1000);
 			}
-
-			//  *  选择大区
-			log_z("点击进入选择服务器界面")
-			click(566, 640);  //  点击进入服务器选择界面 
-			sleep(1000);
-        }
+		}
     }
 }
 
