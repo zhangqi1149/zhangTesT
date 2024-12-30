@@ -45,7 +45,7 @@ let Servers = {
     // 
     "3c7a0b0c-f3d1-44bc-9613-0015f038b5f9": {
 		"Id": "3",
-		"Server": "Luna",
+		"Server": "Eden",
 		"Area": "Fides",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8002"
@@ -323,6 +323,251 @@ function select_create(reData) {
 	return false
 }
 
+// 选择服务器   最小版本
+function select_server() {
+	// 找点击的服务器
+	let serbm = Servers[Bm].Server
+	if (serbm == "Luna") {
+		// 点击区服
+		if (Servers[Bm].Area == "Fides") {
+			log_z(`选择大区 ${serbm} - Fides `)
+			click(535,536)
+		}
+		if (Servers[Bm].Area == "Mors") {
+			log_z(`选择大区 ${serbm} - Mors `)
+			click(700,536)
+		}
+		if (Servers[Bm].Area == "Salus") {
+			log_z(`选择大区 ${serbm} - Salus `)
+			click(870,536)
+		}
+		// 下三区
+		if (Servers[Bm].Area == "Honor") {
+			log_z(`选择大区 ${serbm} - Honor `)
+			click(535,600)
+		}
+		if (Servers[Bm].Area == "Metus") {
+			log_z(`选择大区 ${serbm} - Metus `)
+			click(700,600)
+		}
+		if (Servers[Bm].Area == "Dolor") {
+			log_z(`选择大区 ${serbm} - Dolor `)
+			click(870,600)
+		}
+	}
+	if (serbm == "Ark") {
+		// 点击区服
+		if (Servers[Bm].Area == "Fides") {
+			log_z(`选择大区 ${serbm} - Fides `)
+			click(535,388)
+		}
+		if (Servers[Bm].Area == "Mors") {
+			log_z(`选择大区 ${serbm} - Mors `)
+			click(700,388)
+		}
+		if (Servers[Bm].Area == "Salus") {
+			log_z(`选择大区 ${serbm} - Salus `)
+			click(870,388)
+		}
+		// 下三区
+		if (Servers[Bm].Area == "Honor") {
+			log_z(`选择大区 ${serbm} - Honor `)
+			click(535,450)
+		}
+		if (Servers[Bm].Area == "Metus") {
+			log_z(`选择大区 ${serbm} - Metus `)
+			click(700,450)
+		}
+		if (Servers[Bm].Area == "Dolor") {
+			log_z(`选择大区 ${serbm} - Dolor `)
+			click(870,450)
+		}
+	}
+	if (serbm == "Noah") {
+		// 点击区服
+		if (Servers[Bm].Area == "Fides") {
+			log_z(`选择大区 ${serbm} - Fides `)
+			click(535,244)
+		}
+		if (Servers[Bm].Area == "Mors") {
+			log_z(`选择大区 ${serbm} - Mors `)
+			click(700,244)
+		}
+		if (Servers[Bm].Area == "Salus") {
+			log_z(`选择大区 ${serbm} - Salus `)
+			click(870,244)
+		}
+		// 下三区
+		if (Servers[Bm].Area == "Honor") {
+			log_z(`选择大区 ${serbm} - Honor `)
+			click(535,300)
+		}
+		if (Servers[Bm].Area == "Metus") {
+			log_z(`选择大区 ${serbm} - Metus `)
+			click(700,300)
+		}
+		if (Servers[Bm].Area == "Dolor") {
+			log_z(`选择大区 ${serbm} - Dolor `)
+			click(870,300)
+		}
+	}
+	if (serbm == "Eden") {
+		// 点击区服
+		if (Servers[Bm].Area == "Fides") {
+			log_z(`选择大区 ${serbm} - Fides `)
+			click(535,95)
+		}
+		if (Servers[Bm].Area == "Mors") {
+			log_z(`选择大区 ${serbm} - Mors `)
+			click(700,95)
+		}
+		if (Servers[Bm].Area == "Salus") {
+			log_z(`选择大区 ${serbm} - Salus `)
+			click(870,95)
+		}
+		// 下三区
+		if (Servers[Bm].Area == "Honor") {
+			log_z(`选择大区 ${serbm} - Honor `)
+			click(535,155)
+		}
+		if (Servers[Bm].Area == "Metus") {
+			log_z(`选择大区 ${serbm} - Metus `)
+			click(700,155)
+		}
+		if (Servers[Bm].Area == "Dolor") {
+			log_z(`选择大区 ${serbm} - Dolor `)
+			click(870,155)
+		}
+	}
+    
+	//  普通版本
+	// 		let serbm = Servers[Bm].Server
+	// 		if (serbm == "Luna") {
+	// 			// 向下拉
+	// 			swipe(600,600,200,200,250)
+	// 			sleep(2000);
+	// 			// 点击区服
+	// 			if (Servers[Bm].Area == "Fides") {
+	// 				log_z(`选择大区 ${serbm} - Fides `)
+	// 				click(535,563)
+	// 			}
+	// 			if (Servers[Bm].Area == "Mors") {
+	// 				log_z(`选择大区 ${serbm} - Mors `)
+	// 				click(749,563)
+	// 			}
+	// 			if (Servers[Bm].Area == "Salus") {
+	// 				log_z(`选择大区 ${serbm} - Salus `)
+	// 				click(975,563)
+	// 			}
+	// 			// 下三区
+	// 			if (Servers[Bm].Area == "Honor") {
+	// 				log_z(`选择大区 ${serbm} - Honor `)
+	// 				click(535,644)
+	// 			}
+	// 			if (Servers[Bm].Area == "Metus") {
+	// 				log_z(`选择大区 ${serbm} - Metus `)
+	// 				click(749,644)
+	// 			}
+	// 			if (Servers[Bm].Area == "Dolor") {
+	// 				log_z(`选择大区 ${serbm} - Dolor `)
+	// 				click(975,644)
+	// 			}
+	// 		}
+	// 		if (serbm == "Ark") {
+	// 			// 向下拉
+	// 			swipe(600,600,200,200,250)
+	// 			sleep(2000);
+	// 			// 点击区服
+	// 			if (Servers[Bm].Area == "Fides") {
+	// 				log_z(`选择大区 ${serbm} - Fides `)
+	// 				click(535,370)
+	// 			}
+	// 			if (Servers[Bm].Area == "Mors") {
+	// 				log_z(`选择大区 ${serbm} - Mors `)
+	// 				click(749,370)
+	// 			}
+	// 			if (Servers[Bm].Area == "Salus") {
+	// 				log_z(`选择大区 ${serbm} - Salus `)
+	// 				click(975,370)
+	// 			}
+	// 			// 下三区
+	// 			if (Servers[Bm].Area == "Honor") {
+	// 				log_z(`选择大区 ${serbm} - Honor `)
+	// 				click(535,442)
+	// 			}
+	// 			if (Servers[Bm].Area == "Metus") {
+	// 				log_z(`选择大区 ${serbm} - Metus `)
+	// 				click(749,442)
+	// 			}
+	// 			if (Servers[Bm].Area == "Dolor") {
+	// 				log_z(`选择大区 ${serbm} - Dolor `)
+	// 				click(975,442)
+	// 			}
+	// 		}
+	// 		if (serbm == "Noah") {
+	// 			// 向下拉
+	// 			swipe(600,600,200,200,250)
+	// 			sleep(2000);
+	// 			// 点击区服
+	// 			if (Servers[Bm].Area == "Fides") {
+	// 				log_z(`选择大区 ${serbm} - Fides `)
+	// 				click(535,172)
+	// 			}
+	// 			if (Servers[Bm].Area == "Mors") {
+	// 				log_z(`选择大区 ${serbm} - Mors `)
+	// 				click(749,172)
+	// 			}
+	// 			if (Servers[Bm].Area == "Salus") {
+	// 				log_z(`选择大区 ${serbm} - Salus `)
+	// 				click(975,172)
+	// 			}
+	// 			// 下三区
+	// 			if (Servers[Bm].Area == "Honor") {
+	// 				log_z(`选择大区 ${serbm} - Honor `)
+	// 				click(535,249)
+	// 			}
+	// 			if (Servers[Bm].Area == "Metus") {
+	// 				log_z(`选择大区 ${serbm} - Metus `)
+	// 				click(749,249)
+	// 			}
+	// 			if (Servers[Bm].Area == "Dolor") {
+	// 				log_z(`选择大区 ${serbm} - Dolor `)
+	// 				click(975,249)
+	// 			}
+	// 		}
+	// 		if (serbm == "Eden") {
+	// 			// 向上拉
+	// 			swipe(200,200,600,600,250)
+	// 			sleep(2000);
+	// 			// 点击区服
+	// 			if (Servers[Bm].Area == "Fides") {
+	// 				log_z(`选择大区 ${serbm} - Fides `)
+	// 				click(535,126)
+	// 			}
+	// 			if (Servers[Bm].Area == "Mors") {
+	// 				log_z(`选择大区 ${serbm} - Mors `)
+	// 				click(749,126)
+	// 			}
+	// 			if (Servers[Bm].Area == "Salus") {
+	// 				log_z(`选择大区 ${serbm} - Salus `)
+	// 				click(975,126)
+	// 			}
+	// 			// 下三区
+	// 			if (Servers[Bm].Area == "Honor") {
+	// 				log_z(`选择大区 ${serbm} - Honor `)
+	// 				click(535,210)
+	// 			}
+	// 			if (Servers[Bm].Area == "Metus") {
+	// 				log_z(`选择大区 ${serbm} - Metus `)
+	// 				click(749,210)
+	// 			}
+	// 			if (Servers[Bm].Area == "Dolor") {
+	// 				log_z(`选择大区 ${serbm} - Dolor `)
+	// 				click(975,210)
+	// 			}
+	// 		}
+}
+
 // 执行
 function main(){
     if (init()) {
@@ -338,9 +583,12 @@ function main(){
 				// 点击发送
 				click(1187,683)
 				sleep(2500);
-				click(723,438)//确定
+				// click(723,438)//确定
+				// sleep(1000);
+				// click(723,438)//确定
+				click(700,415)//确定   // 最小版本
 				sleep(1000);
-				click(723,438)//确定
+				click(700,415)//确定
 				return
 			}
 		} catch (error) {
@@ -367,7 +615,8 @@ function main(){
         let croppedImage;
 
 		// * 角色列表 创建完成
-		croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
+		// croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
+		croppedImage = images.clip(grayscaleImage, 1056, 667, 165, 28);  // 最小版本
 		reData = getOcr(croppedImage) 
 		if (reData) {
 			if (select(reData,"ntr") ) {  // Entry
@@ -393,13 +642,15 @@ function main(){
         if (reData) {
 			if (select(reData,"nte")){ // Enter
 				log_z("点击输入名字 ")
-                click(587, 338);
+                // click(587, 338);
+                click(616, 350);  // 最小版本
 				return
             }
         }
 
 		// *  Reset 在捏脸界面
-		croppedImage = images.clip(grayscaleImage, 125, 662, 163, 18);
+		// croppedImage = images.clip(grayscaleImage, 125, 662, 163, 18);
+		croppedImage = images.clip(grayscaleImage, 73, 669, 94, 23); // 最小版本
         reData = getOcr(croppedImage);
         if (reData) {
 			if (select(reData,"eset")){ // Reset
@@ -410,7 +661,8 @@ function main(){
         }
 
 		// * 点击创建  选择职业 进入捏脸
-		croppedImage = images.clip(grayscaleImage, 79, 19, 145, 26);
+		// croppedImage = images.clip(grayscaleImage, 79, 19, 145, 26);
+		croppedImage = images.clip(grayscaleImage, 50, 13, 118, 24);  // 最小版本
         reData = getOcr(croppedImage);
         if (reData) {
 			//  *  select clsaa  选职业
@@ -427,149 +679,27 @@ function main(){
             }
         }
 
-		// * 在服务器列表界面
+		// * 在服务器列表界面   最小界面
 		croppedImage = images.clip(grayscaleImage, 570, 8, 130, 31); 
-        reData = getOcr(croppedImage) 
+		reData = getOcr(croppedImage) 
 		if (reData) {
 			if (select(reData,"rver")) { // AllServers
 				log_z("在选择服务器界面")
-				// 找点击的服务器
-				let serbm = Servers[Bm].Server
-				if (serbm == "Luna") {
-					// 向下拉
-					swipe(600,600,200,200,250)
-					sleep(2000);
-					// 点击区服
-					if (Servers[Bm].Area == "Fides") {
-						log_z(`选择大区 ${serbm} - Fides `)
-						click(535,563)
-					}
-					if (Servers[Bm].Area == "Mors") {
-						log_z(`选择大区 ${serbm} - Mors `)
-						click(749,563)
-					}
-					if (Servers[Bm].Area == "Salus") {
-						log_z(`选择大区 ${serbm} - Salus `)
-						click(975,563)
-					}
-					// 下三区
-					if (Servers[Bm].Area == "Honor") {
-						log_z(`选择大区 ${serbm} - Honor `)
-						click(535,644)
-					}
-					if (Servers[Bm].Area == "Metus") {
-						log_z(`选择大区 ${serbm} - Metus `)
-						click(749,644)
-					}
-					if (Servers[Bm].Area == "Dolor") {
-						log_z(`选择大区 ${serbm} - Dolor `)
-						click(975,644)
-					}
-				}
-				if (serbm == "Ark") {
-					// 向下拉
-					swipe(600,600,200,200,250)
-					sleep(2000);
-					// 点击区服
-					if (Servers[Bm].Area == "Fides") {
-						log_z(`选择大区 ${serbm} - Fides `)
-						click(535,370)
-					}
-					if (Servers[Bm].Area == "Mors") {
-						log_z(`选择大区 ${serbm} - Mors `)
-						click(749,370)
-					}
-					if (Servers[Bm].Area == "Salus") {
-						log_z(`选择大区 ${serbm} - Salus `)
-						click(975,370)
-					}
-					// 下三区
-					if (Servers[Bm].Area == "Honor") {
-						log_z(`选择大区 ${serbm} - Honor `)
-						click(535,442)
-					}
-					if (Servers[Bm].Area == "Metus") {
-						log_z(`选择大区 ${serbm} - Metus `)
-						click(749,442)
-					}
-					if (Servers[Bm].Area == "Dolor") {
-						log_z(`选择大区 ${serbm} - Dolor `)
-						click(975,442)
-					}
-				}
-				if (serbm == "Noah") {
-					// 向下拉
-					swipe(600,600,200,200,250)
-					sleep(2000);
-					// 点击区服
-					if (Servers[Bm].Area == "Fides") {
-						log_z(`选择大区 ${serbm} - Fides `)
-						click(535,172)
-					}
-					if (Servers[Bm].Area == "Mors") {
-						log_z(`选择大区 ${serbm} - Mors `)
-						click(749,172)
-					}
-					if (Servers[Bm].Area == "Salus") {
-						log_z(`选择大区 ${serbm} - Salus `)
-						click(975,172)
-					}
-					// 下三区
-					if (Servers[Bm].Area == "Honor") {
-						log_z(`选择大区 ${serbm} - Honor `)
-						click(535,249)
-					}
-					if (Servers[Bm].Area == "Metus") {
-						log_z(`选择大区 ${serbm} - Metus `)
-						click(749,249)
-					}
-					if (Servers[Bm].Area == "Dolor") {
-						log_z(`选择大区 ${serbm} - Dolor `)
-						click(975,249)
-					}
-				}
-				if (serbm == "Eden") {
-					// 向上拉
-					swipe(200,200,600,600,250)
-					sleep(2000);
-					// 点击区服
-					if (Servers[Bm].Area == "Fides") {
-						log_z(`选择大区 ${serbm} - Fides `)
-						click(535,126)
-					}
-					if (Servers[Bm].Area == "Mors") {
-						log_z(`选择大区 ${serbm} - Mors `)
-						click(749,126)
-					}
-					if (Servers[Bm].Area == "Salus") {
-						log_z(`选择大区 ${serbm} - Salus `)
-						click(975,126)
-					}
-					// 下三区
-					if (Servers[Bm].Area == "Honor") {
-						log_z(`选择大区 ${serbm} - Honor `)
-						click(535,210)
-					}
-					if (Servers[Bm].Area == "Metus") {
-						log_z(`选择大区 ${serbm} - Metus `)
-						click(749,210)
-					}
-					if (Servers[Bm].Area == "Dolor") {
-						log_z(`选择大区 ${serbm} - Dolor `)
-						click(975,210)
-					}
-				}
+				select_server()
 				return
 			}
 		}
 
 		//  ** 在游戏主界面
-		croppedImage = images.clip(grayscaleImage, 1115, 0, 160, 100);
+		// croppedImage = images.clip(grayscaleImage, 1115, 0, 160, 100);  // 普通版本
+		croppedImage = images.clip(grayscaleImage, 1149, 647, 110, 21);     //最小版本
         reData = getOcr(croppedImage) 
 		if (reData) {
-			if (select(reData,"ption") || select(reData,"hang")) {  // 在主游戏界面
+			if (select(reData,"ind") || select(reData,"racte")) {  // 在主游戏界面
+				log_z("Find My Character")
 				//  *  检查大区 要是不对就点击大区
-				croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30);
+				// croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30); // 普通版本
+				croppedImage = images.clip(grayscaleImage, 515, 647, 251, 25);
 				reData = getOcr(croppedImage)
 				if (reData) {
 					if (select_create(reData)) {
@@ -591,56 +721,4 @@ function main(){
 	main()
 	// console.log("执行完成 ")
 	// sleep(1000);
-// }
-
-
-/** 查找内容并返回。
- *  
- * @param {Array} reData - OCR 结果的数组，每个元素通常包含识别出的文本和其他信息。
- * @param {string} targetText - 要查找的文本。
- * @param {boolean} [exactMatch=false] - 是否进行精确匹配。如果为 `true`，则只匹配完全相同的文本；如果为 `false`（默认值），则进行模糊匹配。
- *
- */
-function select3(ocrResults, targetText,exactMatch) {
-    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
-    if (!Array.isArray(ocrResults)) {
-        console.error(`OCR 结果不是数组: ${targetText}`);
-        return null;
-    }
-    console.log("ocrResults.length",ocrResults[0].length)
-    for (let i = 0; i < ocrResults[0].length; i++) {
-        let item = ocrResults[0][i];
-        // log_z(item[1][0])
-        log_z(`text: ${item[1][0]} 坐标 ${item[0]}`)
-        if (exactMatch) {
-            if (item[1][0] === targetText) {
-                return item;
-            }
-        }else{
-            if (item[1][0].includes(targetText)) {
-                return item;
-            }
-        }
-    }
-    return null;
-}
-
-// if (!requestScreenCapture(true)) {
-// 	console.log("请求屏幕捕获权限失败", )
-// }
-
-// let img = getimg(false)
-// let grayscaleImage = images.grayscale(img);
-// let reData = getOcr(grayscaleImage)
-// if (reData) {
-// 	select3(reData,"Class")
-// }
-
-// console.log("?-------------------------------")
-
-// let croppedImage = images.clip(grayscaleImage, 663, 415, 108, 28);
-// croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
-// reData = getOcr(croppedImage)
-// if (reData) {
-// 	select3(reData,"Class")
 // }
