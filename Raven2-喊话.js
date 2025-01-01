@@ -1,6 +1,7 @@
- 
+
 let Log = false
-let text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+// let text = "全球最低钻石 担保交易。欢迎来到 igokay.com  " ;
+let text = "有活人吗 教教我怎么玩" ;
 let interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 let today = new Date().toISOString().split('T')[0]; 
 let storage = storages.create("ABC");
@@ -169,13 +170,12 @@ let Servers = {
     // ZQ 测试手机 
     "5e19856c-7435-4426-813d-4c0b3899399b": {
 		"Id": "000",
-		"Server": "Noah",
-		"Area": "Dolor",
+		"Server": "Eden",
+		"Area": "Mors",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8002"
 	},
 }
-
 
 let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
 
@@ -254,6 +254,36 @@ function getOcr(img) {
     } finally {
     }
     
+    return null;
+}
+
+// OCR请求
+function getOcr2(img) {
+    try {
+        // 将截图转换为Base64编码的PNG格式
+        let imgData = images.toBase64(img, "png");
+
+        let jsonData = {
+            image: imgData,
+            lang: "ch",
+            save: true
+        };
+        
+        // 发送 POST 请求，确保 Content-Type 为 application/json
+        let response = http.postJson("http://192.168.1.142:5000/ocr", jsonData, {
+            headers: {
+                "Content-Type": "application/json"
+            },
+        });
+        
+        if (response.statusCode == 200) {
+            return JSON.parse(response.body.string());
+        } else {
+            console.error("getOcr 服务器返回错误：" + response.statusCode);
+        }
+    } catch (e) {
+        console.error("请求失败: ", e);
+    }
     return null;
 }
 
@@ -348,12 +378,12 @@ function init() {
     // log_z("检查权限 无障碍 完成")
 
 	//  补丁 5分钟关闭一次游戏
-	if (compareTime()) {
-		Recent()
-		sleep(5000);
-		storage.put("e_time",addRandomMinutes(7,14))
-		return 
-	}
+	// if (compareTime()) {
+	// 	Recent()
+	// 	sleep(5000);
+	// 	storage.put("e_time",addRandomMinutes(7,15))
+	// 	return 
+	// }
 
     if (!packageNameEndsWith("raven2")) {
         app.launch('com.netmarble.raven2')
@@ -676,31 +706,6 @@ function select_server() {
 // 执行
 function main(){
     if (init()) {
-		//  检查到输入界面就输入名字
-		try {
-			let ts = className("android.widget.EditText").findOne(1000)
-			if (ts) {
-				log_z("输入法打开了")
-				// 输入文字
-				sleep(500);
-				input(getRandomName());
-				sleep(500);
-				// 点击发送
-				click(1187,683)
-				sleep(2500);
-				// click(723,438)//确定
-				// sleep(1000);
-				// click(723,438)//确定
-				click(700,415)//确定   // 最小版本
-				sleep(1000);
-				click(700,415)//确定
-				return
-			}
-		} catch (error) {
-			console.error("main  Error during database operation:", error);
-			return 
-		}
-
         // 截图
         let img = getimg(false)
         if (img == null) {
@@ -714,6 +719,7 @@ function main(){
             console.log("执行结束 ")
             return false
         }
+
         log_z("截图完成")
         let grayscaleImage = images.grayscale(img);  // 图片二级化
         let reData;
@@ -767,6 +773,7 @@ function main(){
 		}
 
 
+		// * 检查登录
 		croppedImage = images.clip(grayscaleImage, 43,646, 85, 22); // Login   登录掉了
 		reData = getOcr(croppedImage) 
 		if (reData) {
@@ -777,8 +784,8 @@ function main(){
 			}
 		}
 
-		//  谷歌登录
-		croppedImage = images.clip(grayscaleImage, 0, 0, 257, 83);  
+		//  * 谷歌登录
+		croppedImage = images.clip(grayscaleImage, 0,0, 257, 83);  
 		reData = getOcr(croppedImage) 
 		if (reData) {
 			if (select(reData,"etmarb") || select(reData,"iD") ) {  // netmarble iD
@@ -788,7 +795,7 @@ function main(){
 					if (select(reData,"imple") || select(reData,"ign") ) {  	
 						log_z("选择谷歌方式登录")
 						click(1000,333);  
-						sleep(15000);
+						sleep(5000);
 						return
 					}
 				}
@@ -804,6 +811,80 @@ function main(){
 				}
 			}
 		}
+		
+		// * 强制任务
+		croppedImage = images.clip(grayscaleImage, 762, 136, 206, 48);  
+		reData = getOcr(croppedImage) 
+		if (reData) {
+			if (select(reData,"hat") ) {  // utomatically
+				log_z("点击强制任务")
+				click(1200,75); // 点击强制任务
+				return
+			}
+		}
+
+		// * 聊天窗口  Chat?
+		croppedImage = images.clip(grayscaleImage, 5, 64, 61, 24);  
+		reData = getOcr(croppedImage) 
+		if (reData) {
+			if (select(reData,"hat") ) {  // Chat? 
+				//  输入对话内容
+				//  检查到输入界面就输入名字
+				try {
+					let ts = className("android.widget.EditText").findOne(1000)
+					if (ts) {
+						log_z("输入法打开了")
+						// 输入文字
+						sleep(500);
+						input(text);
+						sleep(500);
+						click(1187,683) // 点击发送
+						sleep(2500);
+						click(700,415)//发送按钮
+						sleep(1000);
+						click(202,698); // 发送到聊天框
+						sleep(1000);
+						// 再次打开聊天对话框
+						click(20,268); // 选择服务器
+						sleep(1200);
+						click(20,700); // 点击出对话框
+						sleep(interval); // 停止时间
+						return
+					}
+				} catch (error) {
+					console.error("main  Error during database operation:", error);
+					return 
+				}
+				log_z("打开了对话列表")
+				click(20,268); // 选择服务器
+				sleep(1200);
+				click(20,700); // 点击出对话框
+				return
+			}
+		}
+
+		// * 省电模式
+		croppedImage = images.clip(grayscaleImage, 600, 620, 80, 31);
+		reData = getOcr(croppedImage) 
+		if (reData) {
+			if (select(reData,"Waiting") ) {  // offineMode
+				log_z("解除省电模式")
+				swipe(640, 364,640 ,0 , 250)
+				return
+			}
+		}
+
+		// * 在游戏内了 
+		croppedImage = images.clip(grayscaleImage, 5, 699, 52, 19);
+		reData = getOcr(croppedImage) 
+		if (reData) {
+			if (select(reData,"XP") || select(reData,"%") ) {  // EXP 0%
+				log_z("在游戏了")
+				// 点击出聊天框
+				click(26,628);
+				// throw new Error(" 创建完成")
+			}
+		}
 
 		// * 角色列表 创建完成
 		// croppedImage = images.clip(grayscaleImage, 1070, 655, 60, 27);
@@ -812,7 +893,9 @@ function main(){
 		if (reData) {
 			if (select(reData,"ntr") ) {  // Entry
 				log_z("创建完成")
-				throw new Error(" 创建完成")
+				// throw new Error(" 创建完成")
+				click(1143,679)
+				return 
 			}
 		}
 
@@ -839,12 +922,36 @@ function main(){
             }
         }
 
-		// *  Reset 在捏脸界面
-		// croppedImage = images.clip(grayscaleImage, 125, 662, 163, 18);
-		croppedImage = images.clip(grayscaleImage, 73, 669, 94, 23); // 最小版本
-        reData = getOcr(croppedImage);
+		//  在捏脸界面
+		croppedImage = images.clip(grayscaleImage, 50, 44, 124, 56);  
+		reData = getOcr(croppedImage);
         if (reData) {
-			if (select(reData,"eset")){ // Reset
+			if (select(reData,"Male") || select(reData,"Female") ){ //   Male   Female
+				//  检查到输入界面就输入名字
+				try {
+					let ts = className("android.widget.EditText").findOne(1000)
+					if (ts) {
+						log_z("输入法打开了")
+						// 输入文字
+						sleep(500);
+						input(getRandomName());
+						sleep(500);
+						// 点击发送
+						click(1187,683)
+						sleep(2500);
+						// click(723,438)//确定
+						// sleep(1000);
+						// click(723,438)//确定
+						click(700,415)//确定   // 最小版本
+						sleep(1000);
+						click(700,415)//确定
+						return
+					}
+				} catch (error) {
+					console.error("main  Error during database operation:", error);
+					return 
+				}
+
 				log_z("点击创建")
                 click(1143,676);
 				return
@@ -857,13 +964,13 @@ function main(){
         reData = getOcr(croppedImage);
         if (reData) {
 			//  *  select clsaa  选职业
-			if (select(reData,"elect")) {
+			if (select(reData,"elect") && select(reData,"saa") ) {
 				log_z("选择职业完成");
                 click(640,422);
                 return 
             }
 			//  *  class Detaile 选中职业
-            if (select(reData,"ass")) {
+            if (select(reData,"ass") && select(reData,"taile") ) {
 				log_z("点击进入捏脸");
                 click(1143,676);
                 return 
@@ -908,4 +1015,66 @@ function main(){
     }
 }
 
-main()
+// for (let i = 0; i < 10; i++) {
+	main()
+	// console.log("执行完成 ")
+	// sleep(1000);
+// }
+
+
+/** 查找内容并返回。
+ *  
+ * @param {Array} reData - OCR 结果的数组，每个元素通常包含识别出的文本和其他信息。
+ * @param {string} targetText - 要查找的文本。
+ * @param {boolean} [exactMatch=false] - 是否进行精确匹配。如果为 `true`，则只匹配完全相同的文本；如果为 `false`（默认值），则进行模糊匹配。
+ *
+ */
+function select3(ocrResults, targetText,exactMatch) {
+    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
+    if (!Array.isArray(ocrResults)) {
+        console.error(`OCR 结果不是数组: ${targetText}`);
+        return null;
+    }
+    console.log("ocrResults.length",ocrResults[0].length)
+    for (let i = 0; i < ocrResults[0].length; i++) {
+        let item = ocrResults[0][i];
+        // log_z(item[1][0])
+        log_z(`text: ${item[1][0]} 坐标 ${item[0]}`)
+        if (exactMatch) {
+            if (item[1][0] === targetText) {
+                return item;
+            }
+        }else{
+            if (item[1][0].includes(targetText)) {
+                return item;
+            }
+        }
+    }
+    return null;
+}
+
+
+if (false) {
+	// if (!requestScreenCapture(true)) {
+	// 	console.log("请求屏幕捕获权限失败", )
+	// }
+
+	let img = getimg(false)
+	let grayscaleImage = images.grayscale(img);
+	let reData = getOcr2(grayscaleImage)
+	reData = getOcr(grayscaleImage)
+	if (reData) {
+		// select3(reData,"Class")
+	}
+
+	console.log("-------------------------------end")
+
+	// croppedImage = images.clip(grayscaleImage, 43,646, 85, 22); 
+	croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
+	// reData = getOcr2(croppedImage)
+	reData = getOcr(croppedImage)
+	if (reData) {
+		select3(reData,"Class")
+	}
+
+}
