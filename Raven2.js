@@ -739,7 +739,7 @@ function main(){
 			if (select(reData,"Downloading") && select(reData,"MB") ) {  // data, rather than Wi-Fi, may result in a  ;  Download   ;MB
 				log_z("游戏更新 ")
 				click(688,438);
-				storage.put("e_time",addRandomMinutes(-7,-5))
+				sleep(3*1000*60) // 等待 3分钟
 				return
 			}
 			if (select(reData,"維護") || select(reData,"無法") ) {  // 維護期間無法登入游
@@ -900,6 +900,8 @@ function main(){
 		if (reData) {
 			if (select(reData,"rver")) { // AllServers
 				log_z("在选择服务器界面")
+				click(640,22);
+				sleep(2000);
 				select_server()
 				return
 			}

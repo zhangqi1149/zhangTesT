@@ -1031,6 +1031,8 @@ function main(){
 		if (reData) {
 			if (select(reData,"rver")) { // AllServers
 				log_z("在选择服务器界面")
+				click(640,22);
+				sleep(2000);
 				select_server()
 				return
 			}
