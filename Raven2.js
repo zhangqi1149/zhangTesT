@@ -1,6 +1,7 @@
  
 let Log = false
-let text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+// let text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+let text = "买钻石到 igokay.com, Buy diamonds at igokay.com. ";
 let interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 let today = new Date().toISOString().split('T')[0]; 
 let storage = storages.create("ABC");
@@ -346,6 +347,18 @@ function init() {
         throw new Error("请求无障碍权限失败");
     }
     // log_z("检查权限 无障碍 完成")
+
+	try {
+        let ts = textContains("选择账号").findOne(3000)
+        if (ts) {
+            log_z("谷歌登录-选择账号")
+            click(600,314);
+            return
+        }
+    } catch (error) {
+        console.error("选择账号  Error during database operation:", error);
+        return 
+    }
 
 	try {
         let ts = textContains("請重新運行後").findOne(3000)
@@ -736,6 +749,11 @@ function main(){
 		croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
 		reData = getOcr(croppedImage) 
 		if (reData) {
+			if (select(reData,"logging") && select(reData,"agai") ) {  // ease try logging in agai
+				log_z("登录重试 ")
+				click(688,500);
+				return
+			}
 			if (select(reData,"Downloading") && select(reData,"MB") ) {  // data, rather than Wi-Fi, may result in a  ;  Download   ;MB
 				log_z("游戏更新 ")
 				click(688,438);

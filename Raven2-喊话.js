@@ -1,7 +1,8 @@
 
 let Log = false
 // let text = "全球最低钻石 担保交易。欢迎来到 igokay.com  " ;
-let text = "全球最低钻石 PlayPal担保交易。欢迎来到 igokay.c.o.m  。 The lowest price diamond transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.c.o.m." ;
+// let text = "全球最低钻石 PlayPal担保交易。欢迎来到 igokay.c.o.m  。 The lowest price diamond transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.c.o.m." ;
+let text = "买钻石到 igokay.com, Buy diamonds at igokay.com. ";
 let interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 let today = new Date().toISOString().split('T')[0]; 
 let storage = storages.create("ABC");
@@ -379,7 +380,19 @@ function init() {
     log_z("检查权限 无障碍 完成")
 
 	try {
-        let ts = textContains("請重新運行後").findOne(3000)
+        let ts = textContains("选择账号").findOne(2000)
+        if (ts) {
+            log_z("谷歌登录-选择账号")
+            click(600,314);
+            return
+        }
+    } catch (error) {
+        console.error("选择账号  Error during database operation:", error);
+        return 
+    }
+	// log_z("选择账号完成")
+	try {
+        let ts = textContains("請重新運行後").findOne(2000)
         if (ts) {
             log_z("维护完成")
 			Recent()
@@ -389,13 +402,13 @@ function init() {
         console.error("請重新運行後  Error during database operation:", error);
         return 
     }
-
+	
 	//  补丁 5分钟关闭一次游戏
-	if (compareTime()) {
+	// if (compareTime()) {
 		// Recent()
-		sleep(5000);
-		return 
-	}
+		// sleep(5000);
+		// return 
+	// }
 
     if (!packageNameEndsWith("raven2")) {
         app.launch('com.netmarble.raven2')
@@ -741,6 +754,11 @@ function main(){
 		croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
 		reData = getOcr(croppedImage) 
 		if (reData) {
+			if (select(reData,"logging") && select(reData,"agai") ) {  // ease try logging in agai
+				log_z("登录重试 ")
+				click(688,500);
+				return
+			}
 			if (select(reData,"維護") || select(reData,"無法") ) {  // 維護期間無法登入游
 				log_z("游戏维护 ")
 				storage.put("e_time",addRandomMinutes(20,40))
@@ -1089,7 +1107,7 @@ function select3(ocrResults, targetText,exactMatch) {
     for (let i = 0; i < ocrResults[0].length; i++) {
         let item = ocrResults[0][i];
         // log_z(item[1][0])
-        log_z(`text: ${item[1][0]} 坐标 ${item[0]}`)
+        console.log(`text: ${item[1][0]} 坐标 ${item[0]}`)
         if (exactMatch) {
             if (item[1][0] === targetText) {
                 return item;
@@ -1111,7 +1129,7 @@ if (false) {
 
 	let img = getimg(false)
 	let grayscaleImage = images.grayscale(img);
-	let reData = getOcr2(grayscaleImage)
+	// let reData = getOcr2(grayscaleImage)
 	reData = getOcr(grayscaleImage)
 	if (reData) {
 		// select3(reData,"Class")
@@ -1119,8 +1137,8 @@ if (false) {
 
 	console.log("-------------------------------end")
 
-	// croppedImage = images.clip(grayscaleImage, 43,646, 85, 22); 
 	croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);  // 异常窗口
+	// croppedImage = images.clip(grayscaleImage, 295,252, 683, 291);  // 
 	// reData = getOcr2(croppedImage)
 	reData = getOcr(croppedImage)
 	if (reData) {

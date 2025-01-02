@@ -1556,7 +1556,7 @@ function upLevel(){
         sleep(20000);
         console.log("没有截图权限 ")
         if (!requestScreenCapture(true)) {
-            console.log("请求屏幕捕获权限失败", )
+            console.log("请求屏幕捕获权限失败")
             sleep(5000);
             return false
         }
