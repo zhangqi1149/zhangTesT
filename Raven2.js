@@ -349,6 +349,7 @@ function init() {
 
 	//  补丁 5分钟关闭一次游戏
 	if (compareTime()) {
+		log_z("游戏重启")
 		Recent()
 		sleep(5000);
 		storage.put("e_time",addRandomMinutes(7,14))
@@ -723,6 +724,11 @@ function main(){
 		croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
 		reData = getOcr(croppedImage) 
 		if (reData) {
+			if (select(reData,"維護") || select(reData,"無法") ) {  // 維護期間無法登入游
+				log_z("游戏维护 ")
+				storage.put("e_time",addRandomMinutes(20,40))
+				return
+			}
 			if (select(reData,"input") || select(reData,"time") ) {  // No input has been detected for a long time
 				log_z("长时间无动作被踢 异常")
 				click(640,413); 

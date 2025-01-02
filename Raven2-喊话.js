@@ -1,7 +1,7 @@
 
 let Log = false
 // let text = "全球最低钻石 担保交易。欢迎来到 igokay.com  " ;
-let text = "有活人吗 教教我怎么玩" ;
+let text = "全球最低钻石 PlayPal担保交易。欢迎来到 igokay.c.o.m  。 The lowest price diamond transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.c.o.m." ;
 let interval = 3*1000*60 ;    // 12分钟 720000毫秒  *60000
 let today = new Date().toISOString().split('T')[0]; 
 let storage = storages.create("ABC");
@@ -25,6 +25,7 @@ function packageNameEndsWith(suffix) {
 if (storage.get("e_time",0) == 0){
     storage.put("e_time",today)
 }
+
 let Bm = storage.get("Bm",0);
 if ( Bm == 0) {
     Bm = readLastLine().trim()
@@ -378,12 +379,11 @@ function init() {
     // log_z("检查权限 无障碍 完成")
 
 	//  补丁 5分钟关闭一次游戏
-	// if (compareTime()) {
-	// 	Recent()
-	// 	sleep(5000);
-	// 	storage.put("e_time",addRandomMinutes(7,15))
-	// 	return 
-	// }
+	if (compareTime()) {
+		// Recent()
+		sleep(5000);
+		return 
+	}
 
     if (!packageNameEndsWith("raven2")) {
         app.launch('com.netmarble.raven2')
@@ -729,6 +729,11 @@ function main(){
 		croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
 		reData = getOcr(croppedImage) 
 		if (reData) {
+			if (select(reData,"維護") || select(reData,"無法") ) {  // 維護期間無法登入游
+				log_z("游戏维护 ")
+				storage.put("e_time",addRandomMinutes(20,40))
+				return
+			}
 			if (select(reData,"input") || select(reData,"time") ) {  // No input has been detected for a long time
 				log_z("长时间无动作被踢 异常")
 				click(640,413); 
@@ -812,6 +817,19 @@ function main(){
 			}
 		}
 		
+		// * 跳过动画
+		croppedImage = images.clip(grayscaleImage, 1196,18, 54, 28);
+		reData = getOcr(croppedImage) 
+		if (reData) {
+			if (select(reData,"Skip") ) {  // utomatically
+				log_z("强制跳过动画")
+				click(1217,30); // 点击强制任务
+				sleep(1000);
+				click(1217,30); // 点击强制任务
+				return
+			}
+		}
+
 		// * 强制任务
 		croppedImage = images.clip(grayscaleImage, 762, 136, 206, 48);  
 		reData = getOcr(croppedImage) 
@@ -894,6 +912,8 @@ function main(){
 			if (select(reData,"ntr") ) {  // Entry
 				log_z("创建完成")
 				// throw new Error(" 创建完成")
+				click(1143,679)
+				sleep(1000);
 				click(1143,679)
 				return 
 			}

@@ -1043,6 +1043,18 @@ function init() {
     //     return false
     // }
     // log_z("请求屏幕捕获权限 完成")
+    
+    try {
+        let ts = textContains("选择账号").findOne(3000)
+        if (ts) {
+            log_z("谷歌登录-选择账号")
+            click(600,314);
+            return
+        }
+    } catch (error) {
+        console.error("选择账号  Error during database operation:", error);
+        return 
+    }
 
     //  检查电量
     if (Recent()) {
@@ -1305,6 +1317,13 @@ function closeX(reData){
 
 // 处理弹窗函数
 function wrong(reData) {
+
+    if (select(reData, '再添加一个')) {
+        log_z("谷歌登录");
+        click(600,314);
+        return sleep(5000);
+    }
+
     if (selclick(reData, '游戏结束',true)) {
         log_z("点击界面进入游戏");
         return sleep(5000);
