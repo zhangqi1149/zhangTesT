@@ -17,8 +17,9 @@
 let Log = false   // 是否显示打印内容
 let storage = storages.create("ABC");
 let text = "全球最低金币 PlayPal担保交易。欢迎来到 igokay.com  。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
-let today = new Date().toISOString().split('T')[0];         // 获取今日日期，格式为 YYYY-MM-DD
-let careers = ["法师","道士","弩手","武士","黑道士","战士"];  // 职业顺序
+// let today = new Date().toISOString().split('T')[0];         // 获取今日日期，格式为 YYYY-MM-DD
+let today = "YYYY-MM-DD";         // 一直是一个
+let careers = ["道士","弩手","武士","黑道士","战士","法师"];  // 职业顺序
 
 // 原始别名
 let Bm = storage.get("Bm",0);
@@ -848,7 +849,7 @@ function manage_value() {
     // 如果键不存在，将今天的日期添加到 keysList 中
     if (!keys.includes(today)) {
         keys.push(today);                 // 当前职业 : e_career  喊了话的战斗力 : e_war  当前职业喊的数量 : e_count  停止时间 : e_time
-        storage.put(today,{e_career:'法师', e_war:0, e_count:0 ,e_time:0})  // 职业  战力值  喊话的数量  休息时间
+        storage.put(today,{e_career:'道士', e_war:0, e_count:0 ,e_time:0})  // 职业  战力值  喊话的数量  休息时间
         storage.put("keysList", keys);  // 更新键列表
     }
     
@@ -1168,7 +1169,7 @@ function getNextText(ocrResult,targetText) {
     }
     for (let i = 0; i < ocrResult[0].length; i++) {
         // console.log("ocrResult[0][i][1][0] :", ocrResult[0][i][1][0])
-      if (ocrResult[0][i][1][0].trim().replace(/[.,]/g, '') === targetText.replace(/[.,]/g, '')) {
+      if (ocrResult[0][i][1][0].trim().replace(/[.,]/g, '') === targetText.replace(/[.,]/g, '') || ocrResult[0][i][1][0].trim().replace(/[.,]/g, '') < targetText.replace(/[.,]/g, '') ) {
         // 如果目标文本不是最后一个，返回下一个文本
         if (i + 1 < ocrResult[0].length) {
             // console.log("parseInt(ocrResult[0][i][1][0].trim().replace(/[.,]/g, ''))",parseInt(ocrResult[0][i][1][0].trim().replace(/[.,]/g, '')) )
@@ -1467,23 +1468,7 @@ function Ranking(reData) {
         }
         return true
     }
-    
-    // 检查当前喊话进度  更换职业
-    if (care.e_count == 100) {
-        let index = careers.indexOf(care.e_career); // 当前职业的index
-        if (index == careers.length -1) {
-            // 一轮喊完了  休息一小时
-            console.log("一轮喊完了")
-            // storage.put(today,{e_career:"法师", e_war:0, e_count:0 ,e_time:addRandomMinutes(1,2)})
-            throw new Error("一轮喊完了")
-        }else{
-            console.log("更换职业")
-            console.log(storage.get(today))
-            storage.put(today,{e_career:careers[index+1], e_war:0, e_count:0 ,e_time:0})
-            // throw new Error("更换职业")
-        }
-        return false
-    }
+    log_z(`不在其他玩家信息界面`)
 
     // 在排行榜界面
     if (select(reData,"每日服务器")) {
@@ -1493,7 +1478,7 @@ function Ranking(reData) {
         }
         // 没有选择分组
         if (select(reData,"全部") || select(reData, care.e_career.trim()) == null) { // 才打开不是当前分组
-            if (selclick(reData,"全部") || selclick(reData,"战斗力（")) {
+            if (selclick(reData,"全部") || selclick(reData,"战斗力（") || selclick(reData, "战斗力 (") || selclick(reData,"战斗力 （")) {
                 return 
             }
         }
@@ -1541,7 +1526,18 @@ function Ranking(reData) {
                         log_z(`排名 : ${crop2[0][0][1][0]}`);
                         if (crop2[0][0][1][0] == 100 ) {
                             // 点击右上角退出
-                            clickWithDelay(1235,41,2000); // 关闭窗口
+                            // clickWithDelay(1235,41,2000); // 关闭窗口
+                            let index = careers.indexOf(care.e_career); // 当前职业的index
+                            if (index == careers.length -1) {
+                                // 一轮喊完了  休息一小时
+                                console.log("一轮喊完了")
+                                storage.put(today,{e_career:"道士", e_war:0, e_count:0 ,e_time:addRandomMinutes(1,2)})
+                                // throw new Error("一轮喊完了")
+                            }else{
+                                console.log("更换职业",storage.get(today))
+                                storage.put(today,{e_career:careers[index+1], e_war:0, e_count:0 ,e_time:0})
+                                // throw new Error("更换职业")
+                            }
                             return true;
                         }
                     }
@@ -1660,7 +1656,7 @@ function main(){
             Ranking(reData);
     
             log_z("关闭所有的弹窗")
-            if (closeX(reData)) {return } // 关闭所有的弹窗
+            if (closeX(reData)) {return } 
             if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
         }
     }
@@ -1692,7 +1688,33 @@ function main(){
 
 
 // console.log(storage.get(today))
-
+// storage.put(today,{e_career:"道士", e_war:0, e_count:0 ,e_time:0})
 // console.log("当前电量百分比 ",device.getBattery())
 
- 
+function select3(ocrResults, targetText,exactMatch) {
+    exactMatch = (exactMatch !== undefined) ? exactMatch : false;
+    if (!Array.isArray(ocrResults)) {
+        console.error(`OCR 结果不是数组: ${targetText}`);
+        return null;
+    }
+    // log_z(`ocrResults[0].length : ${ocrResults[0].length}`)
+    for (let i = 0; i < ocrResults[0].length; i++) {
+        let item = ocrResults[0][i];
+        console.log(". -=",item[1][0])
+        if (exactMatch) {
+            if (item[1][0] === targetText) {
+                return item;
+            }
+        }else{
+            if (item[1][0].includes(targetText)) {
+                return item;
+            }
+        }
+    }
+    return null;
+}
+
+// let img = getimg(false)
+// let grayscaleImage = images.grayscale(img);      // 二级化
+// let reData = getOcr(grayscaleImage);
+// select3(reData,"战斗力 （")

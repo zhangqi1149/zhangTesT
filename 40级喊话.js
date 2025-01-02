@@ -1318,6 +1318,17 @@ function closeX(reData){
 // 处理弹窗函数
 function wrong(reData) {
 
+    if (select(reData, '补丁出错')) {
+        if (selclick(reData,"确认") || selclick(reData,"确定")) {
+            sleep(5000);
+        }
+        return 
+    }
+    if (select(reData, "错误",true)) {
+        if (ClickSleep(reData, '确认', 5000, true) || ClickSleep(reData, '游戏结束', 5000, true) || ClickSleep(reData, '确定', 5000, true)) {
+            return true;
+        }
+    }
     if (select(reData, '再添加一个')) {
         log_z("谷歌登录");
         click(600,314);
@@ -1438,12 +1449,7 @@ function wrong(reData) {
     if (select(reData, "警告")) {
         return ClickSleep(reData, '确认');
     }
-    // 错误 -> 确认 或 游戏结束
-    if (select(reData, "错误")) {
-        if (ClickSleep(reData, '确认', 5000, true) || ClickSleep(reData, '游戏结束', 5000, true) || ClickSleep(reData, '确定', 5000, true)) {
-            return true;
-        }
-    }
+
     // 关闭广告 -> 今日不
     let reai = select(reData, '今日不')
     if (reai) {
