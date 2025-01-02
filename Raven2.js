@@ -347,6 +347,18 @@ function init() {
     }
     // log_z("检查权限 无障碍 完成")
 
+	try {
+        let ts = textContains("請重新運行後").findOne(3000)
+        if (ts) {
+            log_z("维护完成")
+			Recent()
+            return
+        }
+    } catch (error) {
+        console.error("請重新運行後  Error during database operation:", error);
+        return 
+    }
+
 	//  补丁 5分钟关闭一次游戏
 	if (compareTime()) {
 		log_z("游戏重启")
@@ -724,6 +736,12 @@ function main(){
 		croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
 		reData = getOcr(croppedImage) 
 		if (reData) {
+			if (select(reData,"Downloading") && select(reData,"MB") ) {  // data, rather than Wi-Fi, may result in a  ;  Download   ;MB
+				log_z("游戏更新 ")
+				click(688,438);
+				storage.put("e_time",addRandomMinutes(-7,-5))
+				return
+			}
 			if (select(reData,"維護") || select(reData,"無法") ) {  // 維護期間無法登入游
 				log_z("游戏维护 ")
 				storage.put("e_time",addRandomMinutes(20,40))

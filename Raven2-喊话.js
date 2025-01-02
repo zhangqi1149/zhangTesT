@@ -376,7 +376,19 @@ function init() {
         auto();
         throw new Error("请求无障碍权限失败");
     }
-    // log_z("检查权限 无障碍 完成")
+    log_z("检查权限 无障碍 完成")
+
+	try {
+        let ts = textContains("請重新運行後").findOne(3000)
+        if (ts) {
+            log_z("维护完成")
+			Recent()
+            return
+        }
+    } catch (error) {
+        console.error("請重新運行後  Error during database operation:", error);
+        return 
+    }
 
 	//  补丁 5分钟关闭一次游戏
 	if (compareTime()) {
@@ -734,6 +746,11 @@ function main(){
 				storage.put("e_time",addRandomMinutes(20,40))
 				return
 			}
+			if (select(reData,"Downloading") && select(reData,"MB") ) {  // data, rather than Wi-Fi, may result in a  ;  Download   ;MB
+				log_z("游戏更新 ")
+				click(688,438);
+				return
+			}
 			if (select(reData,"input") || select(reData,"time") ) {  // No input has been detected for a long time
 				log_z("长时间无动作被踢 异常")
 				click(640,413); 
@@ -788,6 +805,17 @@ function main(){
 				return
 			}
 		}
+
+		// // * 维护完成
+		// croppedImage = images.clip(grayscaleImage, 470, 100, 330, 100);
+		// reData = getOcr(croppedImage) 
+		// if (reData) {
+		// 	if (select(reData,"維護已完") || select(reData,"重新運") ) {    // 渡鷄維護已完成   請重新運行後
+		// 		log_z("维护完成")
+		// 		Recent()
+		// 		return
+		// 	}
+		// }
 
 		//  * 谷歌登录
 		croppedImage = images.clip(grayscaleImage, 0,0, 257, 83);  
@@ -1090,7 +1118,7 @@ if (false) {
 	console.log("-------------------------------end")
 
 	// croppedImage = images.clip(grayscaleImage, 43,646, 85, 22); 
-	croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);
+	croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);  // 异常窗口
 	// reData = getOcr2(croppedImage)
 	reData = getOcr(croppedImage)
 	if (reData) {
