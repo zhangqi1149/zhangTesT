@@ -1461,12 +1461,11 @@ function Ranking(reData) {
             // 等待切换界面
             if (!text3("请输入")) {
                 console.log("该角色不存在")
-                toast("未等到要点的界面")
+                // toast("未等到要点的界面")
                 clickWithDelay(48,33,1000);
             } 
             return true
         }
-        return true
     }
     log_z(`不在其他玩家信息界面`)
 

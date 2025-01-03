@@ -172,8 +172,8 @@ let Servers = {
     // ZQ 测试手机 
     "5e19856c-7435-4426-813d-4c0b3899399b": {
 		"Id": "000",
-		"Server": "Eden",
-		"Area": "Mors",
+		"Server": "Noah",
+		"Area": "Dolor",
 		"OCRip":"http://192.168.1.139",
 		"port" : "8002"
 	},
@@ -1123,24 +1123,24 @@ function select3(ocrResults, targetText,exactMatch) {
 
 
 if (false) {
-	// if (!requestScreenCapture(true)) {
-	// 	console.log("请求屏幕捕获权限失败", )
-	// }
+	if (!requestScreenCapture(true)) {
+		console.log("请求屏幕捕获权限失败", )
+	}
 
 	let img = getimg(false)
 	let grayscaleImage = images.grayscale(img);
-	// let reData = getOcr2(grayscaleImage)
-	reData = getOcr(grayscaleImage)
+	let reData = getOcr2(grayscaleImage)
+	// reData = getOcr(grayscaleImage)
 	if (reData) {
 		// select3(reData,"Class")
 	}
 
 	console.log("-------------------------------end")
 
-	croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);  // 异常窗口
+	// croppedImage = images.clip(grayscaleImage, 465,269, 353, 179);  // 异常窗口
 	// croppedImage = images.clip(grayscaleImage, 295,252, 683, 291);  // 
 	// reData = getOcr2(croppedImage)
-	reData = getOcr(croppedImage)
+	// reData = getOcr(croppedImage)
 	if (reData) {
 		select3(reData,"Class")
 	}

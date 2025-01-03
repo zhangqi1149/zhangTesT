@@ -511,321 +511,321 @@ let Servers = {
     "b402fcdb": {
         "Id": "123",
         "Server": "ASIA011",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "1ef862e0": {
         "Id": "122",
         "Server": "ASIA012",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "96a294d0": {
         "Id": "121",
         "Server": "ASIA013",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "f54f8429-8fc9-45be-be3d-db3d0bf99475": {
         "Id": "120",
         "Server": "ASIA014",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "71d8a433-4789-4dd5-a6da-2604c958615e": {
         "Id": "119",
         "Server": "ASIA021",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "e5f1b8f8-0b74-4ff6-ab03-13e58a19bdec": {
         "Id": "118",
         "Server": "ASIA022",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "b491a690-521c-4a2e-8a7e-21e979085e67": {
         "Id": "117",
         "Server": "ASIA023",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "edcef95f-c98a-4107-a76b-715908e0e659": {
         "Id": "116",
         "Server": "ASIA024",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "12fdc099-8351-4a20-a046-a74b8adcfa83": {
         "Id": "115",
         "Server": "ASIA031",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "4cd13a96-4b51-4862-b503-5881f339242a": {
         "Id": "114",
         "Server": "ASIA032",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "0c86be59-cbea-4fa0-816c-7c5f16bcbe9f": {
         "Id": "113",
         "Server": "ASIA033",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "408830f3-7f73-44d1-b33c-c79d18fc4de4": {
         "Id": "112",
         "Server": "ASIA041",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "40e83d09-d549-443d-bfc4-d004bd693d19": {
         "Id": "111",
         "Server": "ASIA042",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },    
 
     "50e7f21d-2508-4cab-97e9-8a676e0986ea": {
         "Id": "110",
         "Server": "ASIA043",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "047a7c32-de99-4bd9-8503-a11050de37b5": {
         "Id": "109",
         "Server": "ASIA051",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "da727009-8386-4aa3-b7ad-b12e069f7eba": {
         "Id": "108",
         "Server": "ASIA052",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "b546783d-1a82-4465-938b-07fe5fa1cda7": {
         "Id": "107",
         "Server": "ASIA053",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "d6e6a347-c8e7-462d-90be-de1e35da5848": {
         "Id": "106",
         "Server": "ASIA054",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "63f061a5-bd02-4ee5-b4a7-f360068c69a3": {
         "Id": "105",
         "Server": "ASIA061",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "3207acb8-545c-460b-8237-30c9aaef161a": {
         "Id": "104",
         "Server": "ASIA062",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "7fd8c4be-69c4-48a9-b3fd-aaa7598f479e": {
         "Id": "103",
         "Server": "ASIA063",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "36408acc-ca39-4b57-bfec-8fc4b1d1bac3": {
         "Id": "102",
         "Server": "ASIA064",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "0f8f4a18-d173-4045-a0f1-f991d681700c": {
         "Id": "101",
         "Server": "ASIA071",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "a4a38793-f81f-4fe6-95cd-e12343fa5768": {
         "Id": "100",
         "Server": "ASIA072",
-        // "OCRip":"http://192.168.1.140",  // todo
-        "OCRip":"http://192.168.1.140",
+        // "OCRip":"http://192.168.1.139",  // todo
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "b3d90a30-0513-4ff8-ab72-4cc5154e91a4": {
         "Id": "99",
         "Server": "ASIA073",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "1dbb01ca-cdf4-42c1-8935-0e9cc8ca556e": {
         "Id": "98",
         "Server": "ASIA081",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },    
     "45ab4f25-81f8-4bcc-9043-acc85dc47e62": {
         "Id": "97",
         "Server": "ASIA082",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "970c32eb-b623-4764-8743-b5685e308fb5": {
         "Id": "96",
         "Server": "ASIA083",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "f92f2125-71fa-4a0e-b2a6-9a02531ce067": {
         "Id": "95",
         "Server": "ASIA343",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "47ffe00d-52cb-4150-bdb1-49d50b3c1a4f": {
         "Id": "94",
         "Server": "ASIA342",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "843e61dd-3243-4196-ad84-347d1d33ceb6": {
         "Id": "93",
         "Server": "ASIA341",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "4d1a81a4-5e7e-4d41-b65f-5bedf13dc23e": {
         "Id": "92",
         "Server": "ASIA333",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "5d75350e-975e-43e6-b8ab-7ff58df796ad": {
         "Id": "91",
         "Server": "ASIA332",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "beb9afa5-1898-499e-93a7-706034a5c0df": {
         "Id": "90",
         "Server": "ASIA331",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
 	"2e01cc5f-a829-4a35-87fc-8ce7f0ae5a39": {
         "Id": "89",
         "Server": "ASIA324",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
 	"355f4465-1f65-469c-bf6c-81f629bc5b2d": {
         "Id": "88",
         "Server": "ASIA323",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "187eb6fb-520b-4cf0-b469-0c34d21b3711": {
         "Id": "87",
         "Server": "ASIA322",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "502ea617-95c7-4345-9c9b-07de90939c3c": {
         "Id": "86",
         "Server": "ASIA321",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "5cf80fc6-b4b2-4034-990a-42900fba3630": {
         "Id": "85",
         "Server": "ASIA314",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "ded8b096-6ff9-4436-9a15-d960e05e683e": {
         "Id": "84",
         "Server": "ASIA313",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "6c3f773c-c662-433b-97d3-7cb0c2d27fbe": {
         "Id": "83",
         "Server": "ASIA312",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "d3bfaea1-e0eb-4169-92e3-b4165a43bc30": {
         "Id": "82",
         "Server": "ASIA311",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "bd36bbe9-383e-4f09-824f-e60a313746eb": {
         "Id": "81",
         "Server": "ASIA353",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "6e4c7f85-e171-414c-bbd2-f7333b48d605": {
         "Id": "80",
         "Server": "ASIA351",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "b9c5acfc-e77c-4d29-a0e7-8e347de0b1c3": {
         "Id": "79",
         "Server": "ASIA353",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "3172dc49-bc00-42d9-b97a-3f8f5796ccc4": {
         "Id": "78",
         "Server": "ASIA354",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8001",
     },
     "73b351fe-9789-4a7d-b27f-ec431b16677b": {
         "Id": "77",
         "Server": "ASIA361",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "b0d0cbd3-be11-4a50-8b5b-4a50e0efcb55": {
         "Id": "76",
         "Server": "ASIA362",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "7df85b12-105d-438c-a2e7-f487b1ded057": {
         "Id": "75",
         "Server": "ASIA363",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "18055116-dd62-4365-9917-501ec0bf8bd5": {
         "Id": "74",
         "Server": "ASIA364",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "1a8c31f1-2aac-42cf-a5d9-dae264ff31b7": {
         "Id": "73",
         "Server": "ASIA371",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "d02b7531-161c-4fc1-ab6d-bd64783fd6e8": {
         "Id": "72",
         "Server": "ASIA372",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
     "2b808dbf-8156-4f42-a458-56313648a57a": {
         "Id": "71",
         "Server": "ASIA373",
-        "OCRip":"http://192.168.1.140",
+        "OCRip":"http://192.168.1.139",
 		"port":"8002",
     },
 }
@@ -1057,9 +1057,9 @@ function init() {
     }
 
     //  检查电量
-    if (Recent()) {
-        return false
-    }
+    // if (Recent()) {
+    //     return false
+    // }
     if (!packageNameEndsWith("mir4global")) {
         app.launch('com.wemade.mir4global')
         log_z("启动游戏")
@@ -1655,9 +1655,9 @@ function main(){
 
 // for (let i = 0; i < 3; i++) {
     // log_z("main 执行")
-// log_z("$$$$$$$$$$$$$$  执行开始!")
-main()
-// log_z("##############  执行完成")
+    // log_z("$$$$$$$$$$$$$$  执行开始!")
+    main()
+    // log_z("##############  执行完成")
     // log_z("main 结束")
 // }
 
@@ -1703,4 +1703,8 @@ function select3(ocrResults, targetText,exactMatch) {
 // let croppedImage = images.clip(img, 79, 19, 76, 26);
 // let croppedImage = images.clip(grayscaleImage, 478, 623, 322, 30);
 // let reData = getOcr2(croppedImage)
+// let reData = getOcr(grayscaleImage)
 // select3(reData,"1544777")
+
+
+// storage.put("e_time",today)
