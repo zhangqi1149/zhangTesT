@@ -884,6 +884,14 @@ function readLastLine() {
     return lastLine;  // 返回最后一行内容
 }
 
+//  生成未来时间 
+function addRandomMinutes(min, max) {
+    let now = new Date();  // 获取当前时间
+    let randomMinutes = Math.floor(Math.random() * (max - min + 1)) + min; // 生成 min 到 max 之间的随机分钟数
+    now.setMinutes(now.getMinutes() + randomMinutes); // 当前时间加上随机分钟数，自动处理进位
+    return now;
+}
+
 //  查找 后缀控件
 function packageNameEndsWith(suffix) {
     // 查找所有的控件
