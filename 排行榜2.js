@@ -1,13 +1,36 @@
-// 设置服务器地址
-var text = "全球最低金币 PlayPal担保交易。欢迎来到igokay.com。 The lowest price gold transactions in the world. Use PlayPal guaranteed payment. Welcome to igokay.com." ;
+/** 排行榜喊话
+ *  使用小图进行识别
+ *  名字不可靠识别会混乱  等级有重复的   使用战斗力 重复出现的少   
+ *  选择比自己战斗力少的  到100就换个职业 这样可以一直跑下去
+ *  记录滑动的次数  
+ *  多动作联合执行减少识别次数   
+ * 
+ * 各个大区更新排行榜时间
+ *  SA 13:00
+ *  EU 18:00
+ *  ASIA 00:00
+ *  NA 12:00
+ * 
+ */
 
-var  Save = false  // true   false 
-let filePath = "/storage/emulated/0/Documents/config.txt";
-// 原始别名
-let Bm = readLastLine().trim()
-// console.log("Bm :", Bm )
-let Log = false
+let Log = true   // 是否显示打印内容
+let storage = storages.create("ABC");
+let chat_text = "★Buy gold coins at igokay.com. ★买金币就到 igokay.com" ;
+// let today = new Date().toISOString().split('T')[0];         // 获取今日日期，格式为 YYYY-MM-DD
+let today = "YYYY-MM-DD";         // 一直是一个
+let careers = ["战士", "法师", "道士", "弩手", "武士", "黑道士",];  // 职业顺序
 
+// 保存当前设备ID
+let DeviceID = storage.get("DeviceID", 0);
+if ( DeviceID == 0) {
+    DeviceID = readDeviceId().trim()
+    storage.put("DeviceID", DeviceID);
+}
+
+// 保存每台设备的大区、OCR服务器的配置
+// 应该命名为DevicesConfig,历史原因暂时保留
+// k == DeviceID
+// v == map
 let Servers = {
     "492f9be6": {
 		"Id": "1",
@@ -919,21 +942,30 @@ let Servers = {
     },
 }
 
+manage_value()
+//  管理存储值
+function manage_value() {
+    let cfg = storage.get("config", {});
 
-
-function log_z(message) {
-    if (Log) {
-        console.log(message);
+    // e_index 对应 let careers = ["战士", "法师", ...] 的索引
+    if (cfg.e_index==undefined) {
+        // 职业索引  战力值  喊话的数量  休息时间
+        storage.put("config", {e_index: 0, e_war: [{}, {}, {}, {}, {}, {}]})
     }
 }
 
-let SERVER_URL = Servers[Bm].OCRip + ":" + Servers[Bm].port
-// console.log("SERVER_URL :",SERVER_URL)
+// 保存COR服务器的IP:PORT
+let SERVER_URL = Servers[DeviceID].OCRip + ":" + Servers[DeviceID].port  
 
-// let SERVER_URL = "http://192.168.1.140:8001"
+function log_z(message) {
+    if (Log) {
+        console.log("  * ",message);
+    }
+}
 
-// 读取文件并返回最后一行
-function readLastLine() {
+// 从配置文件当中读取当前设备的ID
+function readDeviceId() {
+    let filePath = "/storage/emulated/0/Documents/config.txt";
     let reader = new java.io.BufferedReader(new java.io.FileReader(filePath));
     let line;
     let lastLine = '';
@@ -947,16 +979,88 @@ function readLastLine() {
     return lastLine;  // 返回最后一行内容
 }
 
-// SERVER_URL = "http://192.168.1.94:8002";  // 服务器2  8001 -8005  每个13个
-// let SERVER_URL = "http://192.168.1.139:8002";  // 服务器1 8001 -8005
+//  查找 后缀控件
+function packageNameEndsWith(suffix) {
+    // 查找所有的控件
+    let nodes = className("android.widget.FrameLayout").find();
+    // 遍历控件列表
+    for (let i = 0; i < nodes.size(); i++) {
+        let node = nodes.get(i);
+        // 使用 endsWith 检查包名是否以指定的后缀结尾
+        if (node.packageName().endsWith(suffix)) {
+            return true;  // 找到匹配的控件，返回 true
+        }
+    }
+    
+    // nodes.recycle();  // 如果没有找到匹配的控件，释放资源
+    nodes = null
+    return false;
+}
 
-var storage = storages.create("ABC");
+// 初始化
+function init() {
+    // 检查权限 无障碍
+    if (!auto.service) {
+        throw new Error("请求无障碍权限失败");
+    }
+    if (!requestScreenCapture(true)) {
+        // throw new Error("请求屏幕捕获权限失败");
+        log_z("请求屏幕捕获权限失败")
+        sleep(5000);
+    }
+    if (!packageNameEndsWith("mir4global")) {
+        app.launch('com.wemade.mir4global')
+        log_z("启动游戏")
+        sleep(3000);
+        return true
+    } 
+    return false
+}
+
+/** 截图函数
+ * 
+ * @param {boolean} grayscale 是否进行二级化处理  去除色彩
+ * @returns 
+ */
+function getimg(grayscale) {
+    let img ;
+    try {
+        img = captureScreen();
+        if (img == null) {
+            return null
+        }
+        // 是否二级化 
+        if (grayscale) {
+            let grayscaleImage = images.grayscale(img);
+            return grayscaleImage
+        }
+        return img
+    } catch (error) {
+        console.error("截图失败 ",error)
+    }
+    return null
+}
+
+/**强行关闭游戏 控件本版
+ * 
+ * let currentPkg = currentPackage();  可以获取 com.wemade.mir4global  这个表示传奇4 
+ * @param {string} str  APP包的名字   
+ * @param {boolean} execute  是否启动
+ */
+function close_app(str,execute) {
+    recents()    // 打开最近任务
+    sleep(2000);
+    let targetControl = id("net.oneplus.launcher:id/snapshot").findOne(5000);  // 是否打开了最近活动任务
+    if (targetControl) {
+        gesture(100, [[359, 1073]]);   // 最近任务的关闭位置
+    }
+}
 
 // OCR请求
 function getOcr(img) {
     try {
         
-        console.time("********&&& getOCR");  // 开始计时
+        // console.time("********&&& getOCR");  // 开始计时
 
         // console.time("tobase64");  // 开始计时
         // 将截图转换为Base64编码的PNG格式
@@ -976,213 +1080,50 @@ function getOcr(img) {
             },
             timeout: 20000 // 设置超时时间为10秒
         });
-
-        // let response = http.postJson("http://192.168.1.94:8001/ocr/predict-by-base64", jsonData, {
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     timeout: 100000 // 设置超时时间为10秒
-        // });
-
         // console.timeEnd("httppost");  // 输出执行时间
 
         if (response.statusCode == 200) {
-            console.time("JSON.parse");  // 开始计时
+            // console.time("JSON.parse");  // 开始计时
             let result = JSON.parse(response.body.string());
-            console.time("JSON.parse");  // 开始计时
-            console.log("****************** OCR  time : ", result.time)
+            // console.time("JSON.parse");  // 开始计时
+            // log_z("****************** OCR  time : ", result.time)
             return result.data;
-            // return JSON.parse(response.body.string());
         } else {
             console.error("getOcr 服务器返回错误：" + response.statusCode);
         }
     } catch (e) {
         console.error("请求失败: ", e);
+        sleep(10* 1000)  // 10秒
     } finally {
-        console.timeEnd("********&&& getOCR");  // 输出执行时间
+        // console.timeEnd("********&&& getOCR");  // 输出执行时间
     }
     
     return null;
 }
 
-// 查看控件
-function npackageName() {
-    // 查找屏幕上的所有控件
-    let nodes = className("android.widget.FrameLayout").find();
-    // 遍历找到满足条件的控件
-    for (let i = 0; i < nodes.size(); i++) {
-        let node = nodes.get(i);
-        if (node.packageName() === "com.wemade.mir4global") {
-            // console.log("找到匹配的控件，包名: " + node.packageName());
-            // 可以在这里对控件进行其他操作
-            // toast("找到匹配的控件，包名" + node.packageName())
-            // break; // 如果只需要找到一个，找到后可以跳出循环
-            node.recycle();  // 释放控件资源
-            return true
-        }
-    }
-    return false
-}
+/** 查找文本并点击
+ * 
+ * @param {Array} reData 
+ * @param {string} src   要查找的字
+ * @param {boolean} exactMatch  是否精准查询
+ * @returns 
+ */
+function selclick(reData,src,exactMatch){
+    var target = select(reData, src,exactMatch)
+    if(target != null){
+        // 计算文本区域的中心点
+        let centerX = (target[0][0][0] + target[0][2][0]) / 2;
+        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
 
-function packageNameEndsWith(suffix) {
-    // 查找所有的控件
-    let nodes = className("android.widget.FrameLayout").find();
-    // 遍历控件列表
-    for (let i = 0; i < nodes.size(); i++) {
-        let node = nodes.get(i);
-        // 使用 endsWith 检查包名是否以指定的后缀结尾
-        if (node.packageName().endsWith(suffix)) {
-            return true;  // 找到匹配的控件，返回 true
+        // console.log(`点击 ${src} x = ${centerX}  y = ${centerY}`)
+        code = click(centerX,centerY);  // 点击坐标
+        if (!code) {
+            // log_z(`selclick ${src} 点击失败`)
+            return false
         }
-    }
-    
-    // nodes.recycle();  // 如果没有找到匹配的控件，释放资源
-    nodes = null
-    return false;  // 没有找到匹配的控件，返回 false
-}
-
-// 初始化
-function init() {
-    // 检查权限 无障碍
-    if (!auto.service) {
-        auto();
-        throw new Error("请求无障碍权限失败");
-    }
-    if (!requestScreenCapture(true)) {
-        // throw new Error("请求屏幕捕获权限失败");
-        log_z("请求屏幕捕获权限失败")
-        sleep(3000);
-    }
-    
-    if (packageNameEndsWith("android.vending")) {
-        console.log("在谷歌")
-        return true
-    }
-    if (!packageNameEndsWith("mir4global")) {
-        app.launch('com.wemade.mir4global')
-        sleep(3000);
         return true
     }
     return false
-}
-
-//  释放资源
-function imgRecycle(params) {
-    if (params) {
-        // 释放图片资源
-        params.recycle();
-        // 将参数设为null，帮助垃圾回收
-        params = null;
-    }
-}
-
-/**强行关闭游戏 控件本版
- * 
- * let currentPkg = currentPackage();  可以获取 com.wemade.mir4global  这个表示传奇4 
- * @param {string} str  APP包的名字   
- * @param {boolean} execute  是否启动
- */
-function close_app(str,execute) {
-    if (execute == null) {
-        execute = false
-    }
-    // 打开详情  
-    app.openAppSetting(str)
-    let btn = text("强行停止").findOne(4000);
-    if (btn) {
-        btn.click();
-        console.log("点击强行停止按钮成功");
-    }
-    let qd = text("确定").findOne(3000)
-    if (qd) {
-        qd.click();
-        console.log("点击确定按钮成功");
-    }
-    // 再一次执行App
-    if (execute) {
-        app.launch(str)
-    }
-}
-
-/** 在一定时间等待指定文字出现
- * 
- * @param {string} str 
- * @param {number} time 
- * @returns 
- */
-function wait(str, time) {
-    let startTime = Date.now();  // 获取当前时间（毫秒）
-    while (Date.now() - startTime < time) {
-        // 尝试找到指定的内容
-        let img = captureScreen();
-        let grayscaleImage = images.grayscale(img);
-        imgRecycle(img)
-        let reData = getOcr(grayscaleImage);
-        imgRecycle(grayscaleImage)
-        if (reData) {
-            let top = select(reData,str)
-            if (top) {
-                return true
-            }
-        }
-        sleep(3000);  // 等待 3000 毫秒再继续查找
-    }
-    // 超时返回
-    return false
-}
-
-/** 生成随机英文名  名字要求6-12 
- * 
- * @returns string
- */
-function getRandomName() {
-    // 随机生成 2 到 5 之间的长度
-    let length = random(2, 5);
-    
-    // 定义字符集，可以根据需要修改
-    let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let name = "";
-
-    // 循环生成随机字符组成名字
-    for (let i = 0; i < length; i++) {
-        var randomIndex = random(0, characters.length - 1);
-        name += characters.charAt(randomIndex);
-    }
-    
-    // 加上前缀
-    let prefix = "igokay ";  
-    let fullName = prefix + name;
-    return fullName;
-}
-
-/** 通用裁剪函数
- * 
- * @param {*} img 
- * @param {Array} box 
- * @returns 
- */
-function cropImage(img, box) {
-    var x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
-    var x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
-    var y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
-    var y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
-
-    // 裁剪图像
-    return images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
-}
-
-// 区域裁剪
-function clip(img, box) {
-    // 获取裁剪区域的坐标
-    let x_min = Math.min(box[0][0], box[1][0], box[2][0], box[3][0]);
-    let x_max = Math.max(box[0][0], box[1][0], box[2][0], box[3][0]);
-    let y_min = Math.min(box[0][1], box[1][1], box[2][1], box[3][1]);
-    let y_max = Math.max(box[0][1], box[1][1], box[2][1], box[3][1]);
-
-    // 裁剪图像
-    let croppedImage = images.clip(img, x_min, y_min, x_max - x_min, y_max - y_min);
-
-    return croppedImage
 }
 
 /** 查找后执行点击操作并等待指定时间。
@@ -1197,7 +1138,7 @@ function ClickSleep(reData, text, waitTime, exactMatch) {
     waitTime = (waitTime !== undefined) ? waitTime : 5000;
     exactMatch = (exactMatch !== undefined) ? exactMatch : false;
     if (selclick(reData, text, exactMatch)) {
-        log_z(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
+        // log_z(`点击"${text}"，等待 ${waitTime / 1000} 秒`);
         sleep(waitTime);
         return true;
     }
@@ -1217,59 +1158,21 @@ function select(ocrResults, targetText,exactMatch) {
         console.error(`OCR 结果不是数组: ${targetText}`);
         return null;
     }
+    // log_z(`ocrResults[0].length : ${ocrResults[0].length}`)
     for (let i = 0; i < ocrResults[0].length; i++) {
         let item = ocrResults[0][i];
-        // console.log(item[1][0])
+        // log_z(`字符串 : ${item[1][0]}, 坐标 : ${item[0][0]}`)
         if (exactMatch) {
-            // console.log("进行精准查询 :",item[1][0])
             if (item[1][0] === targetText) {
-                // console.log("找到目标文本:", item);
                 return item;
             }
         }else{
-            // console.log("   * 进行模糊查询 :",item[1][0])
             if (item[1][0].includes(targetText)) {
-                // console.log("模糊查找目标文本:", item.text);
                 return item;
             }
         }
     }
     return null;
-}
-
-/** 查找文本并点击
- * 
- * @param {Array} reData 
- * @param {string} src   要查找的字
- * @param {boolean} exactMatch  是否精准查询
- * @returns 
- */
-function selclick(reData,src,exactMatch){
-    var target = select(reData, src,exactMatch)
-    if(target != null){
-        // 计算文本区域的中心点
-        let centerX = (target[0][0][0] + target[0][2][0]) / 2;
-        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-
-        // 将坐标从截图转换到设备屏幕坐标
-        // let x_phone = (centerX / 1285) * device.height;
-        // let y_phone = (centerY / 720) * device.width;
-
-        // console.log(`selclick-点击${src}: x=${x_phone}, y=${y_phone}`);
-        // console.log(`selclick-点击 ${src}: x=${centerX}, y=${centerY}`);
-
-        // 点击坐标
-        // code = httpclick(centerX,centerY);
-        code = click(centerX,centerY);
-        // console.log("code",code)
-        // code = click(x_phone,y_phone);
-        if (!code) {
-            log_z(`selclick ${src} 点击失败`)
-            return false
-        }
-        return true
-    }
-    return false
 }
 
 /** 点击偏移文本
@@ -1282,13 +1185,6 @@ function textClick(target,x,y){
     // 计算文本区域的中心点
     let centerX = (target[0][0][0] + target[0][2][0]) / 2;
     let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-    // 将坐标从截图转换到设备屏幕坐标
-    // let x_phone = (centerX / 1285) * device.height;
-    // let y_phone = (centerY / 720) * device.width;
-    // console.log(`点击${target.text}: x=${x_phone}, y=${y_phone}`);
-    log_z(` textClick 点击 : ${target.text} 偏移: x=${centerX}, y=${centerY}`);
-    // 点击坐标
-    // click(x_phone+x,y_phone+y);
     click(centerX+x,centerY+y);
 }
 
@@ -1316,78 +1212,90 @@ function clickWithDelay(x, y, delay) {
 function checkAndClick(reData, text, x, y, delay) {
     delay = (delay !== undefined) ? delay : 500;
     if (select(reData, text)) {
+        console.log("checkAndClick  text: ",text)
         clickWithDelay(x, y, delay);
         return true;
     }
     return false;
 }
 
-//  获取等级
-function getlv(lvData){
-    if (!Array.isArray(lvData)) {
-        return null;
-    }
-    for (let i = 0; i < lvData[0].length; i++) {
-        let item = lvData[0][i];
-        if (item[1][0].includes("级")) {
-            let index = item[1][0].indexOf('级');
-            let numberBeforeLevel = item[1][0].slice(0, index).trim();
-            storage.put("lv", numberBeforeLevel);
-            return numberBeforeLevel;
+//  识别3次
+function text3(str) {
+    for (let i = 0; i < 3 ; i++) {
+        // 截取图片
+        let img = captureScreen(); 
+        let grayscaleImage = images.grayscale(img);
+        // 找对应的内容
+        let reData4 = getOcr(grayscaleImage);
+        if (reData4) {
+            // 开始查找内容
+            if (select(reData4,str)) {
+                return true
+            }
         }
-    }
-    return null ;
-}
-
-//  关闭通知
-function closeNote(reData,src) {
-    var target = select(reData, src)
-    // console.log(target)
-    if (target) {
-        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-        let y_phone = (centerY / 720) * device.width;
-        // console.log(`点击${src}: x= 1166, y=${y_phone}`);
-        let code = click(1166,y_phone);
-        return code
     }
     return false
 }
 
-//  查找第二个指示字符
-function selectTow(ocrResults, targetText) {
-    let num = 0
-    for (let i = 0; i < ocrResults[0].length; i++) {
-        let item = ocrResults[0][i];
-        if (item[1][0] === targetText) {
-            num += 1;
-            if (num == 2) {
-                return item;
-            }
+// 关闭窗口
+function closeX(reData){
+    if (select(reData, "是否结束游戏") || select(reData, '龙再炼')||select(reData, '只攻击玩家')) {
+        back()
+        return true
+    }
+    if (checkAndClick(reData, '已付款的商品将发放至商店保管箱', 1130, 66, 2000)) return true;
+    if (checkAndClick(reData, '伪像切换', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '大地图', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '奇缘', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '闭关修炼', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '画面位置', 1230, 88, 2000)) return true;
+    if (select(reData, '可佩戴')) {
+        clickWithDelay(948,200,1000);// 选中
+        clickWithDelay(1150,675,2000); // 购买
+        clickWithDelay(1150,675,1000); // 乘骑设置
+        clickWithDelay(1230,29,1000);
+        return true
+    }
+
+    if (checkAndClick(reData, '龙神器', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '远征队', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '接受委托', 795, 149, 2000)) return true;
+    if (checkAndClick(reData, '切换频道', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '一键删除', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '合成魔', 1241, 29, 2000)) return true;
+    
+    // 利用活力
+    if (checkAndClick(reData, '利用活力', 223, 560, 1200)) return true;
+    if (checkAndClick(reData, '战斗设置', 1235, 41, 2000)) return true;
+    if (checkAndClick(reData, '快捷栏设置', 1235, 41, 2000)) return true;
+    if (checkAndClick(reData, '特殊强化', 1241, 29, 2000)) return true;
+    if (checkAndClick(reData, '精灵合成', 1241, 29, 2000)) return true;
+
+    // 活力补充
+    if (checkAndClick(reData, '活力补充', 950, 164, 2000)) return true;
+    // if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
+
+    if (select(reData,"输入数字") &&  selclick(reData,"取消") ) {
+        sleep(2000);
+        return true
+    }
+    if (checkAndClick(reData, '自动装备', 732,538, 2000)) return true;
+    
+    if (select(reData,"选择购买数量") && selclick(reData,"取消")) {
+        sleep(1000);
+    }
+
+    let long = select(reData,"中型生命")
+    if (long) {
+        if (long[0][0][0] > 700) {
+            click(1219,94); //  X
+            sleep(2000);
+            return true
         }
     }
-    return null;
-}
 
-// 查找文本并点击
-function clickTow(reData,src){
-    var target = selectTow(reData, src)
-    if(target != null){
-        // 存在 点击
-        // console.log("开始点击",src);
-
-        // 计算文本区域的中心点
-        let centerX = (target[0][0][0] + target[0][2][0]) / 2;
-        let centerY = (target[0][0][1] + target[0][2][1]) / 2;
-
-        // 将坐标从截图转换到设备屏幕坐标
-        // let x_phone = (centerX / 1285) * device.height;
-        // let y_phone = (centerY / 720) * device.width;
-
-        log_z(` clickTow 点击坐标: x=${centerX}, y=${centerY}`);
-
-        // 点击坐标
-        click(centerX,centerY);
-
+    if (!select(reData,"前往狭窄的通道") && select(reData,"请拖拽虚拟摇杆进行移动") ) {
+        swipe(232, 455, 232, 200, 4000);
         return true
     }
     return false
@@ -1395,18 +1303,67 @@ function clickTow(reData,src){
 
 // 处理弹窗函数
 function wrong(reData) {
+    log_z("处理异常弹窗")
+    if (selclick(reData, '游戏结束',true)) {
+        log_z("点击界面进入游戏");
+        sleep(5000);
+        return true;
+    }
+    if (select(reData,"正在下载")) {
+        throw new Error(" 正在下载")
+    }
+    if (selclick(reData, '开始游戏',true)) {
+        log_z("点击界面进入游戏");
+        sleep(15000);
+        return true;
+    }
+    if (select(reData,"环境下载")) {
+        selclick(reData, '确认',true)
+        sleep(25000);
+        return true;
+    }
+
+    if (select(reData,"网络状态不佳")) {
+        selclick(reData,"前往登录",true)
+        return true
+    }
+    //  游戏需要更新
+    if (select(reData,"重启游戏") || select(reData,"开始更新")) {
+        selclick(reData,"确认")
+        sleep(8000);  // 等待更新游戏
+        return true
+    }
+
     if (selclick(reData,"Google登录")) {
         sleep(5000);
-        return 
+        return true;
     }
-     // 网络异常波动
-     if (selclick(reData,"前往登录")) {
+    if (selclick(reData,"重新连接",true)) {
+        return true
+    }
+    // 服务器连接断开 -> 前往登录
+    if (select(reData, "服务器连接断开")) {
+        return ClickSleep(reData, '前往登录');
+    }
+    // 网络异常波动   -- 提示
+    if (selclick(reData,"前往登录")) {
         sleep(2000);
-        return
+        return true
+    }
+
+    if (select(reData,"屏蔽")) {
+        if (selclick(reData,"确认",true)) {  // 被屏蔽了 
+            sleep(1000);
+            clickWithDelay(48,33,1000);
+            return true
+        }
+    }
+
+    if (selclick(reData,"确定",true)|| selclick(reData,"确认",true)) {
+        return true
     }
     if (select(reData,"存在最新版本")||select(reData,"无法确认版本")) { 
         selclick(reData,"确定",true);
-        // SetCom("pm clear com.wemade.mir4global")
         // throw new Error("游戏更新");
         return true;
     }
@@ -1415,18 +1372,14 @@ function wrong(reData) {
     if (select(reData,"资格的证明")) {
         selclick(reData,"登录游戏",true)
         sleep(2000);
-        return 
+        return true;
     }
     // 临时维护
     if (select(reData,"Temporary")|| select(reData,"Maintenance")||select(reData,"更新维护公告")) {
-        console.log("游戏临时维护");
+        // log_z("游戏临时维护");
         // 杀掉游戏
         close_app("com.wemade.mir4global")
         throw new Error("游戏临时维护")
-    }
-    if (selclick(reData,"前往登录")) {
-        sleep(2000);
-        return true
     }
     // 更新维护
     if (select(reData,"更新维护公告")) { 
@@ -1444,17 +1397,14 @@ function wrong(reData) {
     if (selclick(reData,"重新连接")) {
         return true
     }
-    // 服务器连接断开 -> 前往登录
-    if (select(reData, "服务器连接断开")) {
-        return ClickSleep(reData, '前往登录');
-    }
+
     if (select(reData,"服务器断开连接")) {
         return ClickSleep(reData,"确认")
     }
     // 网络问题 -> 重新尝试 
     if (select(reData, "网络套")) {
         close_app("com.wemade.mir4global")
-        console.log("需要关闭游戏重新登录")
+        // log_z("需要关闭游戏重新登录")
         return true;
     }
     // 重新尝试
@@ -1463,7 +1413,7 @@ function wrong(reData) {
     }
     // 据点复活
     if (selclick(reData, "据点复活")) {
-        console.log("点击据点复活，等待5秒");
+        // log_z("点击据点复活，等待5秒");
         sleep(5000);
         return true;
     }
@@ -1487,7 +1437,6 @@ function wrong(reData) {
     let reai = select(reData, '今日不')
     if (reai) {
         selclick(reData, '今日不')
-        // console.log("点击关闭广告")
         textClick(reai,920,0)
         sleep(2000);
         return true
@@ -1495,11 +1444,6 @@ function wrong(reData) {
     // Loading 界面
     if (select(reData, "Loading")) {
         sleep(5000);
-        return true;
-    }
-    // Loading 界面
-    if (select(reData, "购买",true)) {
-        click(1219,93);
         return true;
     }
 
@@ -1516,86 +1460,492 @@ function wrong(reData) {
     return false;
 }
 
-//  升级
-function upLevel(){
-    let img = captureScreen();      // 截图
-    if (!img) {
-        log_z("截图失败");
-        return ;
-    }
-    let grayscaleImage = images.grayscale(img);      // 二级化
+/**
+ * 查找喊话目标
+ * 使用多个战力进行匹配
+ * @param {*} cfg : 已经密语过的对象
+ * @param {*} crop : 战力图片的OCR结果
+ * @returns {"crop": 战力, "rank": 排名, "point": 位置};
+ */
+function findTarget(cfg, crop) {
+    // 将战力列表从下至上循环
+    // 例如
+    // 17:05:47.198/D: 403,238
+    // 17:05:47.200/D: 411,319
+    // 17:05:47.201/D: 427,335
+    // 17:05:47.202/D: 428,160
+    let size = crop[0].length - 1;
+    let last = {"crop": undefined, "rank": 0, "point": [0, 0]};
+    for (let i = size; i >= 0; i--) {
+        // 当前战力
+        let cv = crop[0][i][1][0];
+        // print(`cv = ${cv}, rank = ${cfg.e_war[cfg.e_index][cv]}`)
 
-    // 获取OCR
-    let reData = getOcr(grayscaleImage);
-    imgRecycle(img)
-    if (reData) {
-        log_z("处理异常弹窗")
-        // select(reData,"开始更新")
-        if (wrong(reData)) {return } //  处理异常弹窗
+        // 从记录当中查找战力 
+        // cfg.e_war 数据类型[{"战力10": 名次1, "战力9": 名次2}, {...}, {...}, {...}, {...}, {...}]
+        // cfg.e_war 是个数组,里面保存着6个MAP,详情查看 @manage_value
+        // 每个数组对应一个职业
+        // cfg.e_index == 当前正在密语的职业的索引.详情查看 let careers = ["战士",...
+        if (cfg.e_war[cfg.e_index][cv] != undefined) {
+            if (last.crop != undefined) {
+                return last;
+            }
+            last.rank = cfg.e_war[cfg.e_index][cv];
+        } else {
+            last.crop = cv;
+            last.point = crop[0][i][0][0];
+        }
+    }
+    return last;
+}
+
+/**
+ * 过滤战力列表
+ * @param {战力列表} crop 
+ * @returns 
+ */
+function filterCrop(crop) {
+    while(true) {
+        let reCheck = false;
+        for (let i = 0; i < crop[0].length; i++) {
+            // 当前战力
+            let str = crop[0][i][1][0];
+
+            // 判断当前字符串是否只有 ","号和数字
+            let isValid = /^[\d,]+$/.test(str);
+            // print(`str = ${str}, isValid : ${isValid}`);
+            if (false == isValid) {
+                crop[0].splice(i, 1);
+                reCheck = true;
+                break;
+            }
+
+            // 判断中间是否将是逗号
+            if (str[3] != ',') {
+                crop[0].splice(i, 1);
+                reCheck = true;
+                break;
+            }
+        }
+        if (reCheck) { continue; }
+        break;
+    }
+    return crop;
+}
+
+// 关机
+function shutdown() {
+    device.wakeUpIfNeeded()   // 唤醒屏幕  
+    sleep(1000);
+
+    recents()    // 打开最近任务
+    sleep(2000);
+    let targetControl = id("net.oneplus.launcher:id/snapshot").findOne(5000);  // 是否打开了最近活动任务
+    if (targetControl) {
+        gesture(100, [[359, 1073]]);   // 最近任务的关闭位置
+    }
+
+    if (device.isScreenOn()) { // 是否在亮着
+        console.log("屏幕亮着")
+        // device.keepScreenOn() // 保持常亮
+        // 关机选择界面
+        powerDialog()
+        let gj = text("关机").findOne(5000)
+        if (gj) {
+            let bounds = gj.bounds();
+            // 计算控件的中心坐标
+            let centerX = bounds.centerX();
+            let centerY = bounds.centerY();
+            console.log("点击坐标: ", centerX, centerY);  // 打印计算出来的坐标
+            gesture(200, [[centerX, centerY]]);
+        }
     } 
+    throw new Error("执行完成");
+}
+
+// 排行榜喊话
+function Ranking(reData) {
+    /**
+     * 打开排行榜界面
+     * 1.获取当前排行榜角色的战斗力
+     * 2.记录战斗力点击进入个人界面
+     * 3.点击对话
+     * 4.开始输入广告文本
+     * 5.输入完毕就对话列表
+     *          需要存的值为  喊了话的战斗力 e_war  当前职业  e_career     当前职业喊的数量  e_count
+     */
+
+    let cfg = storage.get("config", {});
+    if (cfg.e_index==undefined) {
+        throw new Error("cfg.e_index==undefined"); 
+    }
+
+    // step7
+    // 输入法是打开的情况下直接输入喊话内容
+    try {
+        let isOpenEditText = className("android.widget.EditText").findOne(1000)
+        if (isOpenEditText) {
+            log_z(`已经打开输入框!`)
+            sleep(200);
+            input(chat_text);  // 输入文字
+            sleep(500);
+            clickWithDelay(1187,683,1000); // 点击发送
+            clickWithDelay(633,105,1000); // 关闭对话
+            // clickWithDelay(633,40,1000);  // 关闭对话框
+            clickWithDelay(1230,29,1000);
+            clickWithDelay(1038.5,630.5,1000);
+
+            closeX(reData);
+            return true
+        }
+    } catch (error) {
+        console.error("Ranking  Error during database operation:", error);
+        return 
+    }
+
+    // step6
+    // 判断是否已经打开了聊天对话框,如果打开了则点击输入内容
+    if (select(reData,"聊天") && select(reData,"门派")) {
+        log_z(`已经打开聊天对话框.`)
+        // 请输入内容
+        if (selclick(reData,"请输入内容")) {
+            return true;
+        }
+        return;
+    }
+
+    let inx = cfg.e_index;
+    
+    //
+    // 喊完了, 这里有待处理
+    if (inx >= careers.length) {
+        shutdown();
+        throw new Error("排行榜已经喊完了!");
+    }
+
+    // log_z("排行榜喊话")
+    log_z(`排行榜进度 : ${careers[inx]}`)
+
+    // step5
+    // 判断是否打开某个玩家信息界面
+    if (select(reData,"其他玩家信息")) { 
+        log_z(`已经打开玩家信息栏, 可以进行对话.`)
+        if (selclick(reData,"确认",true)) {  // 被屏蔽了 
+            log_z(`已被屏蔽,跳过这个吊毛.`)
+            clickWithDelay(48,33,1000);
+            return;
+        } 
+
+        log_z(`点击对话.`)
+        let dh = select(reData,"对话")
+        if (dh) {
+            textClick(dh,0,-30)
+            textClick(dh,0,-30)
+        } else {
+            // 有时候它们时装太华丽了。导致识别不到"对话"
+            click(825, 660);
+            click(825, 660);
+        }
+
+        sleep(1500);
+        // 等待切换界面
+        if (!text3("请输入")) {
+            log_z(`这个吊毛角色不存在!`)
+            // toast("未等到要点的界面")
+            clickWithDelay(48,33,1000);
+        } 
+        return;
+    }
+
+    // step3
+    // 在排行榜界面
+    if (select(reData,"每日服务器")) {
+        log_z(`在战斗力排行界面.`)
+
+        // 判断职业下拉列表是否被打开
+        if (select(reData,"战士") && select(reData,"法师")) {
+            log_z(`已经打开职业下拉列表, 选择职业 :${careers[inx]}`)
+            return selclick(reData, careers[inx].trim());
+        }
+
+        // 没有打开职业下拉列表
+        if (select(reData,"全部") || select(reData, careers[inx].trim()) == null) {
+            log_z(`点击职业下拉列表`)
+            if (selclick(reData,"全部") || selclick(reData,"战斗力（") || selclick(reData, "战斗力 (") || selclick(reData,"战斗力 （")) {
+                return 
+            }
+        }
+        sleep(256)
+    }
+
+    // step4
+    // 开始选择玩家
+    if (select(reData, careers[inx])) {
+        // 已经喊话的总数
+        let count = Object.keys(cfg.e_war[cfg.e_index]).length;
+
+        // 开始挑选
+        log_z(`开始挑选 ${careers[inx]}, 目标排名 : ${count + 1}`)
+
+        // 获取当前时间（毫秒）
+        let startTime = Date.now();  
+
+        // 截图的坐标和尺寸
+        let x = 1097, y = 305, w = 91, h = 402;
+
+        function setEnd(cfg, img) {
+            // 100 排名  
+            // let croppedImage2 = images.clip(img, 200, 645, 48, 38); 
+            // let crop2 = getOcr(croppedImage2);
+            // log_z(`setEnd : ${crop2[0].length}`);
+            // if (crop2[0].length > 0) {
+            //     log_z(`排名 : ${crop2[0][0][1][0]}`);
+            //     if (crop2[0].length > 0) { 
+            //         if (crop2[0][0][1][0] == 100 ) {
+            //             cfg.e_index += 1;
+            //             storage.put("config", cfg);
+            //         }
+            //     }
+            //     // throw new Error("排行榜已经喊完了!");
+            // }            
+            cfg.e_index += 1;
+            storage.put("config", cfg);
+        }
+
+        // 找2分钟找不到返回
+        let last_rank = 0
+        let last_selc = 0;
+        let crop_low4 = 0;
+        while (Date.now() - startTime < 2*60*1000) {
+            // 战斗力
+            let img = captureScreen(); 
+            let croppedImage = images.clip(img, x, y, w, h);
+            // images.save(croppedImage1, "/sdcard/1.png");
+            let crop_ocr = getOcr(croppedImage);
+            let crop = filterCrop(crop_ocr);
+            //
+            // 正常的截图是不可能低于4个的, 如果错误了稍微拖动一下
+            // 还有一种情况就是向上滑动的时候有可能打开角色信息界面
+            // 还有一种情况就是向上滑动的时候有可能打开角色信息界面
+            // 还有一种情况就是向上滑动的时候有可能打开角色信息界面
+            if (crop[0].length < 4) {
+                log_z("战力少于4个")
+                swipe(1128, 510, 1128, 660, 1800);
+                sleep(32);
+                crop_low4 += 1;
+                if (crop_low4 > 6) {
+                    click(40, 30)
+                    sleep(1000);
+                    return;
+                }
+                continue;
+            }
+
+            // 查找未密语的对象
+            let target = findTarget(cfg, crop);
+            // 当条件成立的时候就说明当前页面的吊毛全部都密语过了
+            // 那么就涉及到向上滑动的问题了
+            if (target.crop == undefined) {
+                // 根据当前查找的排名和最后记录的排名选择一个滑动方式
+                // 分为大、中、小范围滑动
+                let number = count - target.rank;
+                log_z(`当前名次: ${target.rank}, 间隔: ${number}`)
+
+                // 判断当前名次是否改变了
+                // 如果当前名次始终没变可能已经出问题了
+                if (last_rank != target.rank) {
+                    last_rank = target.rank;
+                    last_selc = 0;
+                } else {
+                    last_selc += 1;
+                    if (last_selc >= 4) {
+                        setEnd(cfg, img)
+                        return;
+                    }
+                }
+
+                // 如果目标名次>=97就每次都使用大翻页加快速度
+                if (count + 1 >= 97 && target.rank < 97) { number = 100; }
+                if (number > 40) {
+                    // 大 20+
+                    swipe(1128, 680, 1128, 330, 666); 
+                    sleep(2333);
+                } else if (number > 16) {
+                    // 中 6+
+                    swipe(1128, 680, 1128, 400, 999);
+                    sleep(1800);
+                } else if(number > 6) {
+                    for (let v = 0; v < (number / 2); v++) {
+                        // 小范围滑动屏幕继续查找
+                        swipe(1128, 660, 1128, 510, 1800);
+                    }
+                    sleep(32);
+                } else {
+                    // 小范围滑动屏幕继续查找
+                    swipe(1128, 660, 1128, 510, 1800);
+                    sleep(32);
+                }
+                continue;
+            }
+
+            // 用数量计算排名
+            let rank = count + 1;
+            log_z(`点击吊毛的排名: ${rank}, 战力: ${target.crop}`)
+            
+            // 确定点击位置
+            click(x + target.point[0], y + target.point[1]);
+            
+            // 将这个吊毛保存起来
+            cfg.e_war[cfg.e_index][target.crop] = rank;
+            storage.put("config", cfg);
+
+            // 判断是否到最后了
+            if (rank >= 100) {
+                setEnd(cfg, img);
+            }
+            return;
+        }
+    }
+
+    // step2
+    // 如果打开了设置界面则去点击“排位”
+    if (select(reData,"快速设置")) {
+        log_z("快速设置")
+        if (selclick(reData,"排位",true)) {
+            return
+        }
+    }
+
+    // step1
+    // 在游戏界面的时候点击打开 - 设置
+    if (select(reData,"和平",true) || select(reData,"近距",true) || select(reData,"卡组变更",true)||select(reData,"安全",true) ) {
+        log_z("在游戏界面")
+        clickWithDelay(1230,29,1300);
+        clickWithDelay(1038.5,630.5,1000);
+        return
+    }
 }
 
 // 主函数
 function main(){
-    let start = desc("开始游戏").findOne(1000)
-    if (start) {
-        console.log("更新完成")
-        let bounds = start.bounds();
-        // 计算控件的中心坐标
-        let centerX = bounds.centerX();
-        let centerY = bounds.centerY();
-        console.log("点击坐标: ", centerX, centerY);  // 打印计算出来的坐标
-        gesture(200, [[centerX, centerY]]);
-        start=null;
-    }
-
-    let GX = desc("更新").findOne(3000)  
-    if (GX) {
-        console.log("找到了")
-        let bounds = GX.bounds();
-        // 计算控件的中心坐标
-        let centerX = bounds.centerX();
-        let centerY = bounds.centerY();
-        console.log("点击坐标: ", centerX, centerY);  // 打印计算出来的坐标
-        gesture(200, [[centerX, centerY]]);
-    }
-    
-    if (desc("卸载").findOne(1000)) {
-        console.log("在更新游戏了")
-        return
-    }
-    GX=null;
-
     // 初始化
     if (!init()) {
-        console.log(" 进入 ")
-        upLevel()
+        log_z("初始化完成")
+        try {
+            let ts = className("android.widget.EditText").findOne(1000)
+            if (ts) {
+                input(chat_text);  // 输入文字
+                sleep(500);
+                clickWithDelay(1187,683,1000); // 点击发送
+                clickWithDelay(633,105,1000); // 关闭对话
+                // clickWithDelay(633,40,1000);  // 关闭对话框
+                clickWithDelay(1230,29,1000);
+                clickWithDelay(1038.5,630.5,1000);
+                return true
+            }
+        } catch (error) {
+            console.error("upLevel  Error during database operation:", error);
+            return 
+        }
+        
+        // 测试截图功能
+        let img = getimg(false)
+        if (img == null) {
+            console.log("截图失败 停止5秒")
+            sleep(5000);
+            return
+        }
+        
+        // 二级化
+        let grayscaleImage = images.grayscale(img);      
+    
+        // 获取OCR
+        let reData = getOcr(grayscaleImage);
+        if (reData) {
+            // 处理异常弹窗
+            if (wrong(reData)) {
+                return 
+            } 
+    
+            // 进入游戏界面以前
+            if(select(reData, 'UNREAL') || select(reData, 'OpenGL')) {
+                log_z("登陆界面")
+                // 进入游戏
+                if (selclick(reData, '点击')) {
+                    log_z("点击界面进入游戏");
+                    sleep(5000);
+                    return
+                }
+                if (select(reData, '退出登录') ) {
+                    log_z("select 退出登录")
+                    if (!select(reData, '选项')) {
+                        // home()  // 返回
+                        app.launch('com.wemade.mir4global');
+                        sleep(5000);
+                    }
+                }
+                if (selclick(reData, '加载补丁中')) {   // 加载补丁中
+                    log_z("加载补丁中 等待5秒")
+                    sleep(5000);
+                    return
+                }
+                if(select(reData, '资格的证明')){
+                    // 进入游戏
+                    if (selclick(reData, '登录游戏',true)) {
+                        log_z(" 资格的证明 - 登录游戏");
+                        sleep(5000);
+                    }
+                }
+                return
+            } else {
+                //  选择角色界面
+                if(select(reData, '选择角色')) {
+                    log_z("选择角色界面")
+                    // 开始游戏
+                    if (selclick(reData, '开始游戏')) {
+                        log_z("select 开始游戏")
+                        return sleep(5000);
+                    }
+                }
+            }
+    
+            log_z("开始喊话")
+            Ranking(reData);
+    
+            log_z("关闭所有的弹窗")
+            if (closeX(reData)) { return } 
+            if (checkAndClick(reData, '指南', 1226, 38, 2000)) return true;
+        }
     }
 }
 
-// for (let i = 0; i < 10; i++) {
-    // console.log("$$$$$$$$$$$$$$  执行开始!")
-    main()
-    // console.log("##############  执行完成")
-    // sleep(1000);
+// for (let i = 0; i < 1000; i++) {
+//     log_z("main 执行")
+    // main()
+//     log_z("main 结束")
 // }
 
+// storage.remove("config")
 
-if (false) {
-    // console.log("开始请求截图")
-    if (!requestScreenCapture(true)) {
-        throw new Error("请求屏幕捕获权限失败");
-    }
-    let img = captureScreen();
-    // let grayscaleImage = images.grayscale(img);
+// let cfg = storage.get("config", {});
+// print(cfg)
+// print(cfg.e_war[cfg.e_index])
 
-    // console.log("开始请求")
-    // let reData = getOcr(grayscaleImage);
-    // let reData = getOcr(img);
+// if (!requestScreenCapture(true)) {
+//     // throw new Error("请求屏幕捕获权限失败");
+//     log_z("请求屏幕捕获权限失败")
+// }
 
-    // let hp =  images.pixel(img, 522,41);   // -13553096
-    // console.log(hp)
-    console.log()
-    console.log()
- 
-}
+// // 战力截图的坐标和尺寸
+// let x = 1097, y = 305, w = 91, h = 402;
+// let img = captureScreen(); 
+// // images.save(img, "/sdcard/5.png");
+// let croppedImage = images.clip(img, x, y, w, h);
+// let grayscaleImage = images.grayscale(img);
+// let reData = getOcr(grayscaleImage);
+// select(reData, "11sdfsdfsd")
+// let crop = filterCrop(reData);
+// let target = findTarget(cfg, crop);
+// print(target)
+
+print(getClip())
