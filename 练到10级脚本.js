@@ -942,6 +942,8 @@ function getOcr(img) {
         // 构造请求的 JSON 数据，添加 lang 字段
         let jsonData = {
             "base64_str": imgData,
+            "save": false,
+            "path": "mir4/test"
         };
         
         // console.time("httppost");  // 开始计时
@@ -987,6 +989,8 @@ function isblue(img) {
 
         let jsonData = {
             "base64_str": imgData,
+            "save": false,
+            "path": "mir4/test"
         };
 
         // 发送 POST 请求
