@@ -1109,7 +1109,7 @@ function getOcr(img) {
  * @returns 
  */
 function selclick(reData,src,exactMatch){
-    var target = select(reData, src,exactMatch)
+    var target = select(reData, src, exactMatch)
     if(target != null){
         // 计算文本区域的中心点
         let centerX = (target[0][0][0] + target[0][2][0]) / 2;
@@ -1535,7 +1535,7 @@ function filterCrop(crop) {
 
 // 关机
 function shutdown() {
-    device.wakeUpIfNeeded()   // 唤醒屏幕  
+    device.wakeUpIfNeeded()   // 唤醒屏幕
     sleep(1000);
 
     recents()    // 打开最近任务
@@ -1630,7 +1630,16 @@ function Ranking(reData) {
     // 判断是否打开某个玩家信息界面
     if (select(reData,"其他玩家信息")) { 
         log_z(`已经打开玩家信息栏, 可以进行对话.`)
-        if (selclick(reData,"确认",true)) {  // 被屏蔽了 
+
+        // 首先复制玩家名称 
+        // if (!selclick(reData, "复制名称")) {
+        //     click(40, 30);
+        //     return;
+        // }
+        // log_z(`复制玩家名称 : ${getClip()}`);
+
+        // 被屏蔽了 
+        if (selclick(reData,"确认",true)) {  
             log_z(`已被屏蔽,跳过这个吊毛.`)
             clickWithDelay(48,33,1000);
             return;
@@ -1734,7 +1743,7 @@ function Ranking(reData) {
                 sleep(32);
                 crop_low4 += 1;
                 if (crop_low4 > 6) {
-                    click(40, 30)
+                    click(40, 30);
                     sleep(1000);
                     return;
                 }
@@ -1944,8 +1953,9 @@ function main(){
 // let grayscaleImage = images.grayscale(img);
 // let reData = getOcr(grayscaleImage);
 // select(reData, "11sdfsdfsd")
+
 // let crop = filterCrop(reData);
 // let target = findTarget(cfg, crop);
 // print(target)
 
-print(getClip())
+// print(getClip())
