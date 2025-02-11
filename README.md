@@ -90,3 +90,44 @@
     ------------ 
     [ [remote]Mir4 ]运行结束，用时0.435000秒
 ```
+### 探探
+```
+    /**获取属性
+     * 
+     * @param {string} key 属性
+     */
+    function executeCommand(command) {
+        let res = http.get("http://127.0.0.1:8848/execute?cmd= "+ command);    // 查看文件
+        if(res.statusCode != 200){
+            toast("请求失败: " + res.statusCode + " " + res.statusMessage);
+            return ""
+        }else{
+            // console.log(res.body.string())
+            let bodyString = res.body.string(); // 立即读取响应体
+            console.log(`value : ${bodyString}`)
+            return bodyString
+        }
+    }
+
+    lockscreen.disabled 1表示禁用 0表示启用锁屏。   adb命令为  adb shell settings get secure lockscreen.disabled    # 读取属性
+                                                            adb shell settings put secure lockscreen.disabled 1  # 禁用锁屏
+                                                            adb shell settings put secure lockscreen.disabled 0  # 启用锁屏
+
+    //  设置
+    executeCommand("settings put secure lockscreen.disabled 0")  // lockscreen.disabled 1表示禁用 0表示启用锁屏。
+
+    //  读取
+    executeCommand("settings get secure lockscreen.disabled")   // lockscreen.disabled 1表示禁用 0表示启用锁屏。
+
+
+    user_rotation 设置为     强制设置设备为竖屏（纵向）模式：  adb shell settings put system user_rotation 0  
+    0 表示竖屏模式。
+    1 表示顺时针旋转90度（横屏）。
+    2 表示旋转180度（逆时针旋转90度）。
+    3 表示顺时针旋转270度。  
+
+    com.p1.mobile.putong:id/close  关闭支付弹窗
+
+    adb shell settings put system screen_off_timeout 2147483647  设置息屏时间  2147483647 毫秒（约 24.8 天） 相当于不息屏 
+
+```
