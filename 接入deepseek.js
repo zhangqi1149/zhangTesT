@@ -505,7 +505,7 @@ let storage = storages.create("ABC");
 
 // let chat_context = storage.get("context")
 // send_context_toserver("target_888", chat_context['target_888'])
-                    // 记录     聊天id       谁说的     内容                    初始化
+            // 记录 没有就是{}   标识       谁说的     内容                    初始化
 let result = chat(storage, "target_888", "对方说", ["你好啊小野猫", "老子要草你"], init);
 print(result)
 // 遍历所有 TextView 类型的控件

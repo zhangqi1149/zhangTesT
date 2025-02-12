@@ -432,6 +432,12 @@ function works() {
             clickobj(title_text)
         }
     }
+    if (Find_Control("打开动态消息通知") && Find_Control("去开启")) {
+        let no =  Find_Control("暂不设置");
+        if (no) {
+            clickobj(no)
+        }
+    }
     if (Find_Control("分享给好友")) {
         clickobj(Find_Control("取消"))
         return
@@ -581,3 +587,10 @@ function Find_message() {
 
 // resource-id="com.p1.mobile.putong:id/img_live_setting"   // 直播设置
 // resource-id="com.p1.mobile.putong:id/start_live"         // 我要开直播
+
+// chat_history()
+
+
+// if (Find_Control("他喜欢了你")) {
+//     console.log(" 他喜欢我")  // 是一个标识  他喜欢我 我再右划就可以配对成功
+// }
