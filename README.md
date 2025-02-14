@@ -5,6 +5,7 @@
     参数能不传就不传
     可以不计算的就不计算
 
+    indexInParent() 控件在父控件的位置
 
     // 设置屏幕密度为 320 dpi   adb shell wm density 当前屏幕密度
     // shell("wm density 320", true); adb shell wm density 320
@@ -12,15 +13,26 @@
     // 设置屏幕分辨率为 720x1280 像素   adb shell wm size
     // shell("wm size 720x1280", true);   adb shell wm size 720x1280
 
-    // var currentPackage = currentPackage();  // 获取当前应用的包名
-    // var currentActivity = currentActivity();  // 获取当前应用的 Activity 名称
 
-    // console.log("当前应用包名: " + currentPackage);
-    // 当前应用包名: com.huawei.android.launcher  // 桌面  
-    // 当前应用包名: com.wemade.mir4global   // 传奇4
-    // console.log("当前应用的 Activity: " + currentActivity);
-    // 当前应用的 Activity: com.huawei.android.launcher.unihome.UniHomeLauncher  // 桌面
-    // 当前应用的 Activity: com.epicgames.ue4.GameActivity   // 传奇4
+    // //  锁屏属性
+    // if (executeCommand("settings get secure lockscreen.disabled") == 0 ) {
+    //     log_z("禁用锁屏:")
+    //     executeCommand("settings put secure lockscreen.disabled 1")  // lockscreen.disabled 1表示禁用 0表示启用锁屏。        
+    // }
+
+    // //  强制设置为竖屏
+    // if (executeCommand("settings get secure lockscreen.disabled") != 0 ) {
+    //     log_z("设置竖屏:")
+    //     //  强制设置为竖屏
+    //     executeCommand("settings put system user_rotation 0")
+    // }
+    
+    // if (executeCommand("settings get system screen_off_timeout") != 2147483647) {
+    //     // 设置当前息屏时间为 2147483647
+    //     log_z("设置息屏:")
+    //     executeCommand("settings put system screen_off_timeout 2147483647")
+    // }
+
 
     8-31 11-52  更改服务器代码 可以自己控制是否保存图片
 
@@ -130,4 +142,61 @@
 
     adb shell settings put system screen_off_timeout 2147483647  设置息屏时间  2147483647 毫秒（约 24.8 天） 相当于不息屏 
 
+```
+
+###遍历控件
+
+```
+    获取当前界面的根节点 - 根节点向下遍历拿到全部的子节点
+
+    // 获取指定控件
+    let node = className("android.widget.FrameLayout").findOne(5000);
+    if (node) {
+        // 递归遍历子控件
+        function getAllChildren(node, depth) {
+            depth = depth || 0; // 如果 depth 未传入，则默认为 0
+
+            // 打印当前控件的信息
+            console.log(" ".repeat(depth * 2) + "控件: " + node.className() + " | 文本: " + node.text());
+
+            // 遍历子控件
+            let children = node.children();
+            for (let i = 0; i < children.size(); i++) {
+                getAllChildren(children.get(i), depth + 1);
+            }
+        }
+
+        // 开始递归遍历，从深度 0 开始
+        getAllChildren(node, 0);
+    } else {
+        console.log("未找到指定控件！");
+    }
+```
+
+### 定位到已知条件 父子关系获取到动态数据
+```
+    // 先定位到文本 "打招呼" 的控件
+    let Nodes = text("打招呼").find();
+    if (Nodes) {
+        Nodes.forEach((targetNode)=>{
+        // 获取 "打招呼" 所在的父节点（可能是 FrameLayout）
+        let parentNode = targetNode.parent().parent();
+
+        // 确保 parentNode 为 FrameLayout 类型
+        if (parentNode && parentNode.className() === "android.view.ViewGroup") {
+            // 获取该父节点下的兄弟控件
+            let siblingNode = parentNode.child(1); // 获取第二个子控件
+            
+            // 确保是 TextView 类型并获取文本
+            if (siblingNode ) {
+                let sib = siblingNode.findOne(className("android.widget.TextView"))
+                log("找到1文本: " + sib.text());
+            } else {
+                log("未找到文本控件！");
+            }
+        } else {
+            log("未找到正确的父控件！");
+        }
+    })
+    }  
 ```

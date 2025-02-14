@@ -1,25 +1,20 @@
-// 是否打印日志
-let Log = true;
+let Log =  true
+
+//  初始化今日养号份额
+let maxLikes = 20;       // 点赞上限
+let minLikes = 1;       // 点赞下限
+
+let maxPosts  = 1;       // 发动态上限
+// let minPosts  = 1;       // 发动态下限
+
+let maxComments = 1;     // 评论上限
+let minComments = 1;     // 评论下限
+
+let Favorites = 10;   // 喜欢上限 就是右滑动 最少7个 
+let today = new Date().toISOString().split('T')[0];  // 获取今日日期，格式为 YYYY-MM-DD
 
 // 存储区
 let storage = storages.create("ABC");
-// storage.remove("OCR_CACHE")
-
-/** 查找控件
- * 
- * @param {string} str  
- * @returns 
- */
-function Find_Control(str) {
-    let targetControl = textContains(str).findOne(1); 
-    if (targetControl) {
-        if (targetControl.visibleToUser()) {
-            // console.log(" targetControl.text :",targetControl.text());
-            return targetControl
-        }
-    }
-    return null
-}
 
 // 日志
 function log_z(message) {
@@ -34,41 +29,6 @@ function log_z(message) {
         storage.put("last_log", Date.now())
     }
 }
-
-/**获取属性
- * 
- * @param {string} key 属性
- */
-function executeCommand(command) {
-    let res = http.get("http://127.0.0.1:8848/execute?cmd= "+ command);    // 查看文件
-    if(res.statusCode != 200){
-        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
-        return ""
-    }else{
-        // console.log(res.body.string())
-        let bodyString = res.body.string(); // 立即读取响应体
-        // console.log(`value : ${bodyString}`)
-        return bodyString
-    }
-}
-
-/** 发包点击
- * 
- * @param {string} key 属性
- */
-function httpclick(x,y) {
-    // let res = http.get("http://127.0.0.1:8848/execute?cmd=input tap 500 1000");    // 查看文件
-    let res = http.get("http://127.0.0.1:8848/execute?cmd=input tap "+`${x} ${y}`);    // 查看文件
-    if(res.statusCode != 200){
-        toast("请求失败: " + res.statusCode + " " + res.statusMessage);
-        return false
-    }else{
-        // console.log(res.body.string())
-        // let bodyString = res.body.string(); // 立即读取响应体
-        // console.log(`value : ${bodyString}`)
-        return true
-    }
-}    
 
 /** 点击坐标 适配偏移
  * 
@@ -111,174 +71,90 @@ function clickobj(targetControl, offsetx, offsety) {
     return click(clickX, clickY);
 }
 
-/** 点击坐标 适配偏移
- * 
- * @param {*} targetControl 
- * @param {number} offsetx 
- * @param {number} offsety 
- */
-function clickobj_an(targetControl, offsetx, offsety) {
-    if (offsetx == null) {offsetx = 0}
-    if (offsety == null) {offsety = 0}
-    // 检查控件是否有效
-    if (!targetControl) {
-        console.log("目标控件无效");
-        return false;
-    }
-    // 获取控件的边界
-    let bounds = targetControl.bounds();
-    // 检查边界是否有效
-    if (!bounds) {
-        console.log("未能获取控件的边界");
-        return false;
-    }
 
-    // 计算控件的中心坐标
-    let centerX = bounds.centerX();
-    let centerY = bounds.centerY();
-
-    // 输出原始中心点坐标
-    // console.log("原始控件: X = " + centerX + ", Y = " + centerY);
-
-    // 计算点击位置，考虑偏移
-    let clickX = centerX + offsetx;
-    let clickY = centerY + offsety;
-
-    // 输出调整后的点击位置
-    // console.log("调整后点击: X = " + clickX + ", Y = " + clickY);
-
-    // 执行点击操作
-    return click(clickX, clickY);
+// 随机一个参数
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// 滑动 模拟操作
-function randomSwipe() {
-    let width = device.width;
-    let height = device.height;
-    let startX, endX, y, duration;
 
-    y = random(height * 0.4, height * 0.6); // 屏幕中部滑动
-    duration = random(200, 400); // 滑动时间随机化
-
-    if (Math.random() > 0.5) {
-        // 向右滑（喜欢）
-        startX = random(width * 0.2, width * 0.3);
-        endX = random(width * 0.7, width * 0.8);
-        console.log("向右滑动 👍");
-    } else {
-        // 向左滑（不喜欢）
-        startX = random(width * 0.7, width * 0.8);
-        endX = random(width * 0.2, width * 0.3);
-        console.log("向左滑动 👎");
+manage_value() // 初始化数据
+//  管理存储值
+function manage_value() {
+    // 获取保存的所有键列表，如果没有保存过键列表，则默认为空数组
+    var keys = storage.get("keysList", []);
+    // 如果键不存在，将今天的日期添加到 keysList 中
+    if (!keys.includes(today)) {
+        keys.push(today);
+        //  随机     今日        喜欢上限                 点赞上限                                          评论上限                           发动态上限           行为      执行时间  次数
+        storage.put(today,{Favorites:Favorites, Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Posts:getRandomInt(0,maxPosts), Event:"", Time:0, Count:0})
+        storage.put("keysList", keys);  // 更新键列表
     }
-
-    swipe(startX, y, endX, y, duration);
-    let waitTime = random(2000, 5000); // 增加随机停顿时间（2s-5s）
-    console.log("等待 " + waitTime + "ms");
-    sleep(waitTime);
-
-    // **模拟用户行为**
-    if (Math.random() > 0.8) {
-        let clickX = random(width * 0.4, width * 0.6);
-        let clickY = random(height * 0.3, height * 0.7);
-        click(clickX, clickY);
-        console.log("模拟点击屏幕 (" + clickX + ", " + clickY + ")");
-        sleep(random(1000, 3000)); // 点击后短暂停顿
-        click(clickX, clickY);
-    }
-
-    // **加入模拟停顿**
-    if (random(20, 25) % random(10, 15) === 0) {
-        let restTime = random(10000, 30000); // 10s~30s
-        console.log("模拟休息 " + restTime + "ms");
-        sleep(restTime);
-    }
-
-    console.log("滑动结束 🎉");
-}
-
-//  获取第一个资料卡信息
-function account_info() {
-    // 获取所有卡片的节点
-    var cards = id("com.p1.mobile.putong:id/root").find();
-
-    // 取最后一个卡片
-    var card = cards[cards.length - 1];
-
-    var data = {};
-
-
-    // 获取用户名
-    var nameNode = card.findOne(id("com.p1.mobile.putong:id/name"));
-    data.name = nameNode ? nameNode.text() : "";
-
-    // 获取位置
-    var detailsNode = card.findOne(id("com.p1.mobile.putong:id/details"));
-    data.details = detailsNode ? detailsNode.text() : "";
-
-    // // 获取性别   默认是男的   自己是女号 刷到的就是男号
-    // // var sexAgeNode = card.findOne(id("com.p1.mobile.putong:id/sex_age_content"));
-    // var sex = card.findOne(id("com.p1.mobile.putong:id/sex"));
-    // data.sex = sex ? sex.text() : "";
-
-    //  获取年龄
-    var age = card.findOne(id("com.p1.mobile.putong:id/age"));
-    data.age = age ? age.text() : "";
-
-    // 获取交友目的
-    var purposeNode = card.findOne(id("com.p1.mobile.putong:id/tv_purpose"));
-    data.purpose = purposeNode ? purposeNode.text() : "";
-
-    // 获取星座
-    var zodiacNode = card.findOne(id("com.p1.mobile.putong:id/zodiac"));
-    data.zodiac = zodiacNode ? zodiacNode.text() : "";
-
-    log(data)
-}
-
-// 获取全部资料卡  *
-function account_info_all() {
     
-    // 获取所有卡片的节点
-    var cards = id("com.p1.mobile.putong:id/root").find();
-
-    // 存储解析后的数据
-    var results = [];
-
-    cards.forEach(card => {
-        var data = {};
-
-        // 获取用户名
-        var nameNode = card.findOne(id("com.p1.mobile.putong:id/name"));
-        data.name = nameNode ? nameNode.text() : "";
-
-        // 获取位置
-        var detailsNode = card.findOne(id("com.p1.mobile.putong:id/details"));
-        data.details = detailsNode ? detailsNode.text() : "";
-
-        // // 获取性别   默认是男的   自己是女号 刷到的就是男号
-        // // var sexAgeNode = card.findOne(id("com.p1.mobile.putong:id/sex_age_content"));
-        // var sex = card.findOne(id("com.p1.mobile.putong:id/sex"));
-        // data.sex = sex ? sex.text() : "";
-
-        //  获取年龄
-        var age = card.findOne(id("com.p1.mobile.putong:id/age"));
-        data.age = age ? age.text() : "";
-
-        // 获取交友目的
-        var purposeNode = card.findOne(id("com.p1.mobile.putong:id/tv_purpose"));
-        data.purpose = purposeNode ? purposeNode.text() : "";
-
-        // 获取星座
-        var zodiacNode = card.findOne(id("com.p1.mobile.putong:id/zodiac"));
-        data.zodiac = zodiacNode ? zodiacNode.text() : "";
-
-        // 将数据添加到结果列表
-        results.push(data);
+    // 遍历之前保存的所有键，并删除不符合条件的键
+    keys.forEach(function(key) {
+        // console.log(key)
+        if (key !== today) {
+            storage.remove(key);  // 删除不是今天的数据
+        }
     });
+}
 
-    // 输出结果
-    log(results);
+
+/** 查找控件     字符版本 eval
+ * @param {string} str     要查找的内容
+ * @param {string} call    指令
+ * @param {number} timeout 查找时间
+ * @returns 
+ */
+function Find_Control2(str,call,timeout) {
+    call = (call !== undefined) ? call : "textContains";
+    timeout = (timeout !== undefined) ? timeout : 100;
+    let targetControl = eval(call + '("' + str + '")').findOne(timeout)
+    if (targetControl) {
+        if (targetControl.visibleToUser()) {
+            return targetControl
+        }
+    }
+    return null
+}
+
+/** 查找控件     
+ * @param {string} str     要查找的内容
+ * @param {string} call    指令
+ * @param {number} timeout 查找时间
+ * @returns 
+ */
+function Find_Control(str,call,timeout) {
+    call = (call !== undefined) ? call : textContains;
+    timeout = (timeout !== undefined) ? timeout : 100;
+    let targetControl = call(str).findOne(timeout)
+    // if (targetControl) {
+    //     if (targetControl.visibleToUser()) {
+    //         return targetControl
+    //     }
+    // }
+    return targetControl && targetControl.visibleToUser() ? targetControl : null;
+}
+
+// 获取未读信息数量
+function Find_message() {
+    //  获取当前是否信息需要查看
+    let nodes = className("android.widget.FrameLayout").find();
+    let message = 0
+    nodes.forEach(node => {
+        let nameView = node.findOne(id("com.p1.mobile.putong:id/name"));
+        if (nameView && nameView.text() === "消息") {  // 确保是“消息”这个 tab
+            let textView = node.findOne(id("com.p1.mobile.putong:id/badge"));
+            if (textView) {
+                // console.log(textView.id());
+                // console.log("textView.text()",textView.text())
+                message =  textView.text()
+            }
+        }
+    });
+    console.log("未读信息 : ",message)
+    return message
 }
 
 //  返回当前界面的消息记录
@@ -304,15 +180,22 @@ function chat_history() {
             avatar = true
         }
 
+        // console.log(textView.className())
+        // console.log(textView.id())
+        // console.log(textView.text())
         if (textView.className() == "android.widget.FrameLayout") {    // 是图片 / 视频 / 语音 
-            // console.log(textView.className())
             var msg = {
                 sender: avatar ? "对方" : "自己",
                 text: "非文本信息"
             };
         }
 
-        if (textView.className() == "android.widget.TextView") {    // 是文本
+        if (textView.text().length <= 0 && textView.className() == "android.widget.LinearLayout") {
+            console.log("过滤掉");
+            return 
+        }
+        //  && textView.visibleToUser() 加上数据就拿不全面了 
+        if (textView.className() == "android.widget.TextView" ) {    // 是文本
             // console.log(text+"",textView.text())
             var msg = {
                 sender: avatar ? "对方" : "自己",
@@ -321,8 +204,95 @@ function chat_history() {
         }
         messages.push(msg);
     })
-    log(messages);
+    log(messages)
     return messages
+}
+
+// 模式分发 随机出数据
+function dispatchMode() {
+    let data = storage.get(today);  // 获取上限数据
+    // 随机一个数值
+    let num = getRandomInt(0, 7)
+    console.log("这个是个随机的数值 : ",num)
+    console.log("喜欢的数量   : ",data.Favorites)
+    //  首先是检查是否达到上限 到上限后才去
+    if (data.Favorites > 0) {
+        // 是否可以命中模式
+        if (num == 2) {
+            // 启动喜欢模式  滑动喜欢或者不喜欢
+            // 生成一个未来时间来保存  event_time
+            console.log(" 命中喜欢模式")
+        }
+    }
+    
+    if (num == 1) {
+        // 启动预览模式  看直播
+        console.log("启动预览模式  看直播")
+        
+        
+    }
+    
+    if (num == 3) {
+        // 启动互动模式  点赞或者是评论
+        console.log("启动互动模式  点赞或者是评论")
+    }
+
+    if (num == 4) {
+        // 启动动态模式  发文字动态
+        console.log("启动动态模式  发文字动态")
+        
+    }
+    
+    //  静默状态  在当前界面等待
+    console.log("静默状态  在当前界面等待 去回信息  !!!!! ")
+    return 0
+    
+}
+
+//  获取当前是那个业务界面
+function getCurrentPage() {
+    //  判断是否是根界面
+    if (Find_Control("com.p1.mobile.putong:id/bottombar",id,10)) {
+        //  "探探" 界面
+        if (Find_Control("com.p1.mobile.putong:id/tab_content",id,10)) {
+            console.log("在 探探 界面 ")
+            return "探探"
+        }
+        //  "消息" 界面
+        if (Find_Control("com.p1.mobile.putong:id/menu_search_conv",id,10)) {
+            console.log("在 消息 界面 ")
+            return "消息"
+        }
+        //  "发现" 界面
+        if (Find_Control("附近") && Find_Control("官宣")) {
+            console.log("在 发现 界面 ");
+            return "发现"
+        }
+        //  "我" 界面
+        if (Find_Control("com.p1.mobile.putong:id/tab_right_icon",id,10)) {
+            console.log("在 我 界面 ");
+            return "我"
+        }
+        //  "娱乐" 界面
+        if (Find_Control("com.p1.mobile.putong:id/title_bar",id,10)) {
+            //  直播界面
+            // if (Find_Control("com.p1.mobile.putong:id/img_live_setting",id) || Find_Control("视频聊天")) {
+            //     console.log("直播界面")
+            //     return "直播界面"
+            // }
+            console.log("在 娱乐 界面 ")
+            return "娱乐"
+        }
+    }
+
+    //  聊天界面
+    if (Find_Control("com.p1.mobile.putong:id/right_icon_container",id)) {   // log(Find_Control("com.p1.mobile.putong:id/input_text",id)) 
+        console.log("在聊天界面");
+        return "聊天界面"
+    }
+
+    console.log("界面未知")
+    return "界面未知"
 }
 
 // 初始化
@@ -404,193 +374,361 @@ function init() {
     return true;
 }
 
-//  具体的分配工作
-function works() {
-    console.log("弹出窗口")
-    // 弹出窗口
-    if (Find_Control("上传照片") && Find_Control("上传展示生活的照片")) {
+// 处理异常
+function wrong1() {
+    // 探探界面处理
+    if (Find_Control("com.p1.mobile.putong:id/button_container",id)) {
+        // 子界面 -> 资料片详情    返回按钮是动态的 读取混乱
+        back();
+        return false
+    }
+    
+    // 娱乐界面处理
+    if (Find_Control("更多直播")) {
+        back();
+        sleep(500);
+        return false
+    }
+
+    //  有直播弹窗
+    let iv_close = Find_Control("com.p1.mobile.putong:id/iv_close",id)
+    if (iv_close) {
+        iv_close.click();
+        return false
+    }
+
+    // 消息界面处理
+    if (Find_Control("闪聊广场")) {
+        let back =  Find_Control("com.p1.mobile.putong:id/back_btn",id,10);
+        if (back) {
+            back.click();
+            return false
+        }
+    }
+
+
+    // 发现界面处理   
+    // if (condition) {  // 在别人的动态评论界面
+        
+    // }
+
+    //   我界面处理
+
+    return true
+}
+
+//  处理弹窗和广告
+function wrong() {
+    // 主动弹出的隐藏选项   有二次选择 不考虑
+    // if (Find_Control("取消") && Find_Control("删除")) {
+    //     console.log(" 关闭探探小助手");
+    //     let nox = Find_Control("不显示");
+    //     if (nox) {
+    //         console.log("不显示 探探小助手");
+    //         clickobj(nox);
+    //     }
+    //     return
+    // }
+
+    //  右划跳出了会员  无法继续喜欢了
+    let node = id("com.p1.mobile.putong:id/description").findOne(500);
+    if (node) {
+        let text = node.text();
+        if (text === "尽情右滑、突破右滑上限、不错过\u000A任何你喜欢的她") {
+            log("文本匹配成功！");
+            // 重置喜欢数量为0 
+            let data = storage.get(today)
+            storage.put(today,{Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Event:data.Event, Time:data.Time,Count:data.Count})
+            //  关闭窗口
+        }  
+    }
+    let data1 = storage.get(today)
+    // log(data1)
+
+    //  检查账号
+    if (Find_Control("密码登录") || Find_Control("验证码登录") || Find_Control("刷新验证") ) {
+        log_z("账号未登录")
+        throw new Error("未登录账号");
+    }
+
+    // 跳出 探探小助手对话框
+    let assi = Find_Control("探探小助手")
+    if (assi) {
+        console.log("可以点击进入")
+        click(assi)
+        // id("com.p1.mobile.putong:id/left_icon_container").findOne(100).click()
+    }
+
+    // 弹出窗口   广告
+    if (Find_Control("以结婚为目的”的恋爱") && Find_Control("我要参加")) {
+        //  划走
+        swipe(300, 572, 32, 568, random(200, 400));
+    }
+
+    // 弹出窗口   广告
+    if ((Find_Control("上传照片") && Find_Control("上传展示生活的照片")) || (Find_Control("今日缘分") && Find_Control("快来查看你的")) || (Find_Control("找个聊天搭子") && Find_Control("向好友发射信号"))) {
         // 要是我上传照片的弹窗需要关闭
-        // com.p1.mobile.putong:id/close   这个是关闭按钮
         let close = id("com.p1.mobile.putong:id/close").findOne(100);
         if (close) {
             clickobj(close)
+            return false
         }
     }
-    if (Find_Control("今日缘分") && Find_Control("快来查看你的")) {
-        // 要是我上传照片的弹窗需要关闭
-        // com.p1.mobile.putong:id/close   这个是关闭按钮
-        let close = id("com.p1.mobile.putong:id/close").findOne(100);
-        if (close) {
-            clickobj(close)
-        }
-    }
-    if (Find_Control("青少年模式") && Find_Control("开启青少年模式")) {
-        // 取消掉青少年模式
-        let title_text= Find_Control("我知道了")
+
+    // 弹出窗口 新人广告
+    if (Find_Control("恭喜获得限时礼包") && Find_Control("立即查看")) {
+        let title_text= Find_Control("稍后再说")  // 取消掉青少年模式
         if (title_text) {
-            // 点击取消青少年弹窗
-            clickobj(title_text)
+            clickobj(title_text) // 点击取消广告弹窗
+            return false
         }
     }
+    // 误触了分享按钮
+    if (Find_Control("分享给好友")) {
+        clickobj(Find_Control("取消"))
+        return false
+    }
+    // 弹出框 索要通知
     if (Find_Control("打开动态消息通知") && Find_Control("去开启")) {
         let no =  Find_Control("暂不设置");
         if (no) {
             clickobj(no)
+            return false
         }
     }
-    if (Find_Control("分享给好友")) {
-        clickobj(Find_Control("取消"))
-        return
-    }
-    console.log("新人广告")
-    //  新人广告
-    if (Find_Control("恭喜获得限时礼包") && Find_Control("立即查看")) {
-        // 取消掉青少年模式
-        let title_text= Find_Control("稍后再说")
+
+    // 取消掉青少年模式
+    if (Find_Control("青少年模式") && Find_Control("开启青少年模式")) {
+        let title_text= Find_Control("我知道了")
         if (title_text) {
-            // 点击取消青少年弹窗
-            clickobj(title_text)
-            return 
+            clickobj(title_text)  // 点击取消青少年弹窗
+            return false
         }
     }
-    // 勾引要开会员的 闪聊匹配
-    if (Find_Control("闪聊匹配") && Find_Control("立即和")) {
-        // 左划掉
-        swipe(300, 572, 32, 568, random(200, 400));
-    }
-    //  点开了资料
-    // let menu_top_ab_refactor = id("com.p1.mobile.putong:id/menu_top_ab_refactor").findOne(100)
-    let profile_back = id("com.p1.mobile.putong:id/profile_back").findOne(10)
-    if (profile_back) {
-        console.log("出资料")
-        clickobj(profile_back)
-        return 
-    }
 
-    console.log("检查配对")
-    //  首先是配对完成的可以开始聊天了 
-    if (Find_Control("配对成功")) {
-        log_z("发消息")
-        let targetControl = Find_Control("发消息")
-        if (targetControl) {
-            log_z("发消息2")
-            clickobj(targetControl)
-            return sleep(1000)
-        }
-    }
-    if (Find_Control("立即认证")) {
-        // 随便点击一个地方就行
-        httpclick(271, 152);
-        // throw new Error("账号进小黑屋了 无法评论无法点赞 无法发送动态");
-    }
-    if (Find_Control("开通")) {
-        let close = id("com.p1.mobile.putong:id/close").findOne(1000); // 关闭按钮
-        clickobj(close)
-    }
-    
-    //  当前界面是在 "我" 的界面
-    if (Find_Control("认证中心")) {
-        // TODO
-
-    }
-
+    //  周围没有可以刷到的人了
     let range = Find_Control("扩大范围")
     if (range) {
         clickobj(range)
+        return false
     }
-    //  在滑动界面
-    if (Find_Control("查看资料")) {
-        //  动态滑动
-        log_z("动态滑动")
-        randomSwipe();
-    }
+
+
+    return true
 }
+
+//  处理工作
+function works() {
+    // 要是遇到在通知界面的话
+    if (Find_Control("通知")&& Find_Control("全部已读")) {
+        //  找到 可以回礼的
+        let item = id("com.p1.mobile.putong:id/reply_tv").find() //  通知   全部已读  可以点击    (com.p1.mobile.putong:id/reply_tv) 礼貌回礼   / 聊聊 兑取是失败的
+        item.forEach(node =>{
+            if (node.text() == "礼貌回礼") {
+                node.click();
+                sleep(getRandomInt(300, 1200));
+            }
+        });
+        // 出去
+        let left_icon_container= id("com.p1.mobile.putong:id/left_icon_container").findOne(100)
+        if (left_icon_container) {
+            left_icon_container.click();
+        }
+    }
+
+    console.log("开始工作")
+    console.log("获取模式")
+    console.log("模式初始化")
+    console.log("随机行为")
+    console.log("行为执行")
+}
+
 
 function main() {
+    // 初始化
     if (init()) {
-        log_z("开始干活")
-        if (Find_Control("密码登录") || Find_Control("验证码登录") || Find_Control("刷新验证") ) {
-            log_z("账号未登录")
-            throw new Error("未登录账号");
-        }
-        works();
-    }
-}
-
-//  保存寻找信息红点
-function name1() {
-    // 截图整个屏幕
-    if (!requestScreenCapture()) {
-        toast("请求截图权限失败");
-        exit();
-    }
-
-    // 判断区域内是否有红色像素
-    function findRedInRegion(image) {
-        var width = image.getWidth();
-        var height = image.getHeight();
-        for (var y = 0; y < height; y++) {
-            for (var x = 0; x < width; x++) {
-                var color = image.pixel(x, y)
-                // 通过颜色值判断是否为红色
-                if (color == -39836) {
-                    console.log(`当前坐标 x = ${x} , y = ${y}`)
-                    // click(x+607 ,y+342)
-                    click(x+924 ,y+572)
-                    return true; // 找到红色
+        if (wrong()) {
+            // 获取当前界面
+            let Current = getCurrentPage()
+            if (Current == "聊天界面") {
+                // 如果是未读的的情况下应该退出去联系其他的用户
+                if (Find_Control("com.p1.mobile.putong:id/read_state_text",id)) {
+                    let left_icon_container = Find_Control("com.p1.mobile.putong:id/left_icon_container",id)
+                    if (left_icon_container) {
+                        return left_icon_container.click();
+                    }
                 }
+                // 是否是才打开聊天窗口
+                if (Find_Control("帮你准备了2句开场白，点击发送")) {
+                    //  选择一个开场白   TODO 是AI 还是用系统给你的推荐开场白
+                    console.log("率先开团 ")
+                    return Find_Control("com.p1.mobile.putong:id/break_ice_message2_content",id).parent().click();
+                }
+
+                // 在回信息界面 获取聊天内容 
+                let chat_data = chat_history()
+                if (chat_data) {
+                    console.log("找到聊天记录了")
+                    log(chat_data);
+                    return 
+                }
+                return 
             }
+
+            // 检查是否有消息要回
+            if (Find_message() > 0 ) {
+                // 出现了 
+                let Tt = Find_Control("探探小助手")
+                if (Tt) {
+                    //  这个消息是没用的 还提示消息
+                    // 长按
+                    console.log(" 找到小助手了")
+                    // let bound = Tt.bounds();
+                    // press(bound.centerX(), bound.centerY(), 1000)
+                    clickobj(Tt)
+                    return 
+                }
+
+                // 查找探探小助手
+                Tt = Find_Control("你有1个新配对")
+                if (Tt) {
+                    clickobj(Tt)
+                    return 
+                }
+
+                // 前往对话点击
+
+                // 点击可以对话的
+
+                return 
+            }
+
+            // 处理工作
+            // 读取配置
+            let data = storage.get(today);
+            if (data.Event) {
+                if (data.Event == "喜欢") {
+                    console.log("喜欢")
+                }
+                if (data.Event == "预览") {
+                    console.log("预览")
+                }
+                if (data.Event == "动态") {
+                    console.log("动态")
+                }
+                if (data.Event == "互动") {
+                    console.log("互动")
+                }                
+            }
+
+            // 无异常可以工作
+            works();  // 分配工作
         }
-        return false; // 没有找到红色
-    }
-
-    // 截图完成
-    var img = captureScreen();  // 截取整个屏幕
-
-    var region = images.clip(img, 607,342,100,569); 
-    // var region = images.clip(img, 924,572, 128, 844);
-
-    // 判断该区域内是否有红色
-    var isRedFound = findRedInRegion(region);
-    if (isRedFound) {
-        log("在指定区域找到红色！");
-    } else {
-        log("在指定区域没有找到红色????");
     }
 }
 
 // main()
 
-// 获取未读信息数量
-function Find_message() {
-    //  获取当前是否信息需要查看
-    let nodes = className("android.widget.FrameLayout").find();
-    let message = 0
-    nodes.forEach(node => {
-        let nameView = node.findOne(id("com.p1.mobile.putong:id/name"));
-        if (nameView && nameView.text() === "消息") {  // 确保是“消息”这个 tab
-            let textView = node.findOne(id("com.p1.mobile.putong:id/badge"));
-            if (textView) {
-                console.log(textView.id());
-                massg =  textView.text()
-            }
-        }
-    });
-    return message
-}
- 
-
-// com.p1.mobile.putong:id/all_pairs_entrance   这个是消息界面 右上角的新配对的数量
-
-//  com.p1.mobile.putong:id/message_sort_image  这个是消息界面特有的东西 三个横杠
-//  认证中心 是 "我" 界面特有的东西
-
-// resource-id="com.p1.mobile.putong:id/img_live_setting"   // 直播设置
-// resource-id="com.p1.mobile.putong:id/start_live"         // 我要开直播
-
-// chat_history()
 
 
-// if (Find_Control("他喜欢了你")) {
-//     console.log(" 他喜欢我")  // 是一个标识  他喜欢我 我再右划就可以配对成功
+//  发送内容
+// setText("泥嚎")
+// Find_Control("发送").click()
+
+
+// log(Find_Control("探探小助手").text())
+
+
+
+
+//  信息界面  有信息提示 可能是有信息没看  或者有新配对   
+
+
+// com.p1.mobile.putong:id/all_pairs_entrance  这个是会变动的 新配对 或者是 全部配对
+
+
+// com.p1.mobile.putong:id/guide_text   暂时没有新配对  有这个就是没有配对信息要点击
+// let left_icon_container= id("com.p1.mobile.putong:id/left_icon_container").findOne(100)
+// if (left_icon_container) {
+//     left_icon_container.click();
 // }
+
+
+// log(Find_Control("尽情右滑、突破右滑上限、不错过").text())
+// log(Find_Control("突破右滑").text())
+
+
+// log(Find_Control("无限右滑").text())
+
+// let node = id("com.p1.mobile.putong:id/description").findOne(5000);
+// if (node) {
+//     let text = node.text();
+//     console.log("控件的文本内容为: " + text);
+// } else {
+//     console.log("未找到指定控件！");
+// }
+
+
+// 查找包含 "右滑" 文本的控件
+// let node = textContains("尽情右滑").findOne(5000);
+// // let node = Find_Control("尽情右滑",textContains,5000);  // 无法使用隐藏来判断
+// if (node) {
+//     console.log("找到控件，文本为: " + node.text());
+// } else {
+//     console.log("未找到包含该文本的控件！");
+// }
+
+
+// log(id("com.p1.mobile.putong:id/description").findOne(100).text());
+// if ( id("com.p1.mobile.putong:id/description").findOne(100).text() == "尽情右滑、突破右滑上限、不错过任何你喜欢的她") {
+//     console.log(" 已经完成")
+// }
+
+
+// storage.put(today,{Favorites:Favorites, Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Posts:getRandomInt(0,maxPosts), Event:"", Time:0, Count:0})
+
+// let data = storage.get(today)
+// log(data)
+
+// wrong1()
+// getCurrentPage()
+// log(Find_message())
+
+// console.log(Find_Control("视频聊天").text())
+
+
+
+// com.p1.mobile.putong:id/right_icon_container 右边的图标
+// com.p1.mobile.putong:id/input_text   输入框
+
+
+
+
+//   com.p1.mobile.putong:id/send   发布界面 
+
+
+//  分享我的时刻…   com.p1.mobile.putong:id/edit_field
+
+//  com.p1.mobile.putong:id/selected_topic  加话题
+
+
+// log(Find_Control("com.p1.mobile.putong:id/selected_topic",id).text())
+
+
+
+//  本身是有个上限的 网传是120个     目前我测试的是97个就要会员无法右划了
+//  首先是滑动过快会触发喜欢上限  ->    ()
+
+
+
+
+
+// console.log(Find_Control("你有1个新配对").id()) 
+console.time("1")
+console.log(Find_Control("com.p1.mobile.putong:id/match_txt",id).text()) 
+console.timeEnd("1")
+
+
+console.time("2")
+console.log(Find_Control("match_txt",id).text()) 
+console.timeEnd("2")
