@@ -153,6 +153,64 @@ function randomSwipe() {
     console.log("滑动结束 🎉");
 }
 
+// 更自然的滑动模拟操作
+function randomSwipe2() {
+    let width = device.width;
+    let height = device.height;
+    let startX, endX, startY, endY, duration;
+
+    startY = random(height * 0.4, height * 0.6); // 起始y坐标
+    endY = random(height * 0.4, height * 0.6); // 终点y坐标
+
+    duration = random(300, 600); // 滑动时间稍微更长一些，显得更自然
+
+    // 随机选择滑动方向，避免完全一致的行为
+    if (Math.random() > 0.5) {
+        // 向右滑动
+        startX = random(width * 0.1, width * 0.3);
+        endX = random(width * 0.6, width * 0.9);
+    } else {
+        // 向左滑动
+        startX = random(width * 0.7, width * 0.9);
+        endX = random(width * 0.1, width * 0.3);
+    }
+
+    // 模拟非直线滑动，增加小幅度颤动
+    let curveX = random(-50, 50);
+    let curveY = random(-30, 30);
+    let middleX = (startX + endX) / 2 + curveX;
+    let middleY = (startY + endY) / 2 + curveY;
+
+    swipe(startX, startY, middleX, middleY, duration / 2); // 第一阶段
+    swipe(middleX, middleY, endX, endY, duration / 2); // 第二阶段
+
+    console.log("滑动完成，等待一会...");
+
+    let waitTime = random(2000, 5000); // 随机等待时间（2s-5s）
+    console.log("等待 " + waitTime + "ms");
+    sleep(waitTime);
+
+    // **模拟点击行为**
+    if (Math.random() > 0.7) {
+        let clickX = random(width * 0.4, width * 0.6);
+        let clickY = random(height * 0.3, height * 0.7);
+        click(clickX, clickY);
+        console.log("模拟点击屏幕 (" + clickX + ", " + clickY + ")");
+        sleep(random(1000, 3000)); // 点击后短暂停顿
+        click(clickX, clickY);
+    }
+
+    // **增加休息模拟**
+    if (random(20, 30) % random(10, 20) === 0) {
+        let restTime = random(10000, 30000); // 模拟更长时间的停顿（10s-30s）
+        console.log("模拟休息 " + restTime + "ms");
+        sleep(restTime);
+    }
+
+    console.log("滑动结束 🎉");
+}
+
+
 //  获取第一个资料卡信息
 function account_info() {
     // 获取所有卡片的节点
