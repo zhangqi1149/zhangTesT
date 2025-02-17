@@ -5,15 +5,15 @@ let Log =  false  // 是否打日志
 let maxLikes = 20;       // 点赞上限
 let minLikes = 1;       // 点赞下限
 
-let maxPosts  = 1;       // 发动态上限
+// let maxPosts  = 1;       // 发动态上限
 // let minPosts  = 1;       // 发动态下限
 
 let maxComments = 1;     // 评论上限
 let minComments = 1;     // 评论下限
 
-//  首先是滑动过快或者频率过快会触发喜欢上限限制 就要会员无法右划喜欢了  目前我测试的是97个   网传是120个
-let maxFavorites = 90;   // 喜欢上限 就是右滑动 / 点击喜欢按钮
-let minFavorites = 20;   // 喜欢下限 
+//  首先是滑动过快或者频率过快会触发喜欢上限限制 就要会员无法右划喜欢了  目前我测试的是104个   网传是120个
+// let maxFavorites = 90;   // 喜欢上限 就是右滑动 / 点击喜欢按钮
+// let minFavorites = 20;   // 喜欢下限 
 
 let today = new Date().toISOString().split('T')[0];  // 获取今日日期，格式为 YYYY-MM-DD
 
@@ -39,9 +39,11 @@ function manage_value() {
     // 如果键不存在，将今天的日期添加到 keysList 中
     if (!keys.includes(today)) {
         keys.push(today);
+        //  随机     今日    情绪描述        是否可以喜欢       点赞上限                                评论上限                                        执行时间 
+        storage.put(today,{Mood:"心情愉悦", Favorites: true,  Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Time:0})
         //  随机     今日    情绪描述                           喜欢上限                        点赞上限                                          评论上限                               发动态上限                      执行时间 
-        storage.put(today,{Mood:"心情愉悦",Favorites:getRandomInt(minFavorites,maxFavorites), Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Posts:getRandomInt(0,maxPosts), Time:0})
-        storage.put("num",0) // 重置今日喜欢数量
+        // storage.put(today,{Mood:"心情愉悦",Favorites:getRandomInt(minFavorites,maxFavorites), Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Posts:getRandomInt(0,maxPosts), Time:0})
+        storage.put("count",0) // 重置今日喜欢数量
         storage.put("keysList", keys);  // 更新键列表
     }
     
@@ -277,6 +279,30 @@ function addRandomMinutes(min, max) {
     return now;
 }
 
+// 获取时间差（单位：分钟）
+function getTimeDifferenceInMinutes(futureTime) {
+    let currentTime = new Date();  // 获取当前时间
+    let futureTimeObj = new Date(futureTime);  // 将字符串转换为 Date 对象
+    let futureTimeStamp = futureTimeObj.getTime(); // 获取未来时间的时间戳
+    let currentTimeStamp = currentTime.getTime(); // 获取当前时间的时间戳
+
+    console.log("未来时间: " + futureTimeObj);
+    console.log("当前时间: " + currentTime);
+
+    // 检查时间戳是否有效
+    if (isNaN(futureTimeStamp)) {
+        console.log("无效的未来日期对象");
+        return NaN;
+    }
+    if (isNaN(currentTimeStamp)) {
+        console.log("无效的当前日期对象");
+        return NaN;
+    }
+
+    let timeDifference = futureTimeStamp - currentTimeStamp; // 计算时间差（毫秒）
+    return Math.floor(timeDifference / (1000 * 60));  // 将毫秒转换为小时
+}
+
 //  对比时间
 function compareTime(a) {
     let now = new Date();  // 获取当前时间
@@ -350,6 +376,28 @@ function getUnread(config) {
         }
     });
     return num;
+}
+
+// 获取当前被选择的界面
+function get_tab_selete() {
+    // 获取所有匹配的控件
+    let tab ;
+    var nodes = id("com.p1.mobile.putong:id/tv_tab_title").find();  // 获取所有匹配控件的列表
+    // 确保 nodes 不为 null 或 undefined
+    if (!nodes || nodes.length === 0) {
+        console.log("没有找到符合条件的控件");
+    } else {
+        // 打印控件数量
+        // console.log("找到的控件数量: " + nodes.length);
+        // 遍历每个控件
+        nodes.forEach((w) => {
+            if (w.selected() == true && w.visibleToUser()) {
+                console.log("选中的控件文本: " + w.text());  // 打印选中的控件的文本
+                tab =   w.text()
+            }
+        });
+    }
+    return tab
 }
 
 /** 更自然的滑动模拟操作
@@ -513,7 +561,6 @@ function account_info() {
     var me_was_liked = card.findOne(id("com.p1.mobile.putong:id/me_was_liked"));
     data.me_was_liked = me_was_liked ? me_was_liked.text() : "";
 
-
     //  获取年龄
     var age = card.findOne(id("com.p1.mobile.putong:id/age"));
     data.age = age ? age.text() : "";
@@ -539,6 +586,8 @@ function account_info() {
         var normal = certification_normal.findOne(id("com.p1.mobile.putong:id/text"))
         data.normal = normal ? normal.text() : "";
     }
+
+    // com.p1.mobile.putong:id/superlike_recv   收到的超级喜欢
 
     // log(data)
     return data
@@ -695,9 +744,21 @@ function chat_history() {
  * @returns 
  */
 function getCurrentPage() {
-    // 判断是否在滑动界面
+    //  - 探探界面 
+    // 滑动喜欢
     if (Find_Control("com.p1.mobile.putong:id/card",id)) {
         return "喜欢"
+    }
+
+    // - 娱乐界面
+    // 是否选择了那个界面卡
+    if (Find_Control("com.p1.mobile.putong:id/title_bar",id)) { // 在娱乐界面
+        //  获取被选择的资料卡  
+        return  get_tab_selete()
+    }
+    if (Find_Control("com.p1.mobile.putong:id/live_close",id)) { // 看直播界面
+        //  获取被选择的资料卡  
+        return  "看直播中"
     }
 
     //  判断是否是根界面
@@ -724,11 +785,6 @@ function getCurrentPage() {
         }
         //  "娱乐" 界面
         if (Find_Control("title_bar",id)) {
-            //  直播界面
-            // if (Find_Control("img_live_setting",id) || Find_Control("视频聊天")) {
-            //     log_z("直播界面")
-            //     return "直播界面"
-            // }
             log_z("在 娱乐 界面 ")
             return "娱乐"
         }
@@ -743,7 +799,6 @@ function getCurrentPage() {
     log_z("界面未知")
     return "界面未知"
 }
-
 
 /** 切换情绪
  * 
@@ -771,7 +826,7 @@ function changeMood(Mood, emotion) {
     let d = storage.get(today);
     // 生成未来时间
     let wtime = addRandomMinutes(minTimeInFuture,maxTimeInFuture)
-    storage.put(today,{Mood:currentMood,Favorites:d.Favorites,Likes:d.Likes,Comments:d.Comments,Posts:d.Posts,Time:wtime})
+    storage.put(today,{Mood:currentMood,Favorites:d.Favorites,Likes:d.Likes,Comments:d.Comments,Time:wtime})
 }
 
 /** 处理弹窗和广告
@@ -866,18 +921,18 @@ function wrong() {
     if (node) {
         let text = node.text();
         if (text === "尽情右滑、突破右滑上限、不错过\u000A任何你喜欢的她") {
-            let num = storage.get("num",0)
+            let num = storage.get("count",0)
             log_z(`滑动要会员了 无法继续喜欢了 今日滑动次数 ${{ num }} `);
              //  获取内存数据
             let data = storage.get(today)
-            // 重置喜欢数量为0  并生成新的TODO 
-            storage.put(today,{Mood:data.Mood,Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:data.Time})
+            // 生成新的
+            // storage.put(today,{Mood:data.Mood,Favorites:false, Likes:data.Likes, Comments:data.Comments, Time:data.Time})
+            changeMood(data)
             //  关闭窗口
             back();
             throw new Error(" 无法喜欢了 ")
         }  
     }
-
 
     // 在资料片界面   
     // let profile_back = Find_Control("com.p1.mobile.putong:id/match_remaining_switch",id,100);
@@ -965,7 +1020,7 @@ function wrong() {
     return true
 }
 
-// 喜欢
+// 心情愉悦 - 喜欢   
 function like(Page) {
     log_z('心情愉悦  - 喜欢');
     //  当前界面
@@ -978,17 +1033,52 @@ function like(Page) {
     }else{back()}
 }
 
-// 预览 TODO
+// 心情一般 - 看直播
 function preview(Page) {
     log_z('心情一般  - 预览');
+    // 先到指定的界面
+    if (Page == "推荐") {
+        // com.p1.mobile.putong:id/right_text
+        click(800,486)
+    }
+    if (Page == "精选") {
+        console.log(" 点击进入直播间")
+        let zb = Find_Control("com.p1.mobile.putong:id/tv_center",id);
+        if (zb){
+            return clickobj(zb);
+        }
+    }
+    if (Page == "视频聊天") {
+        let tj = Find_Control("推荐");
+        if (tj){
+            return clickobj(tj);
+        }
+    }
+    if (Page == "附近") {
+        click(800,486)
+    }
+    if (Page == "新人") {
+        click(800,486)
+    }
+    if (Page == "派对") {
+        // com.p1.mobile.putong:id/right_text
+        click(800,486)
+    }
+    if (Page == "圈子") {
+        console.log("点新人")
+        let tj = Find_Control("新人");
+        if (tj){
+            return clickobj(tj);
+        }
+    }
 }
 
-// 动态 TODO
+// 心情较差 - 看动态-互动 TODO
 function dynamic(Page) {
-    log_z('心情较差  - 动态');
+    log_z('心情较差  - 看动态');
 }
 
-// 互动 TODO
+// 心情低落 - 静默模式 TODO
 function interaction(Page) {
     log_z('心情低落  - 互动');
 
@@ -1032,29 +1122,36 @@ function works() {
         }
         return 
     }
-
     let Data = storage.get(today);
     let Moodr = Data.Mood
     // log_z(Data)
     //  执行情绪行为
+    console.log(`当前人物情绪描述 : ${Moodr} `);
     if (compareTime(Data)) {
-        log_z(`当前人物情绪描述 : ${Moodr} `);
         //  生成新的人物情绪
         changeMood(Moodr)
     }else{
-        //  有事情做
-        if (Moodr) {
-            // console.log("有事情做")
-            // 判断情绪值 获取行为
-            if (Moodr == "心情愉悦") {   
+        // console.log("有事情做")
+        if (Moodr == "心情愉悦") {   
+            if (Data.Favorites) {
                 like(Page);     // 喜欢
-            } else if (Moodr == "心情一般") {   
-                preview(Page);     // 预览
-            } else if (Moodr == "心情较差") {   
-                dynamic(Page);     // 动态
-            } else if (Moodr == "心情低落") {  // 可以触发 心情低落 静默模式   log_z('心情不好  - 静默');   
-                interaction(Page);     // 互动
+            }else{
+                console.log("无法喜欢了")
+                changeMood(Moodr)
             }
+
+        } else if (Moodr == "心情一般") {   
+            if (Page == "看直播中") {
+                if (!compareTime(Data)) {
+                    console.log("看直播中");
+                    return 
+                }
+            }
+            preview(Page);     // 预览
+        } else if (Moodr == "心情较差") {   
+            dynamic(Page);     // 看动态
+        } else if (Moodr == "心情低落") {  // 可以触发 心情低落 静默模式   log_z('心情不好  - 静默');   
+            interaction(Page);     // 互动
         }
     }
 }
@@ -1069,20 +1166,29 @@ function main() {
             works();
         }
     }
-    }
+}
 
 // console.time("main")
-
-// for (let i = 0; i < 1; i++) {
+// for (let i = 0; i < 50; i++) {
     main()
 // }
+
 // console.timeEnd("main")
  
-
-// log(storage.get(today))
-// let wtime = addRandomMinutes(2000,3000)
+//  修改初始化当前情绪持续时间
+// let wtime = addRandomMinutes(1,2)
 // let data = storage.get(today)
-// storage.put(today,{Mood:"心情愉悦",Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:wtime})
+// storage.put(today,{Mood:"心情一般",Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:wtime})
 
 //  ---------------------------------------------------------------------------------------
  
+// for (let i = 0; i < 50; i++) {
+//     if (Find_Control("com.p1.mobile.putong:id/title_bar",id)) {
+//         console.log("在娱乐界面")
+//         sleep(1500);
+//     }
+// }
+
+
+// log(getCurrentPage())
+// preview(getCurrentPage())
