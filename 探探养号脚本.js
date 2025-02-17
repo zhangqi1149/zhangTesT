@@ -697,9 +697,7 @@ function chat_history() {
 function getCurrentPage() {
     // 判断是否在滑动界面
     if (Find_Control("com.p1.mobile.putong:id/card",id)) {
-        // 在滑动界面
-        
-        return 
+        return "喜欢"
     }
 
     //  判断是否是根界面
@@ -791,6 +789,7 @@ function wrong() {
         return
     }
 
+    //  长按连送
     let try_btn =  Find_Control("com.p1.mobile.putong:id/try_btn",id)
     if (try_btn) {
         return clickobj(try_btn);
@@ -966,30 +965,31 @@ function wrong() {
     return true
 }
 
-// 喜欢 TODO 
-function like() {
+// 喜欢
+function like(Page) {
     log_z('心情愉悦  - 喜欢');
-    //  检查当前界面
-    let con = ""
-    var cards = id("com.p1.mobile.putong:id/root").find();
-    // 如果没有找到任何卡片，直接返回
-    if (cards.length > 0) {
-        return randomSwipe();  // 开始滑动
-    }
+    //  当前界面
+    if (Page == "喜欢") {
+        var cards = id("com.p1.mobile.putong:id/root").find();
+        // 如果没有找到任何卡片，直接返回
+        if (cards.length > 0) {
+            return randomSwipe();  // 开始滑动
+        }
+    }else{back()}
 }
 
 // 预览 TODO
-function preview() {
+function preview(Page) {
     log_z('心情一般  - 预览');
 }
 
 // 动态 TODO
-function dynamic() {
+function dynamic(Page) {
     log_z('心情较差  - 动态');
 }
 
 // 互动 TODO
-function interaction() {
+function interaction(Page) {
     log_z('心情低落  - 互动');
 
     // 心情不好 静默模式
@@ -1047,13 +1047,13 @@ function works() {
             // console.log("有事情做")
             // 判断情绪值 获取行为
             if (Moodr == "心情愉悦") {   
-                like();     // 喜欢
+                like(Page);     // 喜欢
             } else if (Moodr == "心情一般") {   
-                preview();     // 预览
+                preview(Page);     // 预览
             } else if (Moodr == "心情较差") {   
-                dynamic();     // 动态
+                dynamic(Page);     // 动态
             } else if (Moodr == "心情低落") {  // 可以触发 心情低落 静默模式   log_z('心情不好  - 静默');   
-                interaction();     // 互动
+                interaction(Page);     // 互动
             }
         }
     }
@@ -1069,14 +1069,14 @@ function main() {
             works();
         }
     }
-}
+    }
 
+// console.time("main")
 
-for (let i = 0; i < 10; i++) {
-    // console.time("main")
+// for (let i = 0; i < 1; i++) {
     main()
-    // console.timeEnd("main")
-}
+// }
+// console.timeEnd("main")
  
 
 // log(storage.get(today))
@@ -1085,5 +1085,4 @@ for (let i = 0; i < 10; i++) {
 // storage.put(today,{Mood:"心情愉悦",Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:wtime})
 
 //  ---------------------------------------------------------------------------------------
-
-
+ 
