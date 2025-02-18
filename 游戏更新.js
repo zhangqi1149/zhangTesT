@@ -954,6 +954,27 @@ var storage = storages.create("ABC");
 
 // OCR请求
 function getOcr(img) {
+    function postJson(url, jsonData) {
+        let response = null;
+        // 创建线程执行 HTTP 请求
+        let thread = threads.start(function () {
+            try {
+                response = http.postJson(url, jsonData, {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+            } catch (e) {
+                log_z("请求出错: " + e);
+            }
+        });
+    
+        // 等待线程完成, 超时时间为 10 
+        // 当接受到数据之后join也立即返回.
+        thread.join(10000)
+        thread.interrupt();
+        return response;
+    }
     try {
         
         console.time("********&&& getOCR");  // 开始计时
@@ -966,17 +987,13 @@ function getOcr(img) {
         // 构造请求的 JSON 数据，添加 lang 字段
         let jsonData = {
             "base64_str": imgData,
+            "save": false,
+            "path": "mir4/test"
         };
         
         // console.time("httppost");  // 开始计时
         // 发送 POST 请求，确保 Content-Type 为 application/json
-        let response = http.postJson(SERVER_URL+"/ocr/predict-by-base64", jsonData, {
-            headers: {
-                "Content-Type": "application/json"
-            },
-            timeout: 20000 // 设置超时时间为10秒
-        });
-
+        let response = postJson(SERVER_URL+"/ocr/predict-by-base64", jsonData)
         // let response = http.postJson("http://192.168.1.94:8001/ocr/predict-by-base64", jsonData, {
         //     headers: {
         //         "Content-Type": "application/json"
@@ -986,7 +1003,7 @@ function getOcr(img) {
 
         // console.timeEnd("httppost");  // 输出执行时间
 
-        if (response.statusCode == 200) {
+        if (response && response.statusCode == 200) {
             console.time("JSON.parse");  // 开始计时
             let result = JSON.parse(response.body.string());
             console.time("JSON.parse");  // 开始计时
@@ -1399,6 +1416,7 @@ function wrong(reData) {
         sleep(5000);
         return 
     }
+
      // 网络异常波动
      if (selclick(reData,"前往登录")) {
         sleep(2000);
@@ -1406,9 +1424,15 @@ function wrong(reData) {
     }
     if (select(reData,"存在最新版本")||select(reData,"无法确认版本")) { 
         selclick(reData,"确定",true);
+        selclick(reData,"确认",true);
         // SetCom("pm clear com.wemade.mir4global")
         // throw new Error("游戏更新");
         return true;
+    }
+    if (select(reData,"环境下载") || select(reData,"正在下载")) {
+        selclick(reData,"确认",true);
+        // sleep(5000);
+        throw new Error("游戏更新中ing");
     }
 
     //  去认证界面
@@ -1531,6 +1555,7 @@ function upLevel(){
     if (reData) {
         log_z("处理异常弹窗")
         // select(reData,"开始更新")
+        selclick(reData,"开始游戏",true)
         if (wrong(reData)) {return } //  处理异常弹窗
     } 
 }
@@ -1568,7 +1593,7 @@ function main(){
 
     // 初始化
     if (!init()) {
-        console.log(" 进入 ")
+        // console.log(" 进入 ")
         upLevel()
     }
 }

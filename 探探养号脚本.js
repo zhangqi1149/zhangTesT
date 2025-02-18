@@ -1,4 +1,11 @@
 // 盘盘罐罐打碎就再置办
+
+// Mood  :      心情描述
+// Favorites  : 今日是否可以喜欢
+// Likes  :     点赞
+// Comments  :  评论
+// Time  :      执行时间 情绪持续时间
+
 let Log =  false  // 是否打日志
 
 //  初始化今日养号份额
@@ -15,7 +22,7 @@ let minComments = 1;     // 评论下限
 // let maxFavorites = 90;   // 喜欢上限 就是右滑动 / 点击喜欢按钮
 // let minFavorites = 20;   // 喜欢下限 
 
-let today = new Date().toISOString().split('T')[0];  // 获取今日日期，格式为 YYYY-MM-DD
+let today = new Date().toISOString().split('T')[0];  // 获取今日日期
 
 
 // 未来时间区间     心情保持时间
@@ -80,7 +87,6 @@ function getnodes() {
         console.log("未找到指定控件！");
     }
 }
-
 
 /** 打印日志
  * 
@@ -331,8 +337,6 @@ function compareTime(a) {
 //     hasGrandparent: 2,                      // 是否有祖父控件，适应不同结构的需求 层级
 // };
 
-// console.log("当前数量 ",getUnread(config))
-
 //  * 获取消息的未读数量 
 function getUnread(config) {
     // 获取 bottombar 控件的边界
@@ -378,7 +382,10 @@ function getUnread(config) {
     return num;
 }
 
-// 获取当前被选择的界面
+/** 获取当前被选择的界面
+ * 
+ * @returns 
+ */
 function get_tab_selete() {
     // 获取所有匹配的控件
     let tab ;
@@ -389,76 +396,14 @@ function get_tab_selete() {
     } else {
         // 打印控件数量
         // console.log("找到的控件数量: " + nodes.length);
-        // 遍历每个控件
         nodes.forEach((w) => {
-            if (w.selected() == true && w.visibleToUser()) {
+            if (w.selected() == true && w.visibleToUser()) {   // 非隐藏 并且 被选中
                 console.log("选中的控件文本: " + w.text());  // 打印选中的控件的文本
                 tab =   w.text()
             }
         });
     }
     return tab
-}
-
-/** 更自然的滑动模拟操作
- * 
- */
-function randomSwipe2() {
-    let width = device.width;
-    let height = device.height;
-    let startX, endX, startY, endY, duration;
-
-    startY = random(height * 0.4, height * 0.6); // 起始y坐标
-    endY = random(height * 0.4, height * 0.6); // 终点y坐标
-
-    duration = random(300, 600); // 滑动时间稍微更长一些，显得更自然
-
-    // 随机选择滑动方向，避免完全一致的行为
-    if (Math.random() > 0.5) {
-        // 向右滑动
-        console.log(" ****  🎉 向右滑动")
-        startX = random(width * 0.1, width * 0.3);
-        endX = random(width * 0.6, width * 0.9);
-    } else {
-        // 向左滑动
-        // console.log("向左滑动 ---  ")
-        startX = random(width * 0.7, width * 0.9);
-        endX = random(width * 0.1, width * 0.3);
-    }
-
-    // 模拟非直线滑动，增加小幅度颤动
-    let curveX = random(-50, 50);
-    let curveY = random(-30, 30);
-    let middleX = (startX + endX) / 2 + curveX;
-    let middleY = (startY + endY) / 2 + curveY;
-
-    // swipe(startX, startY, middleX, middleY, duration / 2); // 第一阶段
-    swipe(middleX, middleY, endX, endY, duration / 2); // 第二阶段
-
-    // console.log("滑动完成，等待一会...");
-
-    let waitTime = random(2000, 3000); // 随机等待时间（2s-5s）
-    // console.log("等待 " + waitTime + "ms");
-    sleep(waitTime);
-
-    // **模拟点击行为** 检查数据做权重   TODO
-    // if (Math.random() > 0.7) {
-    //     let clickX = random(width * 0.4, width * 0.6);
-    //     let clickY = random(height * 0.3, height * 0.7);
-    //     click(clickX, clickY);
-    //     console.log("模拟点击屏幕 (" + clickX + ", " + clickY + ")");
-    //     sleep(random(1000, 3000)); // 点击后短暂停顿
-    //     click(clickX, clickY);
-    // }
-
-    // **增加休息模拟**
-    if (random(20, 30) % random(10, 20) === 0) {
-        let restTime = random(1000, 2000); // 模拟更长时间的停顿（10s-30s）
-        // console.log("模拟休息 " + restTime + "ms");
-        sleep(restTime);
-    }
-
-    // console.log("滑动结束 🎉");
 }
 
 //  特殊处理滑动
@@ -759,6 +704,24 @@ function getCurrentPage() {
     if (Find_Control("com.p1.mobile.putong:id/live_close",id)) { // 看直播界面
         //  获取被选择的资料卡  
         return  "看直播中"
+    }
+
+    // - 发现界面
+    if (Find_Control("发动态")) {
+        let w = className("TextView").boundsInside(0, 0, device.width/2, device.height/2).find();
+        // 遍历所有找到的控件
+        let dt = "";
+        w.forEach((node) => {
+            if (node != null && node.text() == "官宣") {  // 只处理文本为 "消息" 的控件
+                let badgeText = node.text();
+                if (badgeText) {
+                    dt = "看动态";
+                }
+            }
+        });
+        if (dt) {
+            return dt;
+        }
     }
 
     //  判断是否是根界面
@@ -1073,14 +1036,53 @@ function preview(Page) {
     }
 }
 
-// 心情较差 - 看动态-互动 TODO
+// 心情较差 - 看动态
 function dynamic(Page) {
     log_z('心情较差  - 看动态');
+    if (Page == "看动态") {
+        if (Math.random() > 0.5) {
+            // 获取屏幕的宽度和高度
+            let width = device.width;
+            let height = device.height;
+            let startX, endX, startY, endY
+            
+            // 设置向上滑动的起始点和结束点
+            startX = width / 2;  
+            startY = height * 0.7; // 从屏幕底部80%的地方开始
+            
+            endX = width / 2;    
+            endY = height * 0.4;  // 滑动到屏幕顶部20%的地方
+            
+            // 执行滑动操作：从 (startX, startY) 滑动到 (endX, endY)
+            swipe(startX, startY, endX, endY, 500); // 500ms 表示滑动持续的时间，可以根据需要调整
+            
+            sleep(random(3000, 5000));
+            
+            // 向上滑动
+            console.log("向上滑动");
+        }else{
+            let fx = text("刷新").findOne(50);
+            if (fx) {
+                return clickobj(fx)
+            }
+        }
+    }else {
+        //  首先是找到主界面
+        if (Find_Control("bottombar",id)) { // 在根界面
+            console.log("在跟节点 前往发现界面")
+            // 点击发现
+            let fx = Find_Control("发现");
+            if (fx) {
+                return clickobj(fx);
+            }
+        }
+        back();
+    }
 }
 
 // 心情低落 - 静默模式 TODO
 function interaction(Page) {
-    log_z('心情低落  - 互动');
+    log_z('心情低落  - 静默模式');
 
     // 心情不好 静默模式
 }
@@ -1133,14 +1135,16 @@ function works() {
     }else{
         // console.log("有事情做")
         if (Moodr == "心情愉悦") {   
+            console.log("心情愉悦 可以喜欢") 
             if (Data.Favorites) {
                 like(Page);     // 喜欢
             }else{
                 console.log("无法喜欢了")
                 changeMood(Moodr)
             }
-
-        } else if (Moodr == "心情一般") {   
+        } else if (Moodr == "心情一般") {  
+            console.log("心情一般 看看直播") 
+            // 正在进行作业 
             if (Page == "看直播中") {
                 if (!compareTime(Data)) {
                     console.log("看直播中");
@@ -1148,10 +1152,12 @@ function works() {
                 }
             }
             preview(Page);     // 预览
-        } else if (Moodr == "心情较差") {   
+        } else if (Moodr == "心情较差") {  
+            console.log("心情较差 想要看动态") 
             dynamic(Page);     // 看动态
         } else if (Moodr == "心情低落") {  // 可以触发 心情低落 静默模式   log_z('心情不好  - 静默');   
-            interaction(Page);     // 互动
+            console.log("心情低落 静默关闭应用") 
+            interaction(Page);     // 静默
         }
     }
 }
@@ -1169,26 +1175,29 @@ function main() {
 }
 
 // console.time("main")
-// for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 50; i++) {
     main()
-// }
+}
 
 // console.timeEnd("main")
  
 //  修改初始化当前情绪持续时间
-// let wtime = addRandomMinutes(1,2)
+// let wtime = addRandomMinutes(5,9)
 // let data = storage.get(today)
-// storage.put(today,{Mood:"心情一般",Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:wtime})
+// storage.put(today,{Mood:"心情较差",Favorites:0, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:wtime})
 
 //  ---------------------------------------------------------------------------------------
  
-// for (let i = 0; i < 50; i++) {
-//     if (Find_Control("com.p1.mobile.putong:id/title_bar",id)) {
-//         console.log("在娱乐界面")
-//         sleep(1500);
-//     }
+// log(getCurrentPage())
+// log(Find_Control("发动态").text())
+
+
+
+// for (let i = 0; i < 150; i++) {
+//     console.time("ad")
+//     dynamic("看动态") 
+//     console.timeEnd("ad") 
 // }
 
 
-// log(getCurrentPage())
-// preview(getCurrentPage())
+// works()
