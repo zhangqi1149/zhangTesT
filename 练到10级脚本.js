@@ -1020,6 +1020,22 @@ function log_z(message) {
 }
 
 
+// 从配置文件当中读取当前设备的ID
+function readDeviceId() {
+    let filePath = "/storage/emulated/0/Documents/config.txt";
+    let reader = new java.io.BufferedReader(new java.io.FileReader(filePath));
+    let line;
+    let lastLine = '';
+
+    // 逐行读取文件内容
+    while ((line = reader.readLine()) !== null) {
+        lastLine = line;  // 不断更新最后一行
+    }
+
+    reader.close();
+    return lastLine;  // 返回最后一行内容
+}
+
 // ---------------------------------------------- 基础函数
  
 /**强行关闭游戏 控件本版
