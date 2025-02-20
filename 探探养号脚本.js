@@ -645,7 +645,7 @@ function Find_message() {
             if (textView) {
                 // log_z(textView.id());
                 // log_z("textView.text()",textView.text())
-                message =  textView.text()
+                message =  textView.text()  // 这个是红点里面的数字
             }
         }
     });
@@ -681,7 +681,7 @@ function chat_history() {
 
         if (textView.className() == "android.widget.FrameLayout") {    // 是图片 / 视频 / 语音 
             var msg = {
-                sender: avatar ? "对方" : "自己",
+                sender: avatar ? "对方说" : "自己说",
                 text: "非文本信息"
             };
         }
@@ -694,7 +694,7 @@ function chat_history() {
         if (textView.className() == "android.widget.TextView" ) {    // 是文本
             // console.log(text+"",textView.text())
             var msg = {
-                sender: avatar ? "对方" : "自己",
+                sender: avatar ? "对方说" : "自己说",
                 text: textView.text()
             };
         }
@@ -893,6 +893,18 @@ function wrong() {
             return false
         }
     }
+
+    //  闪聊广告
+    if (Find_Control("com.p1.mobile.putong:id/have_a_chat",id)) {
+        startX =height * 0.5;  
+        startY = width / 2;
+        
+        endX =height * 0.1;  
+        endY = width / 2; 
+        
+        return swipe(startX, startY, endX, endY, 500); // 500ms 表示滑动持续的时间，可以根据需要调整
+    }
+
     // 开通svip广告 
     if (Find_Control("开通SVIP会员")) {
         let aerr_close =  Find_Control("com.p1.mobile.putong:id/close",id);
@@ -1245,6 +1257,24 @@ function works() {
             if (Page == "看直播中") {
                 if (!compareTime(Data)) {
                     console.log("看直播中 等待12 - 15秒");
+                    let rand = Math.random()
+                    if (rand > 0.1 && rand < 0.2) {
+                        // 获取屏幕的宽度和高度
+                        let width = device.width;
+                        let height = device.height;
+                        let startX, endX, startY, endY
+                        
+                        // 设置向上滑动的起始点和结束点
+                        startX = width / 2;  
+                        startY = height * 0.7; // 从屏幕底部80%的地方开始
+                        
+                        endX = width / 2;    
+                        endY = height * 0.4;  // 滑动到屏幕顶部20%的地方
+                        
+                        // 执行滑动操作：从 (startX, startY) 滑动到 (endX, endY)
+                        swipe(startX, startY, endX, endY, 500); // 500ms 表示滑动持续的时间，可以根据需要调整
+                        console.log(" 更换直播间 ")
+                    }
                     return  sleep(random(12000,15000));
                 }
             }
@@ -1261,15 +1291,16 @@ function main() {
     if (init()) {
         //  处理异常情况  弹窗广告
         if (wrong()) {
-            console.log("无异常界面 开始工作")
+            // console.log("无异常界面 开始工作")
             works();
         }
     }
 }
 
 // console.time("main")
-for (let i = 0; i < 200; i++) {
-    // console.time("执行时间");
+console.log("开始执行 ")
+for (let i = 0; i < 100; i++) {
+    // console.time("执行时间");console.log("开始执行 ")
     main()
     // console.timeEnd("执行时间");
 }
@@ -1287,12 +1318,14 @@ for (let i = 0; i < 200; i++) {
 // setText("泥嚎")   //  在内部是可以直接输入的 快捷界面需要打开才能输入
 // Find_Control("发送").click()
 
+// storage.remove(today)
 
 log("已经喜欢人数: ",storage.get("num", 0))
+// log("已经喜欢人数: ",storage.get("num", 0))
+// log("count: ",storage.get("count", 0))
+// log("no_start: ",storage.get("no_start", 0))
+// log("today: ",storage.get(today))
 
-// log(currentPackage())
 //  ----------------------------------------------
-
-// log(Find_Control("match_success_txt",id))
-
-// home();
+ 
+ 
