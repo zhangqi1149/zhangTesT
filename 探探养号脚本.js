@@ -1,33 +1,19 @@
-// 盘盘罐罐打碎就再置办
-
-// Mood  :      心情描述
-// Favorites  : 今日是否可以喜欢
-// Likes  :     点赞
-// Comments  :  评论
-// Time  :      执行时间 情绪持续时间
-
 let Log =  false  // 是否打日志
-
 //  初始化今日养号份额
 let maxLikes = 20;       // 点赞上限
 let minLikes = 1;       // 点赞下限
 
-// let maxPosts  = 1;       // 发动态上限
-// let minPosts  = 1;       // 发动态下限
-
 let maxComments = 1;     // 评论上限
 let minComments = 1;     // 评论下限
 
-//  首先是滑动过快或者频率过快会触发喜欢上限限制 就要会员无法右划喜欢了  目前我测试的是104个   网传是120个
-// let maxFavorites = 90;   // 喜欢上限 就是右滑动 / 点击喜欢按钮
-// let minFavorites = 20;   // 喜欢下限 
-
+//  滑动过快或者频率过快会触发喜欢上限限制 就要会员无法右划喜欢了  目前我测试的手动是104个 脚本是109个   网传是120个
+ 
 let today = new Date().toISOString().split('T')[0];  // 获取今日日期
 
 
 // 未来时间区间     心情保持时间
-let maxTimeInFuture = 13
-let minTimeInFuture = 8
+let maxTimeInFuture = 10
+let minTimeInFuture = 6
 
 
 let moodList = ['心情愉悦', '心情一般', '心情较差', '心情低落'];   // // 定义情绪列表
@@ -46,8 +32,8 @@ function manage_value() {
     // 如果键不存在，将今天的日期添加到 keysList 中
     if (!keys.includes(today)) {
         keys.push(today);
-        //  随机     今日    情绪描述        是否可以喜欢       点赞上限                                评论上限                                        执行时间 
-        storage.put(today,{Mood:"心情愉悦", Favorites: true,  Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Time:0})
+        //  随机     今日    情绪描述        是否可以喜欢       点赞上限                                执行时间 
+        storage.put(today,{Mood:"心情愉悦", Favorites: true,  Likes:getRandomInt(minLikes,maxLikes), Time:0})
         //  随机     今日    情绪描述                           喜欢上限                        点赞上限                                          评论上限                               发动态上限                      执行时间 
         // storage.put(today,{Mood:"心情愉悦",Favorites:getRandomInt(minFavorites,maxFavorites), Likes:getRandomInt(minLikes,maxLikes), Comments:getRandomInt(minComments,maxComments), Posts:getRandomInt(0,maxPosts), Time:0})
         storage.put("num", 0)  // 重置今日喜欢数量
@@ -342,64 +328,335 @@ function compareTime(a) {
     }
 }
 
-//  -------------------------------- 探探
+/** 拆分信息 获取对方发的信息
+ * 
+ * @param {信息列表} messages 
+ * @returns 
+ */
+function sort_mess(messages) {
+    // 获取最后一次自己发的消息的位置
+    let lastSelfMessageIndex = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].sender === "自己说") {
+            lastSelfMessageIndex = i;
+            break;
+        }
+    }
+    
+    // 从最后一次自己发的消息开始，获取对方发的后续消息
+    let targetMessages = [];
+    for (let i = lastSelfMessageIndex + 1; i < messages.length; i++) {
+        if (messages[i].sender === "对方说") {
+            targetMessages.push(messages[i].text);
+        }
+    }
+    
+    // 最终只保留最后一条对方的消息
+    // let result = targetMessages.slice(-1); // 获取最后一条对方的消息
+    // console.log(targetMessages);  // 输出: ["为什么啊"]
+    return targetMessages
+}
 
-
-// // 示例 config 对象
-// var config = {
-//     id: "bottombar",                        // bottombar 控件的 ID
-//     type: "TextView",                       // 要查找的控件的类名
-//     conditionFunc: function(node) {         // 控件文本为 "消息" 的条件函数
-//         return node.text() === "消息";  
-//     },
-//     bid : "badge",                          // badge 控件的 ID
-//     hasGrandparent: 2,                      // 是否有祖父控件，适应不同结构的需求 层级
-// };
-
-//  * 获取消息的未读数量 
-function getUnread(config) {
-    // 获取 bottombar 控件的边界
-    var bo = id(config.id).findOne(1000); 
-    var bound ;
-    if (bo) {
-        bound = bo.bounds()
-    }else{
-        return 0
+/**
+ * 利用AI聊天
+ * @param {Storages} storage : 本地存储上下文的容器
+ * @param {string} target_id : 聊天对方的ID,如果为null则是我们自己要和AI对话
+ * @param {string} above : 介词.比如 : "对方说:"
+ * @param {Array} say_text : 聊天的内容
+ * @param {function} init: 初始化函数, 用于第一次和哪个吊毛聊天时初始化信息
+ * @returns AI的给出的结果 json
+ */
+function chat(storage, target_id, above, say_text, init) {
+    function post(url, jsonData, header, timeout) {
+        let response = null;
+        // 创建线程执行 HTTP 请求
+        let thread = threads.start(function () {
+            try {
+                // 这个东西默认2分钟超时
+                response = http.postJson(url, jsonData, {
+                    headers: header
+                });
+            } catch (e) {
+                log("请求出错: " + e);
+            }
+        });
+    
+        // 等待线程完成, 超时时间为 10 
+        // 当接受到数据之后join也立即返回.
+        thread.join(timeout)
+        thread.interrupt();
+        return response;
+    }
+    
+    // 发送AI聊天请求 
+    function send_request(messages) {
+        let url = 'https://api.siliconflow.cn/v1/chat/completions';
+        let payload = {
+            "model":"deepseek-ai/DeepSeek-V3",
+            "messages": [],
+            "stream":false,
+            "max_tokens":512,
+            "stop":["null"],
+            "temperature":0.7,
+            "top_p":0.7,
+            "top_k":50,
+            "frequency_penalty":0.5,
+            "n":1,
+            "response_format":{"type":"text"},
+            "tools":[
+                {
+                    "type":"function",
+                    "function":{
+                        "description":"<string>",
+                        "name":"<string>",
+                        "parameters":{},
+                        "strict":false
+                    }
+                }
+            ]
+        }
+    
+        let headers = {
+            "Authorization": 'Bearer sk-jmspwvbzckqtiqzislxfnalfhhtuidmrsidmlwidvycdasqf',
+            "Content-Type": "application/json"
+        }
+    
+        // 设置上下文
+        payload.messages = messages
+        
+        // 请求聊天, 1分钟超时
+        return post(url, payload, headers, 60 * 1000)
+    }
+    
+    // 将上下文发送到服务器保存
+    function send_context_toserver(target_id, chat_context) {
+        let url = 'http://192.168.1.163:8002/save_context';
+        let headers = {
+            "Content-Type": "application/json"
+        }
+        let payload = {
+            "device_id":"device_id_123",
+            "target_id":target_id,
+            "messages": chat_context,
+        }
+        // 保存到服务器1分钟超时
+        return post(url, payload, headers, 60 * 1000)
+    }
+    
+    function extractJsonBlocks(markdownStr) {
+        /**
+         * 从 Markdown 字符串中提取所有用 ```json 包裹的 JSON 块。
+         *
+         * @param {string} markdownStr - 包含 Markdown 格式的字符串，其中可能包含多个 JSON 块。
+         * @returns {Array} 返回一个包含解析后 JSON 对象的数组。如果没有找到任何 JSON 块则返回空数组。
+         */
+        
+        // 使用正则表达式匹配所有 ```json ... ``` 的块
+        const pattern = /```json\n([\s\S]*?)\n```/g;
+        const jsonBlocks = [];
+        let match;
+    
+        // 提取所有匹配的块
+        while ((match = pattern.exec(markdownStr)) !== null) {
+            jsonBlocks.push(match[1].trim());
+        }
+    
+        const extractedData = [];
+    
+        // 尝试解析每个 JSON 块
+        jsonBlocks.forEach(block => {
+            try {
+                const data = JSON.parse(block);
+                extractedData.push(data);
+            } catch (e) {
+                console.error(`Failed to decode JSON block: ${block.slice(0, 50)}... Error: ${e}`);
+            }
+        });
+    
+        return extractedData;
     }
 
-    // 获取左上角 (left, top) 和右下角 (right, bottom) 的坐标
-    var num = 0;  // 当前的未读信息数
-    var left = bound.left;
-    var top = bound.top;
-    var right = bound.right;
-    var bottom = bound.bottom;
+    // 获得上下文
+    function get_context(chat_context, target_id, above, say_text, init) {
+        // 将聊天内容格式化成一个字符串
+        // 例如 :
+        //      对方说 : 你好啊
+        //      对方说 : 怎么不吊我?
+        let say = ""
+        for (let index = 0; index < say_text.length; index++) {
+            say = say + above + " : " + say_text[index] + "\n"
+        }
 
-    var w = className(config.type).boundsInside(left, top, right, bottom).find();
+        // 如果目标ID不为空则说明需要组织和对方聊天上下文了
+        if (target_id != null) {
+            // 如果还没有和对方这个吊毛聊过天,则设置初始聊天内容保存到上下文
+            let target_context = chat_context[target_id]
+            if (undefined == target_context) {
+                if (say_text.length == 0) {
+                    say = "<msg>我想主动和对方打招呼, 该如何说?</msg>"
+                } else {
+                    say = "<msg>对方主动和我打招呼了: \n" + say + "我该如何回复?</msg>"; 
+                }
+                target_context = {
+                    "last_time" : "",
+                    "chat": [],
+                    "context": [{
+                        "role": "user",
+                        "content": init() + "\n" + say
+                    }]
+                }
+                chat_context[target_id] = target_context;
+                say = ""
+            }
 
-    // 遍历所有找到的控件
-    w.forEach((node) => {
-        if (node != null && config.conditionFunc(node)) {  // 只处理文本为 "消息" 的控件
-            // 获取当前消息节点的祖父控件
-            var parentNode = node;
-            if (config.hasGrandparent == 1 ) {
-                parentNode = node.parent();
+            // 保存最后更新上下文时间,用于计算间隔了多少天删除上下文
+            // let timeDiff = Date() - target_context.last_time的结果是相隔了多少毫秒
+            // 转为分 let diffInMinutes = timeDiff / (1000 * 60);
+            // 转为时 let diffInMinutes = timeDiff / (1000 * 60 * 60);
+            // 转为天 let diffInMinutes = timeDiff / (1000 * 60 * 60 * 24);
+            target_context.last_time = new Date();
+
+            // 保存聊天内容
+            for (let index = 0; index < say_text.length; index++) {
+                target_context.chat.push(above + " : " + say_text[index])
             }
-            if (config.hasGrandparent == 2 ) {
-                parentNode = node.parent().parent();
+
+            // 对方说什么什么
+            if (say.length > 0) {
+                target_context.context.push({"role": "user",
+                    "content": say
+                })
             }
-            // 查找 id 为 "fl_badge" 的控件
-            var badge = parentNode.findOne(id(config.bid));
-            if (badge != null) {
-                // 获取 badge 控件的文本作为未读信息数
-                var badgeText = badge.text();
-                if (badgeText) {
-                    num = badgeText;  // 将文本转换为整数
+
+            // 检查上下文长度,如果太长的话合并一下
+            if (target_context.context.length > 10) {
+                // 先删除 <msg> ... </msg>块
+                let sd = target_context.context[0].content
+                target_context.context[0].content = sd.replace(/<msg>[\s\S]*?<\/msg>/g, '');
+                // 保留前面两次对话,删除其它的
+                target_context.context.splice(2)
+                // 重组一个
+                let chat_log = "我现在把我们之间的聊天内容发送给你 : \n"
+                for (let index = 0; index < target_context.chat.length; index++) {
+                    chat_log = chat_log + target_context.chat[index] + "\n"
+                }
+                target_context.context.push({"role":"user", "content":chat_log})
+            }
+            return target_context.context;
+        }
+        return [{"role":"user","content": say}]
+    }
+    
+    // 调取聊天上下文
+    let chat_context = storage.get("context")
+    if (undefined == chat_context) { chat_context = {} }
+    let ai_context = get_context(chat_context, target_id, above, say_text, init)
+    let begin = new Date()
+    let response = send_request(ai_context);
+    print(`请求时长 : ${new Date() - begin}`)
+    if (response != null && response.statusCode == 200) {
+        let result_json = {};
+        let result = JSON.parse(response.body.string());
+        // print(result["choices"][0]["message"])
+        // print("AI说 : " + result["choices"][0]["message"]["content"])
+        if (target_id != null) {
+            let target_context = chat_context[target_id]
+            if (undefined != target_context) {
+                target_context.context.push(result.choices[0].message)
+                let text = extractJsonBlocks(result.choices[0].message.content)
+                if (text.length > 0) {
+                    result_json = text[0]
+                    target_context.chat.push("我说 : " + text[0].chattext)
                 }
             }
         }
-    });
-    return num;
+
+        // 保存上下文
+        storage.put("context", chat_context)
+
+        if (target_id != null) {
+            // 将聊天上下文保存到服务器
+            send_context_toserver(target_id, chat_context)
+        }
+        
+        return result_json;
+    }
+    return null;
 }
+
+function chatinit() {
+    let name = "小雅"
+    let age = 22
+    let im = "在校的女大学生"
+    let hobby = "唱歌，跳舞，打羽毛球，游泳，追剧"
+    let region = "北京"
+    let job = "唱跳女主播"
+    let reason = "社交软件上有一个人正在和我聊天."
+    let profile = "对方个人资料如下 : 性别:男, 年龄:32岁, 地区:北京. 网名:风清扬, 签名:感动有毒."
+    let lead = "对方来观看我的直播."
+    let attitude = "女汉子"
+
+    let jsonObject = {
+        "chattext": "发送给对方的内容",
+        "friendly level": 1.0,
+        "gender":"对方的性别或未知",
+        "age":"对方的年龄或未知",
+        "region":"对方的地区或未知",
+        "work":"对方的工作或未知",
+        "income situation":"对方的收入情况或未知",
+        "personality":"对方的性格或未知",
+        "preferred girl type":"对方喜欢的女孩类型或未知",
+        "preferred girl age range":"对方喜欢的女孩年龄段或未知",
+        "ambiguous":0.0,
+        "isok":false,
+    };
+    let json_s = JSON.stringify(jsonObject);
+
+    let str = `你好deepseek. 
+    下面是我的个人信息:
+    1. 我叫${name}
+    2. 今年${age}岁.
+    3. 我是一个${im}
+    4. 我的爱好${hobby}
+    5. 我生活在${region}
+    6. 我兼职做${job}
+    请记住不要修改我的个人信息.
+    ${reason}${profile}
+    请你帮我和对方聊天,并通过引入各种不同的话题尽量分析对方如下信息:
+    部分信息可能已经在"对方个人资料当中提供给你".
+    1. 工作
+    2. 收入情况
+    3. 对方的性格
+    4. 对方喜欢的女孩类型
+    5. 对方喜欢哪个年龄段的女孩
+    6. 年龄段
+    7. 现居住地
+    我想通过聊天给对方留下好感,并吸引对方${lead}
+    当对方聊天的内容有性暗示、性要求时希望你帮我想一个相对暧昧的回复,并不直接恢复.
+    接下来我会陆续将我们之间的聊天内容发送给你,你告诉我如何与对方交谈.
+    请务必遵守下列要求:
+    1. 请使用${attitude}的语气帮我聊天
+    2. 通过聊天的内容分析一个"friendly level". 初始1分,满分10分,每次最多添加0.5分
+    3. 如果对方聊天内容出现了侮辱中国、反动、反华、侮辱我的话请将"friendly level"设置为0
+    4. 你每次帮我回复的时候只需要给出一个 json chunk 就可以了,其它的不要.
+    5. json 模版如下: \`\`\`json\
+    ${json_s}\
+    }\`\`\`
+    6. 分析对方和我聊天的暧昧程度满分10. 保存到ambiguous字段
+    7. 在任何情况下不可以暴露是AI在帮我聊天
+    8. 不要在问句后面带”呢“字
+    9. 聊天的内容不能有AI的味道
+    10. 请保持风趣幽默
+    11. 如果对方聊天内容暧昧的话我们就和他聊的暧昧点.
+    12. 如果对方连续说了相同的话请不要给出相同的回复.
+    13. 如果对方明确的要来看我直播的话请将isok字段设置为true
+    14. 如果在我发送给你的内容里面看到了<msg>...</msg>标签请仔细阅读
+    如果你看懂了就回复"明白需求并保证要求."那么接下来让我们一起开始分析这个人吧
+    `
+    return str
+}
+
+//  -------------------------------- 探探
 
 /** 获取当前被选择的界面
  * 
@@ -470,7 +727,7 @@ function randomSwipe() {
     if (swipeDirection === 'right') {
         console.log(" ****  🎉 向右滑动")
         startX = random(width * 0.1, width * 0.3);
-        endX = random(width * 0.6, width * 0.9);
+        endX = random(width * 0.7, width * 0.9);
         storage.put("count", storage.get("count",0)+1)
         storage.put("num", storage.get("num")+1)
     } else {
@@ -775,7 +1032,6 @@ function getCurrentPage() {
 
     //  聊天界面
     if (Find_Control("com.p1.mobile.putong:id/input_emoji",id)) {   // log(Find_Control("input_text",id))  表情按钮
-        log_z("在聊天界面");
         return "聊天界面"
     }
 
@@ -812,7 +1068,7 @@ function changeMood(Mood, emotion) {
     let d = storage.get(today);
     // 生成未来时间
     let wtime = addRandomMinutes(minTimeInFuture,maxTimeInFuture)
-    storage.put(today,{Mood:currentMood,Favorites:d.Favorites,Likes:d.Likes,Comments:d.Comments,Time:wtime}) 
+    storage.put(today,{Mood:currentMood,Favorites:d.Favorites,Likes:d.Likes,Time:wtime}) 
 
     d = storage.get(today);
     console.log(` 当前人物情绪描述 : ${d.Mood} 情绪持续时间 ${getTimeDifferenceInMinutes(d.Time)} 分钟`);
@@ -865,6 +1121,14 @@ function wrong() {
         return false
     }
     log_z("头像认证和直播弹窗")
+
+    //  选择只看未读信息
+    let message_sort_unread_text = Find_Control("com.p1.mobile.putong:id/message_sort_unread_text",id)
+    if (message_sort_unread_text) {
+        message_sort_unread_text.click();
+        return false
+    }
+    
 
     //  周围没有可以刷到的人了
     let range = Find_Control("扩大范围")
@@ -940,7 +1204,7 @@ function wrong() {
              //  获取内存数据
             let data = storage.get(today)
             // 生成新的
-            storage.put(today,{Mood:data.Mood,Favorites:false, Likes:data.Likes, Comments:data.Comments, Time:data.Time})
+            storage.put(today,{Mood:data.Mood,Favorites:false, Likes:data.Likes, Time:data.Time})
             changeMood(data)
             //  关闭窗口
             back();
@@ -1126,30 +1390,49 @@ function dynamic(Page) {
             endX = width / 2;    
             endY = height * 0.4;  // 滑动到屏幕顶部20%的地方
             
+            let ranM = Math.random()
+            //  几率点赞
+            if (ranM > 0.1 && ranM < 0.2 ) {
+                let data = storage.get(today)
+                if (data.Likes > 0 ) {
+                    // 先找到“打招呼”按钮
+                    let sayHiButton = text("打招呼").findOne(1000);
+                    if (sayHiButton) {
+                        // 再找到父控件的父控件
+                        let grandparentGroup = sayHiButton.parent().parent();
+                        let textView357 = grandparentGroup.findOne(className("android.widget.TextView"));
+                        if (textView357) {
+                            textView357.click();
+                            storage.put(today,{Mood:data.Mood, Favorites:data.Favorites, Likes:data.Likes-1, Time:data.Time});
+                        }
+                    }
+                }
+            }
+
             // 执行滑动操作：从 (startX, startY) 滑动到 (endX, endY)
             swipe(startX, startY, endX, endY, 500); // 500ms 表示滑动持续的时间，可以根据需要调整
             
             sleep(random(3000, 5000));  // 思考时间
 
-            let ranM = Math.random()
-            if (ranM > 0.1 && ranM < 0.14 ) {
-                //  可以点击弹出框
-                let pl = Find_Control("走心评论，说点好听的～")
-                if (pl) {
-                    if (pl.visibleToUser()) {
-                        console.log(" 点开评论 ")
-                        clickobj(pl)
-                        //  TODO 输入评论后发送
-                        return
-                    }
-                } 
-            }
-            
+            // if (ranM > 0.1 && ranM < 0.14 ) {
+            //     //  可以点击弹出框
+            //     let pl = Find_Control("走心评论，说点好听的～")
+            //     if (pl) {
+            //         if (pl.visibleToUser()) {
+            //             console.log(" 点开评论 ")
+            //             clickobj(pl)
+            //             //  TODO 输入评论后发送
+            //             return
+            //         }
+            //     } 
+            // }
+
             // 向上滑动
             console.log("向上滑动");
         }else{
             let fx = text("刷新").findOne(50);
             if (fx) {
+                console.log("点击刷新")
                 return clickobj(fx)
             }
         }
@@ -1172,6 +1455,7 @@ function works() {
     //  获取当前界面
     let Page = getCurrentPage()
     if (Page == "聊天界面") {
+        log_z("在聊天界面 ")
         // 如果是未读的的情况下应该退出去联系其他的用户
         if (Find_Control("com.p1.mobile.putong:id/read_state_text",id)) {
             let left_icon_container = Find_Control("com.p1.mobile.putong:id/left_icon_container",id)
@@ -1183,7 +1467,7 @@ function works() {
         
         // 是否是才打开聊天窗口
         if (Find_Control("帮你准备了2句开场白，点击发送")) {
-            //  选择一个开场白   TODO 是AI 还是用系统给你的推荐开场白
+            //  选择一个开场白   系统推荐的开场白
             log_z("率先开团 ")
             return Find_Control("break_ice_message2_content",id).parent().click();
         }
@@ -1200,7 +1484,12 @@ function works() {
         if (chat_data) {
             log_z("找到聊天记录了")
             log(chat_data);
-            // TODO 找AI发送对话
+            //  获取对方的话
+            let messages = sort_mess(chat_data) 
+            if (messages.length > 0) {
+                setText("泥嚎")   // TODO 找AI发送对话
+                Find_Control("发送").click()
+            }
         }
         return 
     }
@@ -1208,14 +1497,22 @@ function works() {
     //  如果是根界面 检查当前是否有信息要发
     if (Find_message() > 0 ) {
         if (Page == "消息") {
+            //  处理消息框 只显示未读的 
+            let message_header_text = Find_Control("com.p1.mobile.putong:id/message_header_text",id)
+            if (message_header_text) {
+                if ( message_header_text.text() != "消息 · 只看未读") {
+                    //  点击三个杠 
+                    return Find_Control("com.p1.mobile.putong:id/message_sort_image",id).click();
+                }
+            }
+
             // 先处理配对 显示你有一个新配对
             let match = Find_Control("com.p1.mobile.putong:id/match_txt",id)
-            // if (match == "新配对") {  // match == "新配对"
             // console.log("处理新出现的新配对 ")
             if (match.text().includes("新配对")) {
                 return clickobj(match);
             }
-            // 选中一个聊天的对象  TODO  com.p1.mobile.putong:id/conversation_item_root
+            // 选中一个聊天的对象  com.p1.mobile.putong:id/conversation_item_root
             let content = Find_Control("com.p1.mobile.putong:id/content",id)
             if (content) {
                 console.log("这里选中一个倒霉蛋")
@@ -1285,7 +1582,6 @@ function works() {
     }
 }
 
-// 入口
 function main() {
     // 初始化先
     if (init()) {
@@ -1297,20 +1593,16 @@ function main() {
     }
 }
 
-// console.time("main")
-console.log("开始执行 ")
-for (let i = 0; i < 100; i++) {
-    // console.time("执行时间");console.log("开始执行 ")
+// console.log("开始执行 ")
+for (let i = 0; i < 100 ; i++) {
     main()
-    // console.timeEnd("执行时间");
 }
 
-// console.timeEnd("main")
  
 //  修改初始化当前情绪持续时间
 // let wtime = addRandomMinutes(1,2)
 // let data = storage.get(today)
-// storage.put(today,{Mood:"心情低落",Favorites:true, Likes:data.Likes, Comments:data.Comments, Posts:data.Posts, Time:wtime})
+// storage.put(today,{Mood:"心情低落",Favorites:true, Likes:data.Likes, Time:wtime})
 // log(data)
 //  ---------------------------------------------------------------------------------------
 
@@ -1321,6 +1613,7 @@ for (let i = 0; i < 100; i++) {
 // storage.remove(today)
 
 log("已经喜欢人数: ",storage.get("num", 0))
+
 // log("已经喜欢人数: ",storage.get("num", 0))
 // log("count: ",storage.get("count", 0))
 // log("no_start: ",storage.get("no_start", 0))
