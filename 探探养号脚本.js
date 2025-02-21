@@ -1,4 +1,4 @@
-let Log =  false  // 是否打日志
+let Log =  true  // 是否打日志
 //  初始化今日养号份额
 let maxLikes = 20;       // 点赞上限
 let minLikes = 1;       // 点赞下限
@@ -302,11 +302,11 @@ function getTimeDifferenceInMinutes(futureTime) {
 
     // 检查时间戳是否有效
     if (isNaN(futureTimeStamp)) {
-        console.log("无效的未来日期对象");
+        log_z("无效的未来日期对象");
         return NaN;
     }
     if (isNaN(currentTimeStamp)) {
-        console.log("无效的当前日期对象");
+        log_z("无效的当前日期对象");
         return NaN;
     }
 
@@ -334,6 +334,12 @@ function compareTime(a) {
  * @returns 
  */
 function sort_mess(messages) {
+    // log(messages)
+    if (!Array.isArray(messages) || messages.length === 0) {
+        console.log("消息为空，返回空数组")
+        return []; // 如果消息为空，返回空数组
+    }
+
     // 获取最后一次自己发的消息的位置
     let lastSelfMessageIndex = -1;
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -574,10 +580,10 @@ function chat(storage, target_id, above, say_text, init) {
         // 保存上下文
         storage.put("context", chat_context)
 
-        if (target_id != null) {
-            // 将聊天上下文保存到服务器
-            send_context_toserver(target_id, chat_context)
-        }
+        // if (target_id != null) {
+        //     // 将聊天上下文保存到服务器
+        //     send_context_toserver(target_id, chat_context)
+        // }
         
         return result_json;
     }
@@ -656,6 +662,27 @@ function chatinit() {
     return str
 }
 
+//  调用api
+function chats() {
+    //  获取到 所有的信息
+    let messages = chat_history()
+    // console.log("获取所有信息 :",messages.list)
+    
+    // 拆分数据
+    let mess = sort_mess(messages.list)
+    // console.log("拆分数据")
+
+    log(mess)
+
+    // 接入AI   
+    // let result = chat(storage, "target_888", "对方说", mess, chatinit); 
+    let result = chat(storage, messages.massage_name, "对方说", mess, chatinit); 
+
+    // log(result);
+
+    return result
+}
+
 //  -------------------------------- 探探
 
 /** 获取当前被选择的界面
@@ -687,7 +714,7 @@ function randomSwipe() {
     //  获取信息内容  
     let wergh = calculateAccountWeight(account_info());
     if (wergh > 0.51) {
-        console.log(" *** 优质账号:",wergh);
+        log_z(" *** 优质账号:",wergh);
         // **增加休息模拟**
         if (random(20, 30) % random(10, 20) === 0) {
             let restTime = random(1000, 2000); // 模拟更长时间的停顿（1s-2s）
@@ -698,12 +725,12 @@ function randomSwipe() {
             let clickX = random(device.width * 0.4, device.width * 0.6);
             let clickY = random(device.height * 0.3, device.height * 0.7);
             click(clickX, clickY);
-            console.log("模拟点击屏幕 (" + clickX + ", " + clickY + ")");
+            // console.log("模拟点击屏幕 (" + clickX + ", " + clickY + ")");
             sleep(random(1000, 3000)); // 点击后短暂停顿
             // return
         }
     } else {
-        console.log("差账号:",wergh);
+        log_z("差账号:",wergh);
     }
 
 
@@ -725,13 +752,13 @@ function randomSwipe() {
     }
 
     if (swipeDirection === 'right') {
-        console.log(" ****  🎉 向右滑动")
+        log_z(" ****  🎉 向右滑动")
         startX = random(width * 0.1, width * 0.3);
         endX = random(width * 0.7, width * 0.9);
         storage.put("count", storage.get("count",0)+1)
         storage.put("num", storage.get("num")+1)
     } else {
-        console.log("向左滑动 ---  ")
+        log_z("向左滑动 ---  ")
         startX = random(width * 0.7, width * 0.9);
         endX = random(width * 0.1, width * 0.3);
         storage.put("count", 0)
@@ -748,7 +775,7 @@ function randomSwipe() {
     // let waitTime = random(2000, 3000); // 随机等待时间（2s-5s）
     // sleep(waitTime);
 
-    console.log("滑动结束 🎉");
+    log_z("滑动结束 🎉");
 }
 
 //  获取第一个资料卡信息
@@ -767,53 +794,64 @@ function account_info() {
 
     // 获取用户名
     var nameNode = card.findOne(id("com.p1.mobile.putong:id/name"));
-    data.name = nameNode ? nameNode.text() : "";
+    data.name = nameNode ? nameNode.text() : "未知";
 
     // 获取位置
     var detailsNode = card.findOne(id("com.p1.mobile.putong:id/details"));
-    data.details = detailsNode ? detailsNode.text() : "";
+    data.details = detailsNode ? detailsNode.text() : "未知";
 
     // // 获取性别   默认是男的   自己是女号 刷到的就是男号
     // // var sexAgeNode = card.findOne(id("com.p1.mobile.putong:id/sex_age_content"));
     // var sex = card.findOne(id("com.p1.mobile.putong:id/sex"));
-    // data.sex = sex ? sex.text() : "";
+    // data.sex = sex ? sex.text() : "未知";
 
     
     //  他喜欢我
     var me_was_liked = card.findOne(id("com.p1.mobile.putong:id/me_was_liked"));
-    data.me_was_liked = me_was_liked ? me_was_liked.text() : "";
+    data.me_was_liked = me_was_liked ? me_was_liked.text() : "未知";
 
     //  获取年龄
     var age = card.findOne(id("com.p1.mobile.putong:id/age"));
-    data.age = age ? age.text() : "";
+    data.age = age ? age.text() : "未知";
 
+    // 是否是vip
     var vip_icon = card.findOne(id("com.p1.mobile.putong:id/vip_icon"));
-    data.vip_icon = vip_icon ? "vip" : "";
+    data.vip_icon = vip_icon ? "vip" : "未知";
 
     // 获取交友目的
     var purposeNode = card.findOne(id("com.p1.mobile.putong:id/tv_purpose"));
-    data.purpose = purposeNode ? purposeNode.text() : "";
+    data.purpose = purposeNode ? purposeNode.text() : "未知";
 
     // 动态标签 做了性格测试的
     var dynamic_tag =  card.findOne(id("com.p1.mobile.putong:id/dynamic_tag"))
-    data.dynamic_tag = dynamic_tag ? dynamic_tag.text() : "";
+    data.dynamic_tag = dynamic_tag ? dynamic_tag.text() : "未知";
 
     // 获取星座
     var zodiacNode = card.findOne(id("com.p1.mobile.putong:id/zodiac"));
-    data.zodiac = zodiacNode ? zodiacNode.text() : "";
+    data.zodiac = zodiacNode ? zodiacNode.text() : "未知";
 
     //  实名认证   certification_normal 子控件  text   头像本人
     var certification_normal = card.findOne(id("com.p1.mobile.putong:id/certification_normal"));
     if (certification_normal) {
         var normal = certification_normal.findOne(id("com.p1.mobile.putong:id/text"))
-        data.normal = normal ? normal.text() : "";
+        data.normal = normal ? normal.text() : "未知";
     }
 
     // com.p1.mobile.putong:id/superlike_recv   收到的超级喜欢
+    
+    //  探探id
+    // let tantan_id_number = id("com.p1.mobile.putong:id/tantan_id_number").findOne(100)
+    // data.tantan_id = tantan_id_number ? tantan_id_number.text() : "未知";
+
+    // //  地址 活动时间  多少人喜欢他
+    // let location_and_active = id("com.p1.mobile.putong:id/location_and_active").findOne(100)
+    // data.active = location_and_active ? location_and_active.text() : "未知";
+    
 
     // log(data)
     return data
 }
+
 
 //  根据信息获取账号权重
 function calculateAccountWeight(account) {
@@ -887,7 +925,28 @@ function calculateAccountWeight(account) {
     return weight;
 }
 
-/** 消息界面是否有需要查看的的信息
+// /** 获取当前是否有消息需要查看
+//  * 
+//  * @returns 
+//  */
+// function Find_message() {
+//     //  获取当前是否有消息需要查看
+//     let nodes = id("com.p1.mobile.putong:id/bottombar").find();
+//     let message = 0
+//     for (let i = 0; i < nodes.length; i++) {
+//         let node = nodes[i];
+//         let nameView = node.findOne(id("com.p1.mobile.putong:id/badge"))
+//         // console.log(nameView.text());
+//         if (nameView) {
+//             message = nameView.text();
+//         }
+        
+//     }
+//     console.log("未读信息 : ",message)
+//     return message
+// }
+
+/** 获取当前是否有消息需要查看
  * 
  * @returns 
  */
@@ -906,32 +965,38 @@ function Find_message() {
             }
         }
     });
-    log_z("未读信息 : ",message)
+    // log_z("未读信息 : ",message)
     return message
 }
 
 /** 返回当前界面的消息记录
  * 
- * @returns 
+ * @returns  消息数据
+ * @returns  用户名
  */
 function chat_history() {
-    var messages = [];
-    let allItems = id("content_wrapper").find();
+    let messages = [];
+    let N_name ="";
+    let zname = Find_Control("com.p1.mobile.putong:id/title",id);
+    if (zname) {
+        N_name = zname.text();
+    }
 
+    let allItems = id("com.p1.mobile.putong:id/content_wrapper").find();
     if (allItems.empty()) {
         log_z("没有找到聊天消息！");
-        return null;
+        return {massage_name:N_name, list : null};
     }
 
     allItems.forEach(function(item) {
         let avatar = false
-        let err = item.findOne(id("error"));        // 对话内容
+        let err = item.findOne(id("com.p1.mobile.putong:id/error"));        // 对话内容
         if (err) {
             console.log(" 账号不可以发送消息")
-            throw new Error("账号不能发送消息")
+            // throw new Error("账号不能发送消息") TODO
         }
-        let textView = item.findOne(id("content"));        // 对话内容
-        let header_pic = item.findOne(id("header_pic"));   // 头像
+        let textView = item.findOne(id("com.p1.mobile.putong:id/content"));        // 对话内容
+        let header_pic = item.findOne(id("com.p1.mobile.putong:id/header_pic"));   // 头像
         if (header_pic.bounds().left < 100){ // 判断头像是左边还是右边
             avatar = true
         }
@@ -949,7 +1014,7 @@ function chat_history() {
         }
         //  && textView.visibleToUser() 加上数据就拿不全面了 
         if (textView.className() == "android.widget.TextView" ) {    // 是文本
-            // console.log(text+"",textView.text())
+            // console.log("信息记录为 ",textView.text())
             var msg = {
                 sender: avatar ? "对方说" : "自己说",
                 text: textView.text()
@@ -958,7 +1023,7 @@ function chat_history() {
         messages.push(msg);
     })
     // log(messages)
-    return messages
+    return {massage_name : N_name, list : messages};
 }
 
 /** 获取当前是那个业务界面
@@ -1009,7 +1074,7 @@ function getCurrentPage() {
             return "探探"
         }
         //  "消息" 界面
-        if (Find_Control("menu_search_conv",id)) {
+        if (Find_Control("com.p1.mobile.putong:id/menu_search_conv",id)) {
             log_z("在 消息 界面 ")
             return "消息"
         }
@@ -1019,12 +1084,12 @@ function getCurrentPage() {
             return "发现"
         }
         //  "我" 界面
-        if (Find_Control("tab_right_icon",id)) {
+        if (Find_Control("com.p1.mobile.putong:id/tab_right_icon",id)) {
             log_z("在 我 界面 ");
             return "我"
         }
         //  "娱乐" 界面
-        if (Find_Control("title_bar",id)) {
+        if (Find_Control("com.p1.mobile.putong:id/title_bar",id)) {
             log_z("在 娱乐 界面 ")
             return "娱乐"
         }
@@ -1035,7 +1100,8 @@ function getCurrentPage() {
         return "聊天界面"
     }
 
-    log_z("界面未知")
+    // log_z("界面未知")
+    console.log("界面未知")
     return "界面未知"
 }
 
@@ -1125,7 +1191,7 @@ function wrong() {
     //  选择只看未读信息
     let message_sort_unread_text = Find_Control("com.p1.mobile.putong:id/message_sort_unread_text",id)
     if (message_sort_unread_text) {
-        message_sort_unread_text.click();
+        clickobj(message_sort_unread_text);
         return false
     }
     
@@ -1195,7 +1261,7 @@ function wrong() {
     // }
 
     //  右划跳出了会员  无法继续喜欢了
-    let node = id("description").findOne(500);
+    let node = id("com.p1.mobile.putong:id/description").findOne(500);
     if (node) {
         let text = node.text();
         if (text === "尽情右滑、突破右滑上限、不错过\u000A任何你喜欢的她") {
@@ -1244,7 +1310,7 @@ function wrong() {
     // 弹出窗口   广告
     if ((Find_Control("上传照片") && Find_Control("上传展示生活的照片")) || (Find_Control("今日缘分") && Find_Control("快来查看你的")) || (Find_Control("找个聊天搭子") && Find_Control("向好友发射信号"))) {
         // 要是我上传照片的弹窗需要关闭
-        let close = id("close").findOne(100);
+        let close = id("com.p1.mobile.putong:id/close").findOne(100);
         if (close) {
             clickobj(close)
             return false
@@ -1270,12 +1336,27 @@ function wrong() {
         return false
     }
 
+    
+
+    // 查看详情 开通礼物充值广告
+    if (Find_Control("查看详情",id)) {
+        let empty= Find_Control("com.p1.mobile.putong:id/empty",id)  
+        if (empty) {
+            clickobj(empty);  //  empty.click();
+            return false
+        }
+    }
+
     // 弹出框 索要通知    
     // if (Find_Control("打开动态消息通知") && Find_Control("去开启")) {
     if ( Find_Control("去开启") ||  Find_Control("打开通知") ) {
         let no =  Find_Control("暂不设置");
         if (no) {
             clickobj(no)
+        }
+        let close = Find_Control("com.p1.mobile.putong:id/close",id)
+        if (close) {
+            close.click();
         }
         return false
     }
@@ -1331,7 +1412,7 @@ function preview(Page) {
         click(514,276)
     }
     if (Page == "精选") {
-        console.log(" 点击进入直播间")
+        log_z(" 点击进入直播间")
         let zb = Find_Control("com.p1.mobile.putong:id/tv_center",id);
         if (zb){
             return clickobj(zb);
@@ -1357,14 +1438,14 @@ function preview(Page) {
         click(514,276)
     }
     if (Page == "圈子") {
-        console.log("点新人")
+        log_z("点新人")
         let tj = Find_Control("新人");
         if (tj){
             return clickobj(tj);
         }
     }
     if (Find_Control("com.p1.mobile.putong:id/bottombar",id)) { // 在根界面
-        console.log("在根节点 前往发现界面")
+        log_z("在根节点 前往发现界面")
         // 点击发现
         let fx = Find_Control("娱乐");
         if (fx) {
@@ -1400,10 +1481,14 @@ function dynamic(Page) {
                     if (sayHiButton) {
                         // 再找到父控件的父控件
                         let grandparentGroup = sayHiButton.parent().parent();
-                        let textView357 = grandparentGroup.findOne(className("android.widget.TextView"));
-                        if (textView357) {
-                            textView357.click();
-                            storage.put(today,{Mood:data.Mood, Favorites:data.Favorites, Likes:data.Likes-1, Time:data.Time});
+                        let textView357 = grandparentGroup.find(className("android.widget.TextView"));
+                        for (let i = 0; i < textView357.length; i++) {
+                            let item = textView357[i];
+                            if ( item && item.visibleToUser()) {
+                                console.log("点赞",item.text());
+                                clickobj(item);
+                                return
+                            }
                         }
                     }
                 }
@@ -1428,25 +1513,27 @@ function dynamic(Page) {
             // }
 
             // 向上滑动
-            console.log("向上滑动");
+            log_z("向上滑动");
         }else{
             let fx = text("刷新").findOne(50);
             if (fx) {
-                console.log("点击刷新")
+                log_z("点击刷新")
                 return clickobj(fx)
             }
         }
     } else {
         //  首先是找到主界面
         if (Find_Control("com.p1.mobile.putong:id/bottombar",id)) { // 在根界面
-            console.log("在根节点 前往发现界面")
+            log_z("在根节点 前往发现界面")
             // 点击发现
             let fx = Find_Control("发现");
             if (fx) {
                 return clickobj(fx);
             }
+        }else{
+            back();
         }
-        back();
+        
     }
 }
 
@@ -1465,7 +1552,7 @@ function works() {
             }
         }
         
-        // 是否是才打开聊天窗口
+        // 是否有系统推荐的开场白
         if (Find_Control("帮你准备了2句开场白，点击发送")) {
             //  选择一个开场白   系统推荐的开场白
             log_z("率先开团 ")
@@ -1482,13 +1569,16 @@ function works() {
         // 在回信息界面 获取聊天内容
         let chat_data = chat_history()
         if (chat_data) {
+            //  找的客户数据 TODO
+        
+
             log_z("找到聊天记录了")
-            log(chat_data);
-            //  获取对方的话
-            let messages = sort_mess(chat_data) 
+            // log(chat_data);
+            // 获取对方的话
+            let messages = sort_mess(chat_data.list) 
             if (messages.length > 0) {
                 setText("泥嚎")   // TODO 找AI发送对话
-                Find_Control("发送").click()
+                // Find_Control("发送").click()
             }
         }
         return 
@@ -1521,7 +1611,7 @@ function works() {
         }else{
             //  前往信息界面 首先是找到主界面
             if (Find_Control("com.p1.mobile.putong:id/bottombar",id)) { // 在根界面
-                console.log("在根节点 前往消息界面")
+                log_z("在根节点 前往消息界面")
                 // 点击发现
                 let fx = Find_Control("消息");
                 if (fx) {
@@ -1529,8 +1619,8 @@ function works() {
                 }
             }
             back();
+            return
         }
-        return
     }
 
     let Data = storage.get(today);
@@ -1553,7 +1643,7 @@ function works() {
             // 正在进行作业 
             if (Page == "看直播中") {
                 if (!compareTime(Data)) {
-                    console.log("看直播中 等待12 - 15秒");
+                    log_z("看直播中 等待12 - 15秒");
                     let rand = Math.random()
                     if (rand > 0.1 && rand < 0.2) {
                         // 获取屏幕的宽度和高度
@@ -1587,38 +1677,37 @@ function main() {
     if (init()) {
         //  处理异常情况  弹窗广告
         if (wrong()) {
-            // console.log("无异常界面 开始工作")
+            console.log("无异常界面 开始工作")
             works();
         }
     }
 }
 
 // console.log("开始执行 ")
-for (let i = 0; i < 100 ; i++) {
-    main()
-}
+// for (let i = 0; i < 100 ; i++) {
+    // main()
+// }
 
+
+// storage.remove("accList")
+// let accda = storage.get("accList",[]);
+// log(accda)
  
-//  修改初始化当前情绪持续时间
-// let wtime = addRandomMinutes(1,2)
-// let data = storage.get(today)
-// storage.put(today,{Mood:"心情低落",Favorites:true, Likes:data.Likes, Time:wtime})
-// log(data)
-//  ---------------------------------------------------------------------------------------
-
 
 // setText("泥嚎")   //  在内部是可以直接输入的 快捷界面需要打开才能输入
 // Find_Control("发送").click()
 
-// storage.remove(today)
-
-log("已经喜欢人数: ",storage.get("num", 0))
-
+ 
 // log("已经喜欢人数: ",storage.get("num", 0))
 // log("count: ",storage.get("count", 0))
 // log("no_start: ",storage.get("no_start", 0))
 // log("today: ",storage.get(today))
 
-//  ----------------------------------------------
- 
+//  修改初始化当前情绪持续时间
+// let wtime = addRandomMinutes(1,2)
+// let data = storage.get(today)
+// storage.put(today,{Mood:"心情愉悦",Favorites:false, Likes:data.Likes, Time:wtime})
+// log(data)
+//  ---------------------------------------------------------------------------------------
+
  
