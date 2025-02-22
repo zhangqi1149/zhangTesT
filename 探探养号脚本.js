@@ -1,4 +1,4 @@
-let Log =  true  // 是否打日志
+let Log =  false  // 是否打日志
 //  初始化今日养号份额
 let maxLikes = 20;       // 点赞上限
 let minLikes = 1;       // 点赞下限
@@ -261,15 +261,6 @@ function init() {
         return false;
     }
     return true;
-}
-
-/** 接入ai TODO
- * 
- * @param {*} params 
- */
-function AIbot() {
-    //  配置AI config
-    
 }
 
 // 随机区间秒
@@ -596,11 +587,23 @@ function chatinit() {
     let im = "在校的女大学生"
     let hobby = "唱歌，跳舞，打羽毛球，游泳，追剧"
     let region = "北京"
-    let job = "唱跳女主播"
+    let job = "学生"
     let reason = "社交软件上有一个人正在和我聊天."
-    let profile = "对方个人资料如下 : 性别:男, 年龄:32岁, 地区:北京. 网名:风清扬, 签名:感动有毒."
-    let lead = "对方来观看我的直播."
+    let lead = "聊聊天"
     let attitude = "女汉子"
+
+    // 获取被选中的账号 TODO
+    let accList = storage.get("accList",[]);
+    let tan_name = storage.get("Selected","未知")
+    // console.log("tantan_id",tantan_id)
+    let existing = accList.findIndex(profile => profile.name === tan_name);
+    // console.log("existing",existing)
+    // console.log("accList[existing]")
+    // log(accList[existing])
+
+    // let profile = "对方个人资料如下 : 性别:男, 年龄:32岁, 地区:北京. 网名:风清扬, 签名:感动有毒."
+    let profile = `对方个人资料如下 :  网名 : ${accList[existing].name}, 年龄 : ${accList[existing].age} ,  个人签名 ${accList[existing].content}, 个人标签 : ${accList[existing].tag}`
+    // console.log(profile)
 
     let jsonObject = {
         "chattext": "发送给对方的内容",
@@ -625,7 +628,7 @@ function chatinit() {
     3. 我是一个${im}
     4. 我的爱好${hobby}
     5. 我生活在${region}
-    6. 我兼职做${job}
+    6. 我是个${job}
     请记住不要修改我的个人信息.
     ${reason}${profile}
     请你帮我和对方聊天,并通过引入各种不同的话题尽量分析对方如下信息:
@@ -657,26 +660,27 @@ function chatinit() {
     12. 如果对方连续说了相同的话请不要给出相同的回复.
     13. 如果对方明确的要来看我直播的话请将isok字段设置为true
     14. 如果在我发送给你的内容里面看到了<msg>...</msg>标签请仔细阅读
+    15. 如果出现 "非文本信息" 表示对方发送了个图片或者是语音,请根据上下文给出回复
+    16. 不要出现 "非文本信息" 也不要让对方解释发送的图片是什么意思.
+    17. 如果没有对方发送了一个 "非文本信息" 并且还没有上下文 就表示我先和别人打的招呼 比如 : hi
+    18. 不要在聊天的时候带上对方的网名
+    19. 我不开直播 也没有直播间
     如果你看懂了就回复"明白需求并保证要求."那么接下来让我们一起开始分析这个人吧
     `
     return str
 }
 
 //  调用api
-function chats() {
-    //  获取到 所有的信息
-    let messages = chat_history()
-    // console.log("获取所有信息 :",messages.list)
-    
-    // 拆分数据
-    let mess = sort_mess(messages.list)
-    // console.log("拆分数据")
+function chats(mess) {
+    let accList = storage.get("accList",[]);
+    let tan_name = storage.get("Selected","未知")
+    let existing = accList.findIndex(profile => profile.name === tan_name);
 
-    log(mess)
-
+    // log("tan_name :",tan_name)
+    log("id :",accList[existing].tantan_id)
     // 接入AI   
     // let result = chat(storage, "target_888", "对方说", mess, chatinit); 
-    let result = chat(storage, messages.massage_name, "对方说", mess, chatinit); 
+    let result = chat(storage, accList[existing].tantan_id, "对方说", mess, chatinit); 
 
     // log(result);
 
@@ -852,6 +856,73 @@ function account_info() {
     return data
 }
 
+ /** 获取资料卡信息
+ * 
+ * @returns   
+ */
+ function account_card() {
+    // 使用前提是打开资料卡
+    let account = {
+        name:"",     // 姓名
+        age:"",      // 年龄
+        content:"无",  // 个人签名
+        tag:"无",      // 标签  职业 学校 学历 交友目的  星座  地址 身高 常去的地方
+        tantan_id:"未知" // 
+    }
+
+    let name = id("com.p1.mobile.putong:id/name").findOne(10)
+    account.name = name ? name.text() : "无";
+
+    let age = id("com.p1.mobile.putong:id/age").findOne(10)
+    account.age = age ? age.text() : "无";
+
+    let num = 0
+    //  获取资料卡信息
+    while (account.tantan_id == "未知"){
+        // 获取用户名
+        if (account.content == "无" ) {
+            var content = Find_Control("com.p1.mobile.putong:id/content",id);
+            account.content = content ? content.text() : "无";
+        }
+
+        // 获取标签
+        if (account.tag == "无" ) {
+            var tags = id("com.p1.mobile.putong:id/title").find()
+            if (tags) {
+                for (let i = 0; i < tags.length; i++) {
+                    let tag = tags[i];
+                    let ttext = tag.text()
+                    if (ttext != "关于我" &&  ttext != "更了解他" &&  !["来自其他", "其他"].includes(ttext)  ) {
+                        if (account.tag == "无") {
+                            account.tag = ""
+                        }
+                        account.tag = account.tag + tag.text() + ", " 
+                    }
+                }
+            }
+        }else{
+            // swipe( 540, device.height - 100 , 540, 200, 210); // 大拉 
+            swipe( device.width/2 , device.height - 100 , device.width/2 , 200, 210); // 大拉 
+        }
+
+        //  探探id
+        if (account.tantan_id == "未知" ) {
+            var tantan_id = Find_Control("com.p1.mobile.putong:id/tantan_id_number",id);
+            account.tantan_id = tantan_id ? tantan_id.text() : "未知";
+        }
+
+        num = num + 1
+        
+        // swipe( 489, 1396, 489, 650, 210); // 小拉 
+        swipe( device.width/2, device.height * 0.8, device.width/2, device.height * 0.4, 210); // 小拉 
+
+        sleep( 600);
+        if (num == 10 ) {
+            break
+        }
+    }
+    return account
+}
 
 //  根据信息获取账号权重
 function calculateAccountWeight(account) {
@@ -924,27 +995,6 @@ function calculateAccountWeight(account) {
 
     return weight;
 }
-
-// /** 获取当前是否有消息需要查看
-//  * 
-//  * @returns 
-//  */
-// function Find_message() {
-//     //  获取当前是否有消息需要查看
-//     let nodes = id("com.p1.mobile.putong:id/bottombar").find();
-//     let message = 0
-//     for (let i = 0; i < nodes.length; i++) {
-//         let node = nodes[i];
-//         let nameView = node.findOne(id("com.p1.mobile.putong:id/badge"))
-//         // console.log(nameView.text());
-//         if (nameView) {
-//             message = nameView.text();
-//         }
-        
-//     }
-//     console.log("未读信息 : ",message)
-//     return message
-// }
 
 /** 获取当前是否有消息需要查看
  * 
@@ -1243,23 +1293,6 @@ function wrong() {
         }
     }
 
-    // if (Find_Control("更多直播")|| Find_Control("更多推荐")) {
-    //     back();
-    //     sleep(500);
-    //     return false
-    // }
-
-    // 主动弹出的隐藏选项   有二次选择 不考虑
-    // if (Find_Control("取消") && Find_Control("删除")) {
-    //     log_z(" 关闭探探小助手");
-    //     let nox = Find_Control("不显示");
-    //     if (nox) {
-    //         log_z("不显示 探探小助手");
-    //         clickobj(nox);
-    //     }
-    //     return
-    // }
-
     //  右划跳出了会员  无法继续喜欢了
     let node = id("com.p1.mobile.putong:id/description").findOne(500);
     if (node) {
@@ -1335,8 +1368,6 @@ function wrong() {
         }
         return false
     }
-
-    
 
     // 查看详情 开通礼物充值广告
     if (Find_Control("查看详情",id)) {
@@ -1419,9 +1450,17 @@ function preview(Page) {
         }
     }
     if (Page == "视频聊天") {
-        let tj = Find_Control("推荐");
+        // let tj = Find_Control("推荐");
+        // if (tj){
+        //     console.log("推荐")
+        //     return clickobj(tj);
+        //     // return tj.click();
+        // }
+        let tj = Find_Control("精选");
         if (tj){
+            console.log("精选")
             return clickobj(tj);
+            // return tj.click();
         }
     }
     if (Page == "附近") {
@@ -1494,23 +1533,9 @@ function dynamic(Page) {
                 }
             }
 
-            // 执行滑动操作：从 (startX, startY) 滑动到 (endX, endY)
             swipe(startX, startY, endX, endY, 500); // 500ms 表示滑动持续的时间，可以根据需要调整
             
             sleep(random(3000, 5000));  // 思考时间
-
-            // if (ranM > 0.1 && ranM < 0.14 ) {
-            //     //  可以点击弹出框
-            //     let pl = Find_Control("走心评论，说点好听的～")
-            //     if (pl) {
-            //         if (pl.visibleToUser()) {
-            //             console.log(" 点开评论 ")
-            //             clickobj(pl)
-            //             //  TODO 输入评论后发送
-            //             return
-            //         }
-            //     } 
-            // }
 
             // 向上滑动
             log_z("向上滑动");
@@ -1541,6 +1566,7 @@ function dynamic(Page) {
 function works() {
     //  获取当前界面
     let Page = getCurrentPage()
+    console.log("所在界面 :",Page)
     if (Page == "聊天界面") {
         log_z("在聊天界面 ")
         // 如果是未读的的情况下应该退出去联系其他的用户
@@ -1553,11 +1579,11 @@ function works() {
         }
         
         // 是否有系统推荐的开场白
-        if (Find_Control("帮你准备了2句开场白，点击发送")) {
-            //  选择一个开场白   系统推荐的开场白
-            log_z("率先开团 ")
-            return Find_Control("break_ice_message2_content",id).parent().click();
-        }
+        // if (Find_Control("帮你准备了2句开场白，点击发送")) {
+        //     //  选择一个开场白   系统推荐的开场白
+        //     log_z("率先开团 ")
+        //     return Find_Control("break_ice_message2_content",id).parent().click();
+        // }
         
         // 如果在探探小助手聊天界面
         if (Find_Control("探探小助手")) {
@@ -1566,19 +1592,72 @@ function works() {
             return  back();
         }
 
+        //  获取本地数据
+        let accList = storage.get("accList",[]);
+        // log(accList)
         // 在回信息界面 获取聊天内容
         let chat_data = chat_history()
         if (chat_data) {
-            //  找的客户数据 TODO
-        
+            //  检查数据
+            // let existing = accList.findIndex(profile => profile.name === chat_data.massage_name);
+            // if (existing == -1) {
+            //     // 点击头像
+            //     let ge_name = Find_Control(`${chat_data.massage_name}`);
+            //     if (ge_name) {
+            //         console.log("点击头像");
+            //         clickobj(ge_name);
+            //         sleep(4000);
+            //     }
 
-            log_z("找到聊天记录了")
-            // log(chat_data);
+            //     console.log(" 获取个人数据 ");
+    
+            //     // 开始获取个人资料
+            //     let acc_data = account_card();
+            //     console.log("获取完成")
+                
+            //     if (accList[existing].tantan_id !== acc_data.tantan_id) {
+            //         // 如果 tantan_id 不一样，替换数据
+            //         accList[existing] = acc_data;
+            //         storage.put("accList",accList)
+            //         // console.log("数据已更新:", accList);
+            //     }
+            //     if (acc_data.tantan_id != "未知") {
+            //         back();
+            //     }
+            // }
+
+            if (!accList.some(profile => profile.name === chat_data.massage_name)) {
+                //  点击按钮
+                let ge_name = Find_Control(`${chat_data.massage_name}`);
+                if (ge_name) {
+                    // console.log("点击头像");
+                    clickobj(ge_name);
+                    sleep(3000);
+                }
+                //  找的客户数据
+                let accdata = account_card();
+                if (accdata.tantan_id != "未知") {
+                    back();
+                }
+                // storage.put("Selected", accdata.tantan_id);  // 当前选中的探探号码
+
+                // 保存数据到本地
+                accList.push(accdata);
+                storage.put("accList", accList);  // 账号
+            }
+
+            storage.put("Selected", chat_data.massage_name);  // 当前选中的探探名字
+
+            log_z("找到聊天记录了");
             // 获取对方的话
-            let messages = sort_mess(chat_data.list) 
+            let messages = sort_mess(chat_data.list);
+            console.log("消息记录");
+            // log(messages)
             if (messages.length > 0) {
-                setText("泥嚎")   // TODO 找AI发送对话
-                // Find_Control("发送").click()
+                console.log("调用AI发送内容")
+                let text = chats(messages);
+                setText(text.chattext)
+                Find_Control("发送").click()
             }
         }
         return 
@@ -1683,31 +1762,35 @@ function main() {
     }
 }
 
-// console.log("开始执行 ")
-// for (let i = 0; i < 100 ; i++) {
-    // main()
-// }
 
-
+// storage.remove("context")
 // storage.remove("accList")
-// let accda = storage.get("accList",[]);
-// log(accda)
+// let accList = storage.get("accList",[]);
+// log(accList)
  
 
-// setText("泥嚎")   //  在内部是可以直接输入的 快捷界面需要打开才能输入
+// setText("泥嚎")       //  在聊天窗口是可以直接输入的 快捷界面需要打开才能输入
 // Find_Control("发送").click()
 
- 
-// log("已经喜欢人数: ",storage.get("num", 0))
-// log("count: ",storage.get("count", 0))
-// log("no_start: ",storage.get("no_start", 0))
-// log("today: ",storage.get(today))
 
 //  修改初始化当前情绪持续时间
 // let wtime = addRandomMinutes(1,2)
 // let data = storage.get(today)
 // storage.put(today,{Mood:"心情愉悦",Favorites:false, Likes:data.Likes, Time:wtime})
 // log(data)
-//  ---------------------------------------------------------------------------------------
 
+
+// console.log("开始执行 ")
+for (let i = 0; i < 100 ; i++) {
+    main()
+}
+
+log("已经喜欢人数: ",storage.get("num", 0))
+
+
+//  -------------------------------------测试代码-----------------------------------------
+
+
+
+// account_card()
  
