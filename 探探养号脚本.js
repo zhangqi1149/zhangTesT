@@ -592,7 +592,7 @@ function chatinit() {
     let lead = "聊聊天"
     let attitude = "女汉子"
 
-    // 获取被选中的账号 TODO
+    // 获取被选中的账号
     let accList = storage.get("accList",[]);
     let tan_name = storage.get("Selected","未知")
     // console.log("tantan_id",tantan_id)
@@ -1043,7 +1043,7 @@ function chat_history() {
         let err = item.findOne(id("com.p1.mobile.putong:id/error"));        // 对话内容
         if (err) {
             console.log(" 账号不可以发送消息")
-            // throw new Error("账号不能发送消息") TODO
+            throw new Error("账号不能发送消息") 
         }
         let textView = item.findOne(id("com.p1.mobile.putong:id/content"));        // 对话内容
         let header_pic = item.findOne(id("com.p1.mobile.putong:id/header_pic"));   // 头像
@@ -1288,6 +1288,13 @@ function wrong() {
     // 开通svip广告 
     if (Find_Control("开通SVIP会员")) {
         let aerr_close =  Find_Control("com.p1.mobile.putong:id/close",id);
+        if (aerr_close.click()) {
+            return false
+        }
+    }
+    //  充值1元 
+    if (Find_Control("心动x6")) {
+        let aerr_close =  Find_Control("com.p1.mobile.putong:id/empty",id);
         if (aerr_close.click()) {
             return false
         }
@@ -1735,7 +1742,7 @@ function works() {
                         startY = height * 0.7; // 从屏幕底部80%的地方开始
                         
                         endX = width / 2;    
-                        endY = height * 0.4;  // 滑动到屏幕顶部20%的地方
+                        endY = height * 0.2;  // 滑动到屏幕顶部20%的地方
                         
                         // 执行滑动操作：从 (startX, startY) 滑动到 (endX, endY)
                         swipe(startX, startY, endX, endY, 500); // 500ms 表示滑动持续的时间，可以根据需要调整
@@ -1791,6 +1798,6 @@ log("已经喜欢人数: ",storage.get("num", 0))
 //  -------------------------------------测试代码-----------------------------------------
 
 
-
+// log(Find_Control("心动x6").text())
 // account_card()
  
